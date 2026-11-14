@@ -14,6 +14,8 @@ The question is a small text file (`question.toml`); nothing in the program is s
 - Ask the person before: accepting the Thermo licence (step 4), starting a long batch (step 7), or deleting anything.
 - Never edit files under `profiles/`. A profile is a versioned scientific method; changing one silently changes
   results. If a profile does not fit, tell the person.
+- If the person asks you to change PXReprise itself, read `docs/decisions/` first: each record says why the engine works
+  as it does. A change that reverses a record needs a new record that supersedes it (`docs/decisions/index.md` says how).
 - Every `pxreprise` command prints ONE JSON object on stdout: `{"ok":true,"data":...}` or
   `{"ok":false,"error":{"type":...,"message":...}}`. Exit code 0 = success, 1 = handled failure, 2 = the command
   was typed wrong. Read the JSON; do not scrape the text on stderr (that is a progress log for humans).
