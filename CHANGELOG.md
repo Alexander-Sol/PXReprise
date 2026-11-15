@@ -7,7 +7,7 @@ section 7, "Updating", of [Getting started](https://smith-chem-wisc.github.io/PX
 A new version of the engine never changes a finished result. Methods live in versioned profiles
 (`label-free-dda@2`), and every result's `provenance.json` records the PXReprise version that made it.
 
-## Unreleased
+## 0.4.49 (2026-11-15)
 
 **MetaMorpheus** unchanged (1.1.14, which runs as its own process on its own mzLib, 1.0.597). **Machine file:** no change
 needed. **Safe mid-batch?** Yes: swap the pin as usual. MetaMorpheus searches as before; what changes is the engine's own
