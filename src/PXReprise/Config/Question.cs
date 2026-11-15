@@ -190,7 +190,12 @@ public sealed record FileReplacement(string Path, string PrideSha1, string Sha25
 /// </summary>
 public sealed record SplitGroup(string Accession, string Group, string By, string Reason, IReadOnlyList<string> Keys)
 {
-    public static readonly IReadOnlyList<string> Reasons = new[] { "species", "enrichment", "label", "chemistry" };
+    /// <remarks><c>tissue</c> (2026-11-15, aging PXR-A182 and PXR-A188, the user: "split them the same way"): a deposit
+    /// whose runs come from different tissues (a group may also be one sex: one TMT plex each, as in PXD067637 and its two
+    /// sisters), searched apart so that protein inference and site localisation stay within a tissue. Only
+    /// <c>species</c> changes what a group must state; the others are reasons, written to the manifest's
+    /// <c>split_reason</c>, whose list datarepo keeps too (<c>DatasetEntry.SplitReasons</c>).</remarks>
+    public static readonly IReadOnlyList<string> Reasons = new[] { "species", "enrichment", "label", "chemistry", "tissue" };
 
     public string Key => SearchKey.Of(Accession, Group);
 

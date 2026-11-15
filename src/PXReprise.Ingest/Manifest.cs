@@ -58,6 +58,7 @@ public sealed record DatasetEntry
         ["enrichment"] = "the deposit's runs differ in enrichment (e.g. whole proteome and a phospho enrichment), each searched on its own",
         ["label"] = "the deposit's runs differ in labelling (e.g. label-free and TMT), each searched on its own",
         ["chemistry"] = "the deposit's runs differ in sample chemistry (e.g. digestion or alkylation), each searched on its own",
+        ["tissue"] = "the deposit's runs come from different tissues (a group may also be one sex), each searched on its own, so protein inference and site localisation stay within a tissue",
     };
 
     /// <summary>The uses a <c>restrictions</c> entry may name, each with what it rules out (aging DATAREPO-74, their 101).</summary>
