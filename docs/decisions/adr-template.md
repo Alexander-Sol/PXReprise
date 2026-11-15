@@ -3,7 +3,7 @@ title: Decision record template
 parent: Decisions
 nav_exclude: true
 status: proposed
-date: YYYY-MM-DD
+date: 2026-11-14  # the day the decision was last changed; must be a real date, or the docs site fails to build
 decision-makers: the maintainer
 ---
 
