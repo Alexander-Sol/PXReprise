@@ -22,7 +22,8 @@ public sealed record QcFileResult(
     RunMetadata? Run = null,
     string? IsobaricKit = null,   // v0.4.34: under an isobaric profile, the kit's modification id (IsobaricReporters.ModificationId)
     bool? SpsMs3 = null,          //   and whether its reporters are read in MS3 (null: not an isobaric profile)
-    IReadOnlyList<string>? IsobaricChannels = null);   // v0.4.41: the channels that show a sample (IsobaricReporters.Kit), when a kit was read
+    IReadOnlyList<string>? IsobaricChannels = null,   // v0.4.41: the channels that show a sample (IsobaricReporters.Kit), when a kit was read
+    TagEvidence? IsobaricTag = null);                  // v0.4.48 (G108): a TMT kit's reagent, TMT or TMTpro, from the labelled lysine's y1
 
 /// <summary>
 /// What the raw file says about its own acquisition (DATAREPO-72), recorded while the file still exists: the search's
@@ -100,6 +101,7 @@ public static class SpectraQc
         string? kit = null;
         IReadOnlyList<string>? channels = null;
         bool? spsMs3 = null;
+        TagEvidence? tag = null;
         if (isobaric)
         {
             // v0.4.34 (PLAN_tmt-dda-2 stage 4; TMT trial): under a profile that takes isobaric labels, the KIT is read from
@@ -120,12 +122,19 @@ public static class SpectraQc
             {
                 kit = IsobaricReporters.ModificationId(k.Kit);
                 channels = k.Seen;
+                // v0.4.48 (G108; PXD075949): below 132N the reporters cannot tell TMT from TMTpro; a labelled lysine's y1 can.
+                if (IsobaricReporters.Family(kit) == "TMT")
+                {
+                    tag = IsobaricReporters.Tag(ms2);
+                    kit = IsobaricReporters.ReagentKit(kit, tag);
+                }
             }
             if (reporters.Tag is null || kit is null) reasons.Add(NoReporters);
             if (spsMs3 == true) reasons.Remove(LowResMs2);
         }
         return new QcFileResult(reasons.Count == 0, reasons, scans.Count, ms2.Count, Search.SearchMetrics.PyRound(frac, 4), pairs,
-            Search.SearchMetrics.PyRound(runMinutes, 2), charges, Reporters: reporters, IsobaricKit: kit, SpsMs3: spsMs3, IsobaricChannels: channels);
+            Search.SearchMetrics.PyRound(runMinutes, 2), charges, Reporters: reporters, IsobaricKit: kit, SpsMs3: spsMs3, IsobaricChannels: channels,
+            IsobaricTag: tag);
     }
 
     /// <summary>Counts by value, most common first; ties keep first-seen order (Python's Counter.most_common).</summary>

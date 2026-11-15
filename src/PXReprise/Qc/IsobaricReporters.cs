@@ -11,6 +11,13 @@ namespace PXReprise.Qc;
 /// spectrum carries one), for a thin fraction of an isobaric deposit (<see cref="IsobaricReporters.MinFractionBesideItsDeposit"/>).</param>
 public sealed record ReporterEvidence(string? Tag, double Fraction, int SpectraChecked, string? Family = null);
 
+/// <summary>v0.4.48 (G108): which TMT reagent a file's spectra carry, from the y1 ion of a labelled lysine (<see cref="IsobaricReporters.Tag"/>).</summary>
+/// <param name="SpectraChecked">The high-resolution (Orbitrap or TOF) MS2 spectra read.</param>
+/// <param name="Tmt">The share of them holding TMT's y1 (376.2757).</param>
+/// <param name="TmtPro">The share holding TMTpro's y1 (451.3199).</param>
+/// <param name="Reagent"><c>TMT</c>, <c>TMTpro</c>, or null when the spectra name neither.</param>
+public sealed record TagEvidence(int SpectraChecked, double Tmt, double TmtPro, string? Reagent);
+
 /// <summary>
 /// Finds isobaric reporter ions in a file's own spectra, because a deposit's text can fail to say it is labelled:
 /// PXD052189 never mentions TMT and a TMT six-plex was searched as label-free (aging S64, G4). The reporter m/z values
@@ -89,6 +96,67 @@ public static class IsobaricReporters
         IsobaricMassTagType.diLeu12 => "DiLeu-12plex",
         _ => throw new ArgumentOutOfRangeException(nameof(kit), kit, null),
     };
+
+    /// <summary>
+    /// v0.4.48 (G108; PXD075949, 2026-11-15): the reagent TMT and the reagent TMTpro are told apart by the y1 ion of a peptide
+    /// ending in a labelled lysine, which a reagent's reporters cannot do. TMT (TMT6, TMT10, TMT11) adds 229.163 Da and TMTpro
+    /// (TMT16, TMT18) 304.207 Da, but TMTpro's reporters 126 to 131C have exactly TMT's m/z, and <see cref="Kit"/> takes the
+    /// smallest kit holding every channel seen. So a TMTpro deposit that uses no channel above 131C read as TMT10 and was
+    /// searched under the wrong label: PXD075949 (six channels, 126 to 130N) gave 19 PSMs at 1% of 120,934 MS2, 17 of them
+    /// protein N-terminal acetylated peptides with no lysine, the only peptides that carry no label. Its depositor's own search
+    /// has a 304.207 Da label. Measured 2026-11-15, one file each, share of high-resolution MS2 holding each reagent's y1:
+    /// PXD012552 (TMT10) 0.864 TMT, 0.0014 TMTpro; PXD013708 (TMT10) 0.932, 0.0007; PXD070797 (TMT18) 0.0019, 0.769;
+    /// PXD075949 (read TMT10) 0.0001, 0.396. Ion-trap MS2 cannot tell them apart at its resolution (PXD049967 and PXD005407,
+    /// TMT10: 0.67 to 0.69 TMT and 0.28 to 0.46 TMTpro within 0.4 Da), so only Orbitrap and TOF MS2 are read.
+    /// </summary>
+    public const double MinTagShare = 0.10;
+
+    /// <summary>v0.4.48 (G108): the y1 of one reagent names it when its share is at least this many times the other's.</summary>
+    public const double MinTagRatio = 10;
+
+    /// <summary>v0.4.48 (G108): fewer high-resolution MS2 spectra than this name no reagent.</summary>
+    public const int MinTagSpectra = 100;
+
+    private static readonly double WaterMass = ChemicalFormula.ParseFormula("H2O").MonoisotopicMass;
+
+    /// <summary>
+    /// v0.4.48 (G108): the m/z (charge 1) of the y1 ion of a peptide ending in a lysine labelled with <paramref name="modificationId"/>
+    /// (<see cref="ModificationId"/>): the lysine, the tag's mass as mzLib's own modification gives it, water and a proton.
+    /// 376.2757 under TMT, 451.3199 under TMTpro.
+    /// </summary>
+    public static double LabelledLysineY1(string modificationId) =>
+        Mods.IsobaricLabelModifications.First(m => string.Equals(m.OriginalId, modificationId, StringComparison.Ordinal)).MonoisotopicMass!.Value
+        + Proteomics.AminoAcidPolymer.Residue.GetResidue('K').MonoisotopicMass + WaterMass + Constants.ProtonMass;
+
+    /// <summary>
+    /// v0.4.48 (G108): which TMT reagent a file's high-resolution MS2 spectra carry, from the share holding each reagent's
+    /// <see cref="LabelledLysineY1"/> within <see cref="ToleranceDa"/>. <see cref="TagEvidence.Reagent"/> is <c>TMT</c> or
+    /// <c>TMTpro</c> when one share is at least <see cref="MinTagShare"/> and <see cref="MinTagRatio"/> times the other, over at
+    /// least <see cref="MinTagSpectra"/> spectra; otherwise null, and the kit the reporters read is kept.
+    /// </summary>
+    public static TagEvidence Tag(IEnumerable<MsDataScan> scans)
+    {
+        double[] tmt = { LabelledLysineY1(ModificationId(IsobaricMassTagType.TMT10)) };
+        double[] pro = { LabelledLysineY1(ModificationId(IsobaricMassTagType.TMT18)) };
+        var spectra = scans.Where(s => s.MsnOrder == 2 && (s.MzAnalyzer is MZAnalyzerType.Orbitrap or MZAnalyzerType.TOF) && s.MassSpectrum is { Size: > 0 })
+            .Select(s => s.MassSpectrum.XArray).ToList();
+        int n = spectra.Count;
+        double ft = n == 0 ? 0 : (double)spectra.Count(x => Channels(x, tmt) == 1) / n;
+        double fp = n == 0 ? 0 : (double)spectra.Count(x => Channels(x, pro) == 1) / n;
+        string? reagent = n < MinTagSpectra ? null
+            : fp >= MinTagShare && fp >= MinTagRatio * ft ? "TMTpro"
+            : ft >= MinTagShare && ft >= MinTagRatio * fp ? "TMT"
+            : null;
+        return new TagEvidence(n, Search.SearchMetrics.PyRound(ft, 4), Search.SearchMetrics.PyRound(fp, 4), reagent);
+    }
+
+    /// <summary>
+    /// v0.4.48 (G108): the kit a file is searched with, from the kit its reporters read and its y1 evidence: a TMT6, TMT10 or
+    /// TMT11 read whose spectra say TMTpro is TMT18 (a TMTpro 16 deposit is searched under TMT18's label, <see cref="ModificationId"/>).
+    /// Its channels need no change: <see cref="Kit"/> names them in TMT18's labels. Any other read is kept.
+    /// </summary>
+    public static string ReagentKit(string kit, TagEvidence? evidence) =>
+        evidence?.Reagent == "TMTpro" && Array.IndexOf(OneReagentTmt, kit) >= 0 ? ModificationId(IsobaricMassTagType.TMT18) : kit;
 
     /// <summary>A channel counts as seen when it is present in at least this share of the typical channel's spectra.</summary>
     public const double MinChannelShare = 0.5;

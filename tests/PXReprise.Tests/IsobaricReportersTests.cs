@@ -362,4 +362,54 @@ public class IsobaricReportersTests
         Assert.That((none.IsobaricKit, none.SpsMs3), Is.EqualTo(((string?)null, (bool?)false)));
         Assert.That(none.IsobaricChannels, Is.Null);
     }
+
+    // v0.4.48 (G108; PXD075949, 2026-11-15): TMTpro's reporters 126 to 131C have TMT's m/z, so a TMTpro deposit that uses only those
+    // read as TMT10 and was searched under the wrong label (19 PSMs at 1% of 120,934 MS2). The y1 ion of a peptide ending in a
+    // labelled lysine, 376.2757 under TMT and 451.3199 under TMTpro, names the reagent; high-resolution MS2 only.
+    [Test]
+    public void TheLabelledLysinesY1TellsTmtProFromTmtWhereTheReportersCannot()
+    {
+        Assert.That(IsobaricReporters.LabelledLysineY1("TMT10"), Is.EqualTo(376.2757).Within(0.0001));
+        Assert.That(IsobaricReporters.LabelledLysineY1("TMT6-plex"), Is.EqualTo(376.2757).Within(0.0001), "TMT6, 10 and 11 are one reagent");
+        Assert.That(IsobaricReporters.LabelledLysineY1("TMT18"), Is.EqualTo(451.3199).Within(0.0001));
+
+        // PXD075949's six channels; 127C is not TMT6's, so the reporters alone read TMT10.
+        string[] channels = { "126", "127N", "127C", "128N", "129C", "130N" };
+        double[] six = channels.Select(c => Tmt18.ReporterIonMzs[Array.IndexOf(Tmt18.ChannelLabels.ToArray(), c)]).ToArray();
+        List<MsDataScan> File(double y1, int count = 120, int withY1 = 84) =>
+            Enumerable.Range(0, count).Select(i => Scan(i, 2, i < withY1 ? six.Append(y1).ToArray() : six)).ToList();
+
+        var pro = SpectraQc.Evaluate(File(451.3199), Gates, isobaric: true);
+        Assert.That(pro.IsobaricKit, Is.EqualTo("TMT18"), "TMTpro is searched under TMT18's label");
+        Assert.That(pro.IsobaricChannels, Is.EqualTo(channels), "the channels are already in TMT18's labels");
+        Assert.That(pro.IsobaricTag, Is.EqualTo(new TagEvidence(120, 0.0, 0.7, "TMTpro")));
+        Assert.That(pro.FailReasons, Does.Not.Contain(SpectraQc.NoReporters));
+
+        var tmt = SpectraQc.Evaluate(File(376.2757), Gates, isobaric: true);
+        Assert.That((tmt.IsobaricKit, tmt.IsobaricTag), Is.EqualTo(("TMT10", new TagEvidence(120, 0.7, 0.0, "TMT"))));
+
+        // The reporters' kit stands when the y1 names neither reagent: no labelled lysine (iodoTMT labels cysteines; PXD025746
+        // measured 0.0003 and 0.0044), both y1 alike, or too few high-resolution MS2.
+        var noY1 = SpectraQc.Evaluate(File(451.3199, withY1: 0), Gates, isobaric: true);
+        Assert.That((noY1.IsobaricKit, noY1.IsobaricTag?.Reagent), Is.EqualTo(("TMT10", (string?)null)));
+        var thin = SpectraQc.Evaluate(File(451.3199, withY1: 6), Gates, isobaric: true);
+        Assert.That((thin.IsobaricKit, thin.IsobaricTag?.TmtPro), Is.EqualTo(("TMT10", 0.05)), "under MinTagShare");
+        var both = Enumerable.Range(0, 120).Select(i => Scan(i, 2, six.Append(376.2757).Append(451.3199).ToArray())).ToList();
+        Assert.That(SpectraQc.Evaluate(both, Gates, isobaric: true).IsobaricKit, Is.EqualTo("TMT10"));
+        var few = SpectraQc.Evaluate(File(451.3199, count: 60, withY1: 60), Gates, isobaric: true);
+        Assert.That((few.IsobaricKit, few.IsobaricTag?.SpectraChecked), Is.EqualTo(("TMT10", 60)));
+
+        // Ion-trap MS2 is not read: at its resolution the two y1 are not told apart (PXD049967, PXD005407).
+        MsDataScan IonTrap(int n) => new(new MzSpectrum(six.Append(451.3199).ToArray(), six.Append(451.3199).Select(_ => 1e5).ToArray(), false), n, 2, true,
+            Polarity.Positive, n / 10.0, new MzRange(100, 2000), "", MZAnalyzerType.IonTrap2D, 1e6, 10, null, $"scan={n}", selectedIonMz: 500,
+            dissociationType: DissociationType.CID);
+        var ionTrap = SpectraQc.Evaluate(Enumerable.Range(0, 120).Select(IonTrap).ToList(), Gates, isobaric: true);
+        Assert.That((ionTrap.IsobaricKit, ionTrap.IsobaricTag?.SpectraChecked), Is.EqualTo(("TMT10", 0)));
+
+        // A kit of another family, or TMTpro already read by its channels above 131C, is never changed.
+        Assert.That(IsobaricReporters.ReagentKit("iTRAQ-8plex", new TagEvidence(120, 0, 0.7, "TMTpro")), Is.EqualTo("iTRAQ-8plex"));
+        Assert.That(IsobaricReporters.ReagentKit("TMT18", new TagEvidence(120, 0.7, 0, "TMT")), Is.EqualTo("TMT18"));
+        Assert.That(IsobaricReporters.ReagentKit("TMT11", new TagEvidence(120, 0, 0.7, "TMTpro")), Is.EqualTo("TMT18"));
+        Assert.That(IsobaricReporters.ReagentKit("TMT11", null), Is.EqualTo("TMT11"));
+    }
 }
