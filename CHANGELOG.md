@@ -7,11 +7,14 @@ section 7, "Updating", of [Getting started](https://smith-chem-wisc.github.io/PX
 A new version of the engine never changes a finished result. Methods live in versioned profiles
 (`label-free-dda@2`), and every result's `provenance.json` records the PXReprise version that made it.
 
-## Unreleased
+## 0.4.48 (2026-11-15)
 
 **MetaMorpheus** unchanged. **Machine file:** no change needed (`spectral_library_remote` is new; unset means no sync, as
-before). **Safe mid-batch?** Yes, while no remote is named. Naming one on a machine whose chains were built before needs
-the chains seeded or pulled first (below).
+before). **Safe mid-batch?** Yes: swap the pin as usual, while no remote is named. Naming one on a machine whose chains were
+built before needs the chains seeded or pulled first (below). A probe worker takes the new release (`worker release`). After
+the swap, `batch research` a TMTpro deposit that was read as TMT and parked for low identifications. A split by tissue is
+delivered only by a datarepo that reads `split_reason: tissue` (1.5.0, whose code is here); a machine still on datarepo 1.4.5
+refuses it at ingest, so add none to its questions yet.
 
 - **A deposit can be split by tissue** (`[splits.<acc>] by = "tissue"`; aging PXR-A182 and PXR-A188, the user,
   2026-11-15: "split them the same way"). Groups still name their own raw files with `include_files`; a group may also be
