@@ -81,7 +81,7 @@ public static class IsobaricReporters
 
     /// <summary>
     /// The modification MetaMorpheus searches a kit with, as its <c>MultiplexModId</c> and as "&lt;id&gt; on K" / "on X"
-    /// fixed mods. mzLib's IsobaricMassTag.SourceModificationId (private in 1.0.596), copied: TMTpro 16 is searched under
+    /// fixed mods. mzLib's IsobaricMassTag.SourceModificationId (private through 1.0.598), copied: TMTpro 16 is searched under
     /// TMT18's label, whose first sixteen channels it is.
     /// </summary>
     public static string ModificationId(IsobaricMassTagType kit) => kit switch

@@ -7,6 +7,24 @@ section 7, "Updating", of [Getting started](https://smith-chem-wisc.github.io/PX
 A new version of the engine never changes a finished result. Methods live in versioned profiles
 (`label-free-dda@2`), and every result's `provenance.json` records the PXReprise version that made it.
 
+## Unreleased
+
+**MetaMorpheus** unchanged (1.1.14, which runs as its own process on its own mzLib, 1.0.597). **Machine file:** no change
+needed. **Safe mid-batch?** Yes: swap the pin as usual. MetaMorpheus searches as before; what changes is the engine's own
+use of mzLib: its reading of SDRFs and its downloads (below).
+
+- **The engine moves to mzLib 1.0.598** (from 1.0.596), one ahead of MetaMorpheus 1.1.14's 1.0.597 and the version
+  datarepo's projects here already use. Nothing in the engine's code had to change. What it changes for the engine:
+  - **SDRF designs** (`SdrfIsobaricDesign`, `SdrfLabelFreeDesign`) accept pooled references and several factor columns, so
+    an SDRF refused for those before can now give a design.
+  - **A checked PRIDE download** stops at the first sight of EBI's error text and starts again from byte 0, within its
+    retries (#1517), instead of downloading the rest of a doomed file. A file whose bytes hold that text is refused even when
+    its MD5 matches. The fetch still turns a refusal into a refetch, as before.
+  - **`RetrieveProteome`** no longer saves UniProt's error page as a downloaded proteome; it writes nothing.
+  - Provenance's `tools.mzlib` reads 1.0.598.
+  - The rest of mzLib 1.0.597's and 1.0.598's notes touch code the engine does not call. The offline tests pass
+    unchanged, and every delivered aging search, re-read through mzLib 1.0.598's readers, gives the same derived blocks.
+
 ## 0.4.48 (2026-11-15)
 
 **MetaMorpheus** unchanged. **Machine file:** no change needed (`spectral_library_remote` is new; unset means no sync, as
