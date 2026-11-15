@@ -91,6 +91,12 @@ public static class QcStage
                 entry["isobaric_kit"] = r.IsobaricKit;
                 entry["sps_ms3"] = sps;
                 if (r.IsobaricChannels is { } channels) entry["isobaric_channels"] = new JsonArray(channels.Select(c => (JsonNode?)c).ToArray());
+                // v0.4.48 (G108): the evidence that kept or changed a TMT kit's reagent.
+                if (r.IsobaricTag is { } t)
+                    entry["isobaric_tag"] = new JsonObject
+                    {
+                        ["spectra_checked"] = t.SpectraChecked, ["y1_tmt"] = t.Tmt, ["y1_tmtpro"] = t.TmtPro, ["reagent"] = t.Reagent,
+                    };
             }
             // DATAREPO-72: a key only for a value the reader gave; a missing key means "not read".
             if (r.Run is { } run)

@@ -53,6 +53,15 @@ the chains seeded or pulled first (below).
   - `datarepo push <store> --store <local>` and `datarepo pull` (dataRepo's draft, `feat/storage-push-pull`) copy bundles,
     engine outputs and study deliveries between a local store and a shared one, write-once, each folder's record file
     last, every file checked against `bundle.json` first. Not for real bundles before the 1.5.0 re-ingest.
+- **A TMTpro deposit that uses no channel above 131C is no longer searched as TMT6, TMT10 or TMT11** (gap G108; found on
+  PXD075949, 2026-11-15). TMTpro's reporters 126 to 131C have exactly TMT's m/z, so the reporters alone read such a file
+  as the smallest TMT kit holding its channels, and the search used the wrong label (PXD075949: 19 PSMs at 1% of 120,934
+  MS2). QC now also reads the y1 ion of a peptide ending in a labelled lysine in the file's high-resolution MS2: 376.276
+  under TMT, 451.320 under TMTpro. When TMTpro's is in at least 10% of the spectra and ten times as common as TMT's, the
+  kit is TMT18 (TMTpro 16 is searched under TMT18's label). `qc_report.json` records the evidence per file as
+  `isobaric_tag` (`spectra_checked`, `y1_tmt`, `y1_tmtpro`, `reagent`). Ion-trap MS2 is not read, so an SPS-MS3 file
+  keeps its reporters' kit. Safe mid-batch: only a TMTpro file read as TMT changes, and such a search identified almost
+  nothing.
 
 ## 0.4.47 (2026-11-13)
 
