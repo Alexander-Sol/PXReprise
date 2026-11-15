@@ -13,6 +13,11 @@ A new version of the engine never changes a finished result. Methods live in ver
 before). **Safe mid-batch?** Yes, while no remote is named. Naming one on a machine whose chains were built before needs
 the chains seeded or pulled first (below).
 
+- **A deposit can be split by tissue** (`[splits.<acc>] by = "tissue"`; aging PXR-A182 and PXR-A188, the user,
+  2026-11-15: "split them the same way"). Groups still name their own raw files with `include_files`; a group may also be
+  one sex, one TMT plex each, as the Corylin lab's PXD067637, PXD067643 and PXD067647 are. Delivering such a group needs
+  a datarepo that reads `split_reason: tissue` (1.5.0 here); 1.4.5 refuses it at ingest.
+
 - **Spectral library chains can be shared through the cloud** (Alex and the user, 2026-11-11; thread diabetes 004,
   PXR-D3 and PXR-D4), so every machine searches with the same library.
   - The machine file's `spectral_library_remote` names a folder (a share) or `s3://bucket/prefix` (credentials from

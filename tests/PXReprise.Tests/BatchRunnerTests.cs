@@ -650,6 +650,31 @@ public class BatchRunnerTests
         return (new BatchRunner(q, Profiles, machine, files, search, "2026-11-08") { Sha1Source = NoSha1 }, search, files, dir);
     }
 
+    // 2026-11-15 (aging PXR-A182, PXR-A188; the user: "split them the same way"): the Corylin lab's three deposits, six TMT10
+    // plexes each, one per tissue and sex. File names hold both, and "female" contains "male": the leading underscore keeps
+    // "_liver_male_" off "_liver_female_".
+    private const string CorylinSplit =
+        "[splits.PXD067637]\nreason = \"six TMT10 plexes, one per tissue and sex (aging D189)\"\nby = \"tissue\"\n"
+        + "[splits.PXD067637.liverfemale]\ninclude_files = \"_corylin_liver_female_\"\n"
+        + "[splits.PXD067637.livermale]\ninclude_files = \"_corylin_liver_male_\"\n"
+        + "[splits.PXD067637.kidneyfemale]\ninclude_files = \"_corylin_kidney_female_\"\n"
+        + "[splits.PXD067637.kidneymale]\ninclude_files = \"_corylin_kidney_male_\"\n";
+
+    [Test]
+    public void ADepositSplitsByTissueAndEachRawFileIsInOneGroup()
+    {
+        string dir = TestSupport.TempDir();
+        var q = QuestionLoader.Load(TestSupport.WriteFile(dir, "q.toml", SplitQuestion(CorylinSplit)));
+        var keys = q.SplitKeysOf("PXD067637");
+        Assert.That(keys, Is.EqualTo(new[] { "PXD067637-liverfemale", "PXD067637-livermale", "PXD067637-kidneyfemale", "PXD067637-kidneymale" }));
+        foreach (string file in new[] { "20230808_corylin_liver_female_TMT10_s01.raw", "20230808_corylin_liver_male_R_TMT10_s01.raw",
+                                        "20230810_corylin_kidney_female_TMT10_s12.raw", "20230810_corylin_kidney_male_TMT10_s12.raw" })
+            Assert.That(keys.Count(k => q.ExceptionFor(k)!.Keeps(file)), Is.EqualTo(1), $"{file} is in exactly one group");
+        var g = q.ExceptionFor("PXD067637-livermale")!;
+        Assert.That((g.Split!.By, g.Species), Is.EqualTo(("tissue", (string?)null)), "a split by tissue names no species");
+        QuestionLoader.CheckAgainstProfiles(q, Profiles);
+    }
+
     [Test]
     public void AQuestionSplitsADepositIntoOneSearchPerGroup()
     {
@@ -672,7 +697,7 @@ public class BatchRunnerTests
         Assert.That(Refused(Pxd076192Split.Replace("include_files = \"_human_\"\n", "")), Does.Contain("splits.PXD076192.human selects no files"));
         Assert.That(Refused(Pxd076192Split.Replace("species = \"human\"\n", "")), Does.Contain("names each group's species"));
         Assert.That(Refused(Pxd076192Split.Replace("species = \"human\"", "species = \"mouse\"")), Does.Contain("two groups name the same species"));
-        Assert.That(Refused(Pxd076192Split.Replace("by = \"species\"", "by = \"organism\"")), Does.Contain("by must be one of species, enrichment, label, chemistry"));
+        Assert.That(Refused(Pxd076192Split.Replace("by = \"species\"", "by = \"organism\"")), Does.Contain("by must be one of species, enrichment, label, chemistry, tissue"));
         Assert.That(Refused("[splits.PXD076192]\nreason = \"r\"\nby = \"species\"\n[splits.PXD076192.mouse]\nspecies = \"mouse\"\ninclude_files = \"_mouse_\"\n"),
             Does.Contain("names 1 group"));
         var zebrafish = QuestionLoader.Load(TestSupport.WriteFile(dir, "q3.toml", SplitQuestion(Pxd076192Split.Replace("species = \"human\"", "species = \"zebrafish\""))));

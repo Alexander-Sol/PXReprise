@@ -16,6 +16,9 @@ the 1.4.5 catalog is explained (`results/reingest_150_2026-11-12/`). No re-searc
 search by MetaMorpheus 1.1.13 or earlier.
 
 ### Added (ingest, `cs-1.3.0`)
+- **`split_reason: tissue`** (PXReprise, 2026-11-15): a deposit whose runs come from different tissues, each searched on
+  its own (a group may also be one sex: one TMT plex per tissue and sex, as in PXD067637 and its two sisters). The fifth
+  reason; any other value is still refused. Not content, so no bundle id moves.
 - **`peptidoform_ions`**: the six `Matched Ion *` columns of the best PSM of each peptidoform, verbatim, with
   `selected_by`, for the peptidoforms that pass the search's confidence rule (below). Contaminants are left out, as
   `peptidoforms_1pct` leaves them, and an ambiguous row is kept under its first option, whose ions MetaMorpheus writes. A
