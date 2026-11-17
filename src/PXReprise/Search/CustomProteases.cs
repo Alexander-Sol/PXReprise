@@ -5,7 +5,8 @@ namespace PXReprise.Search;
 /// <summary>
 /// v0.4.28: digestion agents mzLib's <c>proteases.tsv</c> does not have, from PXReprise's own list shipped under
 /// <c>profiles/lists/</c> (same columns; see its PROVENANCE.md). The first is <see cref="TrypsinChymotrypsin"/>, for the
-/// chymotrypsin fraction of a MED-FASP digest (PXD006815).
+/// chymotrypsin fraction of a MED-FASP digest (PXD006815); v0.4.50's list (v2) adds <see cref="TrypsinGluC"/>, for one
+/// digest by Lys-C, trypsin and Glu-C together (PXD031782).
 /// <list type="bullet">
 /// <item>The list is merged into mzLib's <see cref="ProteaseDictionary"/> in this process when the profiles load
 /// (<see cref="Config.ProfileLoader.LoadDirectory"/>), so the chemistry resolves its names like any other.</item>
@@ -17,11 +18,14 @@ namespace PXReprise.Search;
 /// </summary>
 public static class CustomProteases
 {
-    public const string FileName = "PXReprise_custom_proteases_v1.tsv";
+    public const string FileName = "PXReprise_custom_proteases_v2.tsv";
     public const string MetaMorpheusFileName = "proteases_custom.tsv";
 
     /// <summary>Cuts after K and R, and after F, W, Y and L except before P.</summary>
     public const string TrypsinChymotrypsin = "trypsin+chymotrypsin";
+
+    /// <summary>v0.4.50: cuts after K, R and E (Glu-C in ammonium bicarbonate), with no proline rule.</summary>
+    public const string TrypsinGluC = "trypsin+Glu-C";
 
     private const string Header = "Name\tMotif\tSpecificity\tPSI-MS Accession\tPSI-MS Name\tCleavage Modification";
 

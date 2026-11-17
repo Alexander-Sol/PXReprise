@@ -7,6 +7,24 @@ section 7, "Updating", of [Getting started](https://smith-chem-wisc.github.io/PX
 A new version of the engine never changes a finished result. Methods live in versioned profiles
 (`label-free-dda@2`), and every result's `provenance.json` records the PXReprise version that made it.
 
+## 0.4.50 (2026-11-17)
+
+**MetaMorpheus** unchanged (1.1.14). **Machine file:** no change needed. **Safe mid-batch?** Yes: swap the pin as usual. A
+search that names neither of PXReprise's combined proteases runs exactly as before, and a MetaMorpheus settings folder that
+already holds `trypsin+chymotrypsin` is left as it is.
+
+- **A second protease of PXReprise's own: `trypsin+Glu-C`,** for one digest by Lys-C, trypsin and Glu-C together (first
+  PXD031782, whose 12 files all come from such a digest).
+  - **It cuts after K, R and E,** with no proline rule. Glu-C cuts after E only in ammonium bicarbonate, the deposit's
+    buffer (mzLib's `Glu-C`, not `Glu-C (with asp)`); Lys-C adds nothing to trypsin.
+  - **A question names it** in its SDRF as `NT=trypsin+Glu-C`, or by naming trypsin and Glu-C (with or without Lys-C) in
+    one file's `comment[cleavage agent details]` columns, as it already names `trypsin+chymotrypsin`. With such an SDRF the
+    deposit is no longer parked `waiting_multi_protease`: one digest by three enzymes is one protease.
+  - **The list is now `profiles/lists/PXReprise_custom_proteases_v2.tsv`:** v1's entry byte for byte, then the new one
+    (entries are never edited in place). Its `PROVENANCE.md` gives the protocol behind the motif.
+  - Before, such a deposit could only be searched as trypsin, which cannot match the roughly three peptides in five with an
+    end after E.
+
 ## 0.4.49 (2026-11-15)
 
 **MetaMorpheus** unchanged (1.1.14, which runs as its own process on its own mzLib, 1.0.597). **Machine file:** no change
