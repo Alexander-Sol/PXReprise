@@ -1,12 +1,17 @@
 # Contributing to dataRepo
 
+**dataRepo's code now lives here, in smith-chem-wisc/PXReprise** (since #4, 2026-11-13): the projects
+`src/PXReprise.*`, the tests `tests/PXReprise.Data.Tests`, the schema `schemas/datarepo/datarepo.yaml`,
+and these docs. Changes come in as pull requests; datarepo releases are tagged `datarepo-v<version>`.
+smith-chem-wisc/dataRepo keeps the project's design records, threads and results.
+
 Thanks for helping. dataRepo is early, so the most useful contributions right now are schema reviews,
 benchmark questions the schema can't yet answer, and producer file formats the ingester mishandles.
 
 ## Ground rules
 
-1. **The schema YAML is the source of truth.** `schema/datarepo.yaml` (core) and
-   `schema/study/*.yaml` (study layers). Everything in `docs/schema/` is generated from them.
+1. **The schema YAML is the source of truth.** `schemas/datarepo/datarepo.yaml` (core) and
+   `schemas/datarepo/study/*.yaml` (study layers). Everything in `docs/data/schema/` is generated from them.
 2. **Keep the core generic.** If a column only makes sense for one study (age, disease model, a
    specific clock), it belongs in a study layer as a table keyed on core IDs, never as a new core column.
 3. **Store, don't compute.** dataRepo doesn't define metrics, run statistics or build annotations. A
@@ -15,7 +20,7 @@ benchmark questions the schema can't yet answer, and producer file formats the i
 5. **No data in this repo.** Bundles, releases and DOIs belong to an instance (decision D8).
    `examples/` and `tests/data/` hold only tiny fixtures.
 6. **Parsing producer formats belongs to mzLib.** If the ingester reads a producer file itself, the
-   reason must be recorded in `Readers` (`dotnet/src/DataRepo.Ingest/Readers.cs`) and in the bundle's
+   reason must be recorded in `Readers` (`src/PXReprise.Ingest/Readers.cs`) and in the bundle's
    reader log, along with the request that would let the in-house code be deleted.
 7. **Never invent an identifier.** An unresolved modification, an unmatched run or a protein group
    the producer did not build is reported as a finding, not filled in with a plausible guess.
