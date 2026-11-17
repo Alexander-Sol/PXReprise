@@ -206,7 +206,7 @@ table. The next `build` writes the restrictions to `dataset_restrictions` and on
 `dataset_overview.restrictions`, and moves the catalog id, with no re-ingest. `datarepo manifest` lists
 them as `restricted <use>: <reason>`.
 
-A deposit whose runs differ in species, enrichment, labelling or chemistry can be **searched in parts**
+A deposit whose runs differ in species, enrichment, labelling, chemistry or tissue can be **searched in parts**
 (a split, PXReprise's PXR-R30 to R32). Each part is its own entry, keyed `<accession>-<group>`, with
 `split_reason` saying why. In the same write that adds the parts, retire the whole search's entry:
 
