@@ -114,6 +114,7 @@ public static class ChemistryDetector
     private const string Trypsin = "trypsin";
     private const string LysC = "Lys-C|P";
     private const string Chymotrypsin = "chymotrypsin|P";
+    private const string GluC = "Glu-C";
     private const string NonSpecific = "non-specific";
 
     /// <summary>The wait of a deposit whose protease cuts almost anywhere (v0.4.19); the screen gives the same status to an immunopeptidome.</summary>
@@ -366,6 +367,10 @@ public static class ChemistryDetector
             // both enzymes' sites: the combined custom protease, when it is loaded (PXD006815, 2026-10-20).
             if (agents.Count == 2 && agents.Contains(Trypsin) && agents.Contains(Chymotrypsin) && Search.CustomProteases.IsCustom(Search.CustomProteases.TrypsinChymotrypsin))
                 agents = new List<string> { Search.CustomProteases.TrypsinChymotrypsin };
+            // v0.4.50: trypsin and Glu-C named for one file (Lys-C, trypsin and Glu-C in one digest, PXD031782) cut at both
+            // enzymes' sites, the same way.
+            if (agents.Count == 2 && agents.Contains(Trypsin) && agents.Contains(GluC) && Search.CustomProteases.IsCustom(Search.CustomProteases.TrypsinGluC))
+                agents = new List<string> { Search.CustomProteases.TrypsinGluC };
             if (agents.Count == 1 && file.Length > 0) perFile[file] = agents[0];
             else if (agents.Count > 1 && file.Length > 0) perFile[file] = string.Join(" + ", agents);
             foreach (string cell in row.All("comment[modification parameters]"))

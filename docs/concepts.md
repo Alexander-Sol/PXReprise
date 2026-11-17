@@ -117,15 +117,18 @@ which protease made the deposit's peptides, how its cysteines were alkylated, an
 - **A profile can respect cleavage-blocking modifications** (`label-free-dda@12`,
   `RespectCleavageBlockingModifications`). No peptide then ends at a cut on a modification that blocks the protease, such as
   citrulline, acyl-K or GG-K after trypsin, and GPTMD no longer places one there.
-- **PXReprise's own proteases** (since 0.4.28, any profile). `profiles/lists/PXReprise_custom_proteases_v1.tsv` holds
-  digestion agents mzLib's list lacks, in mzLib's own columns. Before a search that uses one, PXReprise adds it to
-  the `proteases_custom.tsv` in the MetaMorpheus settings folder the search uses. Today the list holds one:
+- **PXReprise's own proteases** (since 0.4.28, any profile). `profiles/lists/PXReprise_custom_proteases_v2.tsv` (since
+  0.4.50; v1 before) holds digestion agents mzLib's list lacks, in mzLib's own columns. Before a search that uses one,
+  PXReprise adds it to the `proteases_custom.tsv` in the MetaMorpheus settings folder the search uses. Today the list
+  holds two:
   - **`trypsin+chymotrypsin`** cuts after K and R, and after F, W, Y and L except before P. It is meant for the
     chymotrypsin fraction of a MED-FASP digest, where chymotrypsin digests what trypsin left. On one such run, a
     non-specific search found both kinds of cut at either end of the peptides; chymotrypsin alone identified 651 PSMs,
     this protease 7,028.
-  - **How a question names it:** in its SDRF, `NT=trypsin+chymotrypsin`, or both trypsin and chymotrypsin in one
-    file's cleavage-agent columns.
+  - **`trypsin+Glu-C`** (since 0.4.50) cuts after K, R and E. It is meant for one digest by Lys-C, trypsin and Glu-C
+    together in ammonium bicarbonate, where Glu-C cuts after E only.
+  - **How a question names one:** in its SDRF, by its name (`NT=trypsin+chymotrypsin`, `NT=trypsin+Glu-C`), or by
+    naming both its enzymes in one file's cleavage-agent columns (Lys-C beside trypsin changes nothing).
 - **When the search fails:** if MetaMorpheus reports it could not use a modification or a per-file protease. It does
   not search on without them.
 
