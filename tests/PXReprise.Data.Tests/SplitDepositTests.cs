@@ -111,6 +111,32 @@ public class SplitDepositTests
         Assert.That(e!.Message, Does.Contain(message));
     }
 
+    private static IEnumerable<string> SplitReasons() => DatasetEntry.SplitReasons.Keys;
+
+    /// <summary>Every reason on the list loads on a part (<c>tissue</c>, the fifth, came with PXReprise 120), and every
+    /// description of <c>split_reason</c> names it. The descriptions once listed four reasons by hand and missed
+    /// <c>tissue</c>, so an agent reading the catalog would not have known the value could appear.</summary>
+    [TestCaseSource(nameof(SplitReasons))]
+    public void EveryReasonOnTheListLoadsAndEveryDescriptionNamesIt(string reason)
+    {
+        var text = File.ReadAllText(ManifestPath).Replace("\r\n", "\n")
+            .Replace("    split_reason: species\n", $"    split_reason: {reason}\n");
+        var path = Path.Combine(Data, $"reason-{reason}.yaml");
+        File.WriteAllText(path, text);
+        Assert.That(Manifest.Load(path).Datasets[PartA].SplitReason, Is.EqualTo(reason));
+
+        var descriptions = CatalogBuilder.DerivedDocs.Values
+            .SelectMany(d => d.Columns.Where(c => c.Key == "split_reason").Select(c => c.Value))
+            .Append(CatalogBuilder.DerivedDocs[CatalogBuilder.DepositsTable].Description)
+            .ToList();
+        Assert.That(descriptions, Has.Count.EqualTo(3));
+        Assert.Multiple(() =>
+        {
+            foreach (var description in descriptions)
+                Assert.That(description, Does.Contain($"`{reason}`"));
+        });
+    }
+
     /// <summary><c>datarepo manifest</c> names each part's deposit, and a whole entry still <c>include</c> beside its parts
     /// (exit 1), so the mistake the build refuses is found before a build.</summary>
     [Test]

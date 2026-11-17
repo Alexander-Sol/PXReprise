@@ -584,7 +584,7 @@ public static partial class CatalogBuilder
                     + "`PXD027754-mouse`); NULL for a deposit searched whole. The other searches of the deposit are the "
                     + "rows with the same `accession`.",
                 ["split_reason"] = "Why the producer split the deposit, from the manifest the build was given: "
-                    + "`species`, `enrichment`, `label` or `chemistry`. NULL for a deposit searched whole, and for a split "
+                    + SplitReasonsNamed() + ". NULL for a deposit searched whole, and for a split "
                     + "search whose manifest entry states no reason (or that has no entry), which is not stated, never "
                     + "'no reason'.",
                 ["n_psms_1pct"] = "Target PSMs passing the producer's acceptance rule, as the ingest counted them "
@@ -753,13 +753,13 @@ public static partial class CatalogBuilder
                     + "when the entry names none; the search's own recorded SDRF was then read (sha256-checked) or, for "
                     + "pxreprise_default, the deposit's metadata/ SDRF.",
                 ["split_reason"] = "Why the producer searched the deposit in parts, for one search of a split deposit "
-                    + "(`<accession>-<group>`): `species`, `enrichment`, `label` or `chemistry`. NULL when the entry "
+                    + "(`<accession>-<group>`): " + SplitReasonsNamed() + ". NULL when the entry "
                     + "states none. Also on `dataset_overview.split_reason`.",
             }),
         [DepositsTable] = new(
             "One row per DEPOSIT (ProteomeXchange accession) the catalog serves, naming its searches. Most deposits "
-            + "are searched whole, as one dataset under the bare accession. A deposit whose runs differ in species, "
-            + "enrichment, labelling or chemistry can be searched in parts (a split), each part its own dataset keyed "
+            + "are searched whole, as one dataset under the bare accession. A deposit whose runs differ in a way "
+            + "`split_reason` names (" + SplitReasonsNamed() + ") can be searched in parts (a split), each part its own dataset keyed "
             + "`<accession>-<group>`. Count deposits here, or by `dataset_overview.accession`; a count of datasets counts "
             + "a split deposit once per part. The build refuses a catalog serving a deposit both whole and in parts.",
             new Dictionary<string, string>(StringComparer.Ordinal)
@@ -2027,6 +2027,16 @@ public static partial class CatalogBuilder
         GROUP BY accession
         ORDER BY accession
         ");
+    }
+
+    /// <summary>The reasons a <c>split_reason</c> may give, as a description names them (<c>`a`, `b` or `c`</c>), in the
+    /// order the manifest's refusal lists them.</summary>
+    /// <remarks>Read from <see cref="DatasetEntry.SplitReasons"/>, so a reason PXReprise adds reaches every description
+    /// with it. The descriptions once listed four reasons by hand and missed the fifth, <c>tissue</c>.</remarks>
+    internal static string SplitReasonsNamed()
+    {
+        var named = DatasetEntry.SplitReasons.Keys.Order(StringComparer.Ordinal).Select(r => $"`{r}`").ToList();
+        return named.Count == 1 ? named[0] : string.Join(", ", named.Take(named.Count - 1)) + " or " + named[^1];
     }
 
     /// <summary>Whether a deposit is served both whole and in parts: its bare accession beside one of its own
