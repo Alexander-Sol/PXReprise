@@ -6,7 +6,7 @@
 
     The drafting pipeline (evidence records, the rule extractor, the supplement reader, the drafter, the model reader) is
     internal to mzLib. As in sdrf's results/benchmark, its SHIPPED source is compiled in here, from a worktree of the
-    mzLib release the engine runs (code/_wt_mzlib_1.0.596, detached at tag 1.0.596), instead of being made public or
+    mzLib release the engine runs (code/_wt_mzlib_1.0.598, detached at tag 1.0.598), instead of being made public or
     reached by reflection. Everything else comes from the same mzLib NuGet package as the engine.
   -->
   <PropertyGroup>
@@ -20,7 +20,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <!-- CS0436: a compiled-in mzLib type shadows the package's internal copy, by design. -->
     <NoWarn>$(NoWarn);CS1591;CS0436;NU1605;NU1608</NoWarn>
-    <MzLibSource>..\..\code\_wt_mzlib_1.0.596\mzLib</MzLibSource>
+    <MzLibSource>..\..\code\_wt_mzlib_1.0.598\mzLib</MzLibSource>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MzLibSource)\Readers\Sdrf\SdrfFileNamePattern.cs" Link="Shipped\SdrfFileNamePattern.cs" />
@@ -37,7 +37,7 @@
     <Compile Include="$(MzLibSource)\SampleEvidenceModel\ModelEvidenceReader.cs" Link="Shipped\ModelEvidenceReader.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="mzLib" Version="1.0.596" />
+    <PackageReference Include="mzLib" Version="1.0.598" />
     <PackageReference Include="Anthropic" Version="12.50.0" />
     <PackageReference Include="PdfPig" Version="0.1.16" />
     <!-- TIFF/BMP figures and EMF/WMF drawings in Word supplements, converted to PNG for the model (Windows only). -->
