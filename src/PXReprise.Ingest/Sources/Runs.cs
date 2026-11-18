@@ -45,7 +45,7 @@ public static class Runs
     public static Dictionary<string, object?> LoadQcReport(string path) =>
         LoadJson(path) as Dictionary<string, object?> ?? throw new InvalidDataException($"{path} is not a JSON object");
 
-    /// <summary>The raw files the search left out, and the producer's reason (aging D52).</summary>
+    /// <summary>The raw files the search left out, and the producer's reason.</summary>
     /// <remarks>aging excludes a file that fails QC only on <c>too_few_ms2</c> (a blank or failed injection) and
     /// records it in the search's <c>excluded_files</c>. The QC report still lists it, truthfully, so a run
     /// built from the QC report would describe a measurement that is not in the data.</remarks>
@@ -292,7 +292,7 @@ public static class Runs
 
     /// <summary>Fill each run's <c>enrichment</c> and <c>enrichment_source</c>, and say whether the runs differ (G63).</summary>
     /// <remarks>
-    /// The rules are the ones agreed with aging (their 058), and each failure
+    /// The rules are the ones agreed with aging, and each failure
     /// refuses the ingest rather than writing a guess:
     /// <list type="bullet">
     /// <item><b>A per-run map must cover every run.</b> A partial map would leave some runs NULL beside some

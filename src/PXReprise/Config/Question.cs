@@ -111,7 +111,7 @@ public sealed record DesignSettings(string Dir, IReadOnlyList<string> ConditionC
 }
 
 /// <summary>
-/// A question's exception for one deposit (<c>[exceptions.PXD...]</c>; PXReprise D28, the user's D-2): the deposit's own
+/// A question's exception for one deposit (<c>[exceptions.PXD...]</c>, the user's D-2): the deposit's own
 /// value for any of the profile's <c>[deposit]</c> caps, and which of its raw files to search. Data, never code; every use
 /// is recorded in provenance and the manifest note. <see cref="IncludeFiles"/> / <see cref="ExcludeFiles"/> are
 /// case-insensitive regexes on raw file names: choosing runs is a design decision (S43), so it is the question's to state.
@@ -183,14 +183,14 @@ public sealed record DepositException(
 public sealed record FileReplacement(string Path, string PrideSha1, string Sha256, string Note);
 
 /// <summary>
-/// v0.4.43 (D33, design/PLAN_split-deposits.md): one group of a split deposit, <c>[splits.&lt;accession&gt;.&lt;group&gt;]</c>.
+/// v0.4.43 (D33): one group of a split deposit, <c>[splits.&lt;accession&gt;.&lt;group&gt;]</c>.
 /// <paramref name="By"/> is what the split separates (<see cref="Reasons"/>; written to the manifest as dataRepo's
 /// <c>split_reason</c>, their 093); <paramref name="Keys"/> are every group's search key, this one's included, in the
 /// question's order.
 /// </summary>
 public sealed record SplitGroup(string Accession, string Group, string By, string Reason, IReadOnlyList<string> Keys)
 {
-    /// <remarks><c>tissue</c> (2026-11-15, aging PXR-A182 and PXR-A188, the user: "split them the same way"): a deposit
+    /// <remarks><c>tissue</c> (2026-11-15, the user: "split them the same way"): a deposit
     /// whose runs come from different tissues (a group may also be one sex: one TMT plex each, as in PXD067637 and its two
     /// sisters), searched apart so that protein inference and site localisation stay within a tissue. Only
     /// <c>species</c> changes what a group must state; the others are reasons, written to the manifest's
@@ -214,7 +214,7 @@ public sealed record BatchSettings(string RunRoot, string StateDir, string Queue
 public sealed record PublishSettings(string? Manifest, IReadOnlyList<string> Command, double EveryHours = 6, double TimeoutHours = 4);
 
 /// <summary>
-/// v0.4.46 (their D171; their user: "it should be part of the code, not part of the project AI"): the
+/// v0.4.46 (their user: "it should be part of the code, not part of the project AI"): the
 /// question's <c>[gate]</c>, rules over a deposit's own text that every deposit passes before the census queues it
 /// (<see cref="Census.Gate"/>). The terms are the question's, never the engine's: a question is data.
 /// </summary>

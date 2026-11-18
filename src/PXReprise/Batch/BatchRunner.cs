@@ -51,7 +51,7 @@ public sealed class BatchRunner
     private double? _probeMinutes;
     private DateTime _limitsStamp, _limitsChecked;
 
-    // v0.4.26 (design/PLAN_worker.md): the share with a probe worker. On the controller ([workers]) fresh deposits are
+    // v0.4.26: the share with a probe worker. On the controller ([workers]) fresh deposits are
     // probed there and only searched here; on the worker ([worker]) the driver only probes what the controller assigns.
     private readonly WorkerShare? _share;
     private bool? _workerWasQuiet;
@@ -269,7 +269,7 @@ public sealed class BatchRunner
     /// <c>fetch_failed</c> is never undone by hand-editing state.json. The previous status, detail, time, user and reason
     /// are kept in the entry's <c>requeued</c> list and in batch.log. Refused while a driver runs (it owns state.json)
     /// and for a deposit whose search finished.
-    /// v0.4.44 (PXD034029, aging D161, 2026-11-10): a deposit in <paramref name="queueFile"/> that never started (no
+    /// v0.4.44 (PXD034029, 2026-11-10): a deposit in <paramref name="queueFile"/> that never started (no
     /// state entry) is taken too, so a person can put it first. PXD034029 was queue entry 1 for ten hours and never
     /// started: a deposit the probe worker passed goes ahead of every one still to be probed here, and the worker keeps
     /// refilling its window. A person's request goes ahead of the worker's passes.
@@ -1881,7 +1881,7 @@ public sealed class BatchRunner
         int rc;
         if (_ingestJson)
         {
-            // datarepo 1.0+: one JSON envelope on stdout, the human report on stderr (our 011).
+            // datarepo 1.0+: one JSON envelope on stdout, the human report on stderr.
             var argv = new[] { _m.DataRepo, "ingest", manifest, e.Accession, "--json" };
             var (exit, stdout, stderr) = await RunProcessFullAsync(argv, TimeSpan.FromHours(3), ct).ConfigureAwait(false);
             string full = KeepOutput(OutputDir, e.Accession, "ingest", argv, exit, stdout, stderr, DateTime.UtcNow);
@@ -1987,7 +1987,7 @@ public sealed class BatchRunner
             DateTime started = DateTime.UtcNow;
             RecordPublish(("last_started_utc", started.ToString("o")), ("waiting", Names(waiting)));
             Log($"PUBLISH start: {waiting.Count} deposit(s) delivered since the last successful publish ({Brief(waiting)}); limit {pub.TimeoutHours:0.#} h, free {FreeGb():0} GB");
-            // G38 (promised to dataRepo, our 032): the whole output goes to a file; batch.log and state keep only the tail.
+            // G38 (promised to dataRepo): the whole output goes to a file; batch.log and state keep only the tail.
             var argv = PublishArgv(pub.Command, pub.Manifest!, _m.DataRepo!);
             var (rc, stdout, stderr) = await RunProcessFullAsync(argv, TimeSpan.FromHours(pub.TimeoutHours), ct).ConfigureAwait(false);
             DateTime finished = DateTime.UtcNow;
@@ -2131,7 +2131,7 @@ public sealed class BatchRunner
     /// <summary>
     /// Files to exclude, [] when every file passed, or null when the deposit must be skipped. Deliberately narrow: only the
     /// profile's excludable reasons (a blank or failed injection), at most its share of the deposit (one file is always
-    /// allowed), and at least one file must pass. An acquisition failure (ion-trap MS2) still drops the deposit (aging D52).
+    /// allowed), and at least one file must pass. An acquisition failure (ion-trap MS2) still drops the deposit.
     /// </summary>
     /// <summary>
     /// G4 (aging S64): the deposit's text never said it was labelled, but its spectra carry isobaric reporter ions.

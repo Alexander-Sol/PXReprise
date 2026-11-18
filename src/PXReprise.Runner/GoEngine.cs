@@ -43,19 +43,19 @@ public sealed record GoBundleInputs(
 /// <c>annotated</c> rows of porcine and bovine terms, and <c>protein_localizations</c> carries no contaminant mark
 /// to tell them apart (logs 002 section 0: the contaminant flag must travel with the accession). A human keratin
 /// that is also a target entry is still annotated, from its target entry.</para>
-/// <para><b>Unknown GO ids are skipped and recorded</b> (<see cref="SkipUnknownGoIds"/>, go D35): a UniProt
+/// <para><b>Unknown GO ids are skipped and recorded</b> (<see cref="SkipUnknownGoIds"/>): a UniProt
 /// release newer than the pinned go.obo cites ids the release lacks, and refusing would cost a whole dataset for
 /// one term. mzLib's writer then writes <c>#!unresolved_go_ids N</c>, and <c>run.json</c> lists the ids.</para>
-/// <para><b>The definition is go's:</b> <see cref="DefinitionId"/>, published in <c>go/design/DEFINITIONS.md</c>
-/// (go D40, go 023 GO-D4). dataRepo never defines another project's number (D24), so <see cref="Run"/> still
+/// <para><b>The definition is go's:</b> <see cref="DefinitionId"/>, published in <c>go/design/DEFINITIONS.md</c>.
+/// dataRepo never defines another project's number (D24), so <see cref="Run"/> still
 /// refuses a call that passes none. Each <c>protein_localizations</c> row carries its own accession's qualifiers,
-/// as that definition states (GO-D7, <see cref="Go.LocalizationRows"/>).</para>
+/// as that definition states (<see cref="Go.LocalizationRows"/>).</para>
 /// </remarks>
 public static class GoEngine
 {
     public const string Engine = PXReprise.Catalog.Runner.GoEngine;
 
-    /// <summary>go's definition id for these rows (go D40, go 023 GO-D4). v1 is what mzLib 1.0.593 does; go's D39
+    /// <summary>go's definition id for these rows. v1 is what mzLib 1.0.593 does; go's D39
     /// (a shuffled entrapment copy carries no GO) will be v2.</summary>
     public const string DefinitionId = "go:DEF-GROUP-GO-ANNOTATION v1";
 
@@ -257,7 +257,7 @@ public static class GoEngine
 
         var dbSha = AnnotationDbSha256(bundle.Targets);
         // Loaded as the rest of the C# loads a searched database (Specificity, the bridge's Proteins.Load): no
-        // decoys, no sequence variants applied (the annotator inherits a variant's terms itself, go D34), and not
+        // decoys, no sequence variants applied (the annotator inherits a variant's terms itself), and not
         // a contaminant, since only target databases are passed.
         var proteins = Specificity.LoadProteins(bundle.Targets.Select(t => (t.Path, t.Sha256, false)));
         var annotator = new GoGroupAnnotator(loaded.Ontology, proteins, dbSha, skipUnknownGoIds: SkipUnknownGoIds);

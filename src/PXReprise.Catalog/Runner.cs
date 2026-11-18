@@ -67,7 +67,7 @@ public static class Runner
     /// (<c>dataset_id</c>, <c>bundle_id</c>): stating the dataset is true here, where for logs it would be false.</summary>
     public static readonly IReadOnlyList<string> GoTables = ["protein_localizations", "organelle_term_categories", "annotation_sources"];
 
-    /// <summary>ptmQtl's engines (our 026): site pairs per search, pooled per species, and site-trait fits.</summary>
+    /// <summary>ptmQtl's engines: site pairs per search, pooled per species, and site-trait fits.</summary>
     public const string PtmQtlSitePairs = "ptmqtl.site_pairs";
 
     public const string PtmQtlPoolPairs = "ptmqtl.pool_pairs";

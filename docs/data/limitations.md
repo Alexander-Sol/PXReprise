@@ -51,8 +51,8 @@ PXD056458, PXD058248; 0.25 to 2.0 years, all rodent). None came from an SDRF. Fr
 0.4.0 on, `age_source` says which kind a row is. A dataset outside those seven has no age, and that
 is NA, not "young".
 
-**Upstream, the SDRF route yields a usable age for 132 of 151 age-bearing accessions** (sdrf 016:
-86% of real age cells parse exactly; the refusals are mostly bare numbers with no unit). Of the
+**Upstream, the SDRF route yields a usable age for 132 of 151 age-bearing accessions**
+(86% of real age cells parse exactly; the refusals are mostly bare numbers with no unit). Of the
 producer's 168 benchmark questions, 46 require an age effect, and `age_effects` holds zero rows.
 Do not present an empty result to such a question as "no effect found".
 
@@ -78,7 +78,7 @@ drafted fraction of 1 may be exactly that (`runs.fraction_source`).
 
 **Reading a per-column source.** In an SDRF's `comment[<characteristic> source]`, `not applicable`
 is not a source: it means the column has no override on that row and the row's
-`comment[characteristics source]` applies (sdrf 026). A row default covers only filled cells, so
+`comment[characteristics source]` applies. A row default covers only filled cells, so
 `source = publication` beside `value = not available` does not mean "the paper says not available".
 
 **A drafted SDRF can say `not available` for organism on a mixed-species deposit.** sdrf's drafter
@@ -170,11 +170,11 @@ Four ways to misread it:
 - **It is not parsimony, and older catalogs meant parsimony.** Bundles written before 1.0.0 (the
   Python package, schema 0.0.13 and earlier) stored *parsimony*-uniqueness in `is_unique`: one
   accession in MetaMorpheus's protein list. Under that rule a fibronectin (P02751) peptide also found
-  in three of its isoforms read `true` (aging 075). Those bundles left `is_isoform_specific` NULL on
+  in three of its isoforms read `true`. Those bundles left `is_isoform_specific` NULL on
   every row. A catalog holds one schema version, so check `catalog_meta.schema_version` before
   reading the column: 0.0.14 or later is the rule above.
 - **"One gene" is mzLib's grouping.** A few within-gene groupings rest on a shared Ensembl id alone
-  and can join paralogs: 46 of 937 measured (DATAREPO-70).
+  and can join paralogs: 46 of 937 measured.
 - **It is relative to what was searched.** A database that holds no isoforms cannot make a peptide
   shared with one, and sequence variants in a UniProt XML are not applied. `is_isoform_specific`
   true means one sequence *among those searched*, not one in the proteome.

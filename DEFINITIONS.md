@@ -91,7 +91,7 @@ one run, so the run counts partition the dataset's set and sum to the predicate'
 
 It is NOT the number `aging:DEF-PSM-1PCT-RUN v1` named. That one is `results.txt`'s per-file line
 `<file> - Target PSMs with q-value <= 0.01`, for which MetaMorpheus recomputes the FDR on that file's PSMs alone. The two are
-not comparable (aging 072 PXR-A58, qc 009 PXR-C5). It IS the target rows of the population `aging:DEF-PSM-1PCT-INFILE v1`
+not comparable. It IS the target rows of the population `aging:DEF-PSM-1PCT-INFILE v1`
 already describes (whole-search q-values; `AllPSMs.psmtsv` is written before the per-file recalculation).
 
 ## pxreprise:DEF-PEPTIDE-1PCT-RUN v1
@@ -114,7 +114,7 @@ supports a group when its `Base Sequence` is one of the group's `Unique Peptides
 lists both as base sequences without modifications, separated by `|`. Groups are formed once, on the whole search, and
 never per run. A group seen in several runs counts in each. It replaces `aging:DEF-PROTEINGROUP-1PCT-RUN v1`, the per-file
 line `<file> - Target protein groups with q-value <= 0.01` (the whole search's groups re-scored and re-FDR'd on the file's
-PSMs alone), with a different meaning. The rule is the one qc accepted (qc 009, PXR-C5).
+PSMs alone), with a different meaning. The QC payload uses this rule.
 
 **The filter of all three.** v1 uses today's rule: q-value and notch q-value at 0.01. When PXReprise's D36 filter (PEP
 q-value first, else notch q-value, else q-value) enters the pipeline (G30), it arrives as v2 of each, and data keep the
@@ -134,9 +134,9 @@ version that produced them.
   `QuantProject:DEF-QC-13`. An intensity, which MBR can supply, plays no part.
 - **In practice it equals `pxreprise:DEF-PROTEINGROUP-1PCT`.** Every 1% group has spectra somewhere.
 - **Where it is written:** the qc payload's `protein_groups_quantified`, a name taken over from aging's builder, which
-  never defined it (qc 019, PXR-C13).
+  never defined it.
 - **Before PXReprise 0.4.44** a payload built from a design with multi-run samples counted the single-run columns
-  alone (qc 016, PXR-C11). Those payloads carry no definition entry.
+  alone. Those payloads carry no definition entry.
 
 ## pxreprise:DEF-PROTEINGROUP-RUNS-MSMS v1
 

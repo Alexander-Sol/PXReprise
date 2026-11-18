@@ -485,7 +485,7 @@ public static class ChemistryDetector
             if (thiolReagents?.TryGetValue(unmodelled.Name, out string? custom) == true)
             {
                 // G40: the profile ships a modification for this reagent. Variable, never fixed: the PXD058611 probe found
-                // 14-24% of identified cysteines unmodified (results/nbf-probe_2026-10-11).
+                // 14-24% of identified cysteines unmodified.
                 mods = new[] { new CysMod(CustomModName(custom), "", false, custom) };
                 alkylation = new(unmodelled.Name, ChemistrySource.ProtocolText,
                     $"a thiol reagent the profile models as variable {custom.Replace('\t', ' ')}: {Snip(text, unmodelled.M)}");

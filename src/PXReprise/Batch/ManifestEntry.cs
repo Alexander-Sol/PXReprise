@@ -101,7 +101,7 @@ public static class ManifestEntry
         string enrichment = earlier?.Enrichment is { Length: > 0 } curated ? curated : screened;
         var search = JsonNode.Parse(File.ReadAllText(Path.Combine(runDir, "04_search", "provenance.json")))!;
         string mm = search["tools"]?["MetaMorpheus"]?["release"]?.GetValue<string>() ?? profile.MetaMorpheus;
-        // v0.4.26: an overlay keeps its name when its content changes (aging D125), so the note gives
+        // v0.4.26: an overlay keeps its name when its content changes, so the note gives
         // each one's sha256 prefix from the search's own inputs: that is what tells two versions apart.
         string Sha12(string name) =>
             search["inputs"]?.AsArray().FirstOrDefault(i => i?["path"]?.GetValue<string>() is { } p
@@ -168,7 +168,7 @@ public static class ManifestEntry
             flags.Add("qc_excluded_files");
         }
         // G16: a prose flag and a note only. `mixed_enrichment` itself changes what the ingest does with every run, so it
-        // is set by hand with the per-run map (aging D51), never guessed from file names.
+        // is set by hand with the per-run map, never guessed from file names.
         if (MixedSamples.Detect(qc.Select(kv => kv.Key)) is { } mixed)
         {
             notes.Add($"POSSIBLY MIXED SAMPLES: the raw file names hold {MixedSamples.Describe(mixed)}. If these are different enrichments, the dataset-level `enrichment` cannot say which run is which; curate `run_enrichment` and the `mixed_enrichment` flag before pooling.");

@@ -1,7 +1,7 @@
 #:package DuckDB.NET.Data.Full@1.5.5
 #:property PublishAot=false
 #:property JsonSerializerIsReflectionEnabledByDefault=true
-// PTM-annotated proteomes (aging D59): each organism's reviewed UniProt proteome XML, plus the biological PTM sites
+// PTM-annotated proteomes: each organism's reviewed UniProt proteome XML, plus the biological PTM sites
 // GPTMD found across a question's catalog that UniProt does not annotate. A C# port of aging's
 // results/ptm_db_2026-09-27/build_ptm_db.py (agingPTM-v1), same selection, same XML bytes (PXReprise D12: no Python).
 //
@@ -23,8 +23,8 @@
 // "Phosphorylation on S" at a UniProt "Phosphoserine" position counts). Enriched-for is --exclude-enriched's rows
 // (declared plus measured), by class (Rules: phospho, acetylK, ...). Every other UniProt modified residue is left out of
 // the written XML; no other line changes. UniProt is "already contaminated with enrichment data" (the user, 11-03), and
-// a database's PTMs should mimic the sample's. Tested against entrapment, leave-one-out
-// (results/regular-db-trial_2026-11-04): peptides -0.6% to +0.9%, FDP equal or lower, 1-3% of UniProt-site peptides
+// a database's PTMs should mimic the sample's. Tested against entrapment, leave-one-out:
+// peptides -0.6% to +0.9%, FDP equal or lower, 1-3% of UniProt-site peptides
 // lost. Each UniProt site and its verdict go to --sites-out as uniprot_sites_<organism>.tsv. The default, "all", keeps
 // every UniProt feature (agingPTM-v6 and earlier).
 //   [--leave-out PXD...]   (repeatable) a deposit's sites do not count (the trial's leave-one-out)
@@ -622,7 +622,7 @@ static string MzLibName(UniSite s) => s.Desc.Split(';')[0].Trim() + " on " + s.R
 /// null for a class outside the map, which then matches by name only.</summary>
 static string? UniprotUnimod(string desc) => UnimodByPrefix.FirstOrDefault(p => desc.StartsWith(p.Prefix, StringComparison.Ordinal)).Id;
 
-/// <summary>The isoform XML's Ensembl-only entries (aging D128): accession, primary gene name, Ensembl gene ID (unversioned).</summary>
+/// <summary>The isoform XML's Ensembl-only entries: accession, primary gene name, Ensembl gene ID (unversioned).</summary>
 static List<EnsemblEntry> EnsemblEntries(string xml) =>
     UniprotEntries(xml).Where(e => (string?)e.Attribute("dataset") == "Ensembl").Select(e =>
     {
@@ -795,9 +795,9 @@ static partial class Program
         ["Methylation on R"] = ("me1R", 'R'), ["Dimethylation on R"] = ("me2R", 'R'),
         // agingPTM-v5 (the maintainer, 2026-10-26/27: "clean the databases and keep them clean until other PRs produce clean
         // databases"): Hydroxylation on P and K are not selected. GPTMD's sites of both carry the misplaced Met/Trp
-        // oxidation fingerprint (results/gptmd-census_2026-10-25). Put them back once GPTMD's own filters make them clean.
+        // oxidation fingerprint. Put them back once GPTMD's own filters make them clean.
         // agingPTM-v7: Malonylation on K is not selected either. Its GPTMD sites run 10.1% on entrapment partners under
-        // label-free-dda@12 (results/acyl-gptmd_2026-11-03), and @13 takes it out of GPTMD's list.
+        // label-free-dda@12, and @13 takes it out of GPTMD's list.
         ["Succinylation on K"] = ("succinyl", 'K'), ["Glutarylation on K"] = ("glutaryl", 'K'),
         ["Crotonylation on K"] = ("crotonyl", 'K'), ["Butyrylation on K"] = ("butyryl", 'K'), ["Hydroxybutyrylation on K"] = ("hydroxybutyryl", 'K'),
         ["HexNAc on S"] = ("oglcnac", 'S'), ["HexNAc on T"] = ("oglcnac", 'T'),

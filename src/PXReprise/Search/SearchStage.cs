@@ -336,7 +336,7 @@ public static class SearchStage
         if (fragmentation is not null)
             prov.Set("fragmentation", new JsonObject(fragmentation.Select(kv => KeyValuePair.Create(kv.Key, (JsonNode?)new JsonObject
                 { ["dissociation_type"] = kv.Value.DissociationType, ["low_res"] = kv.Value.LowRes, ["evidence"] = kv.Value.Evidence }))));
-        // v0.4.34 (TMT stage 5, results/tmt-trial_2026-10-29): a Calibration task writes each calibrated file's own settings
+        // v0.4.34 (TMT stage 5): a Calibration task writes each calibrated file's own settings
         // file, and the search reads that one, without our per-file DissociationType; Calibration itself scored the ion-trap
         // MS2 as HCD (57 MS1 and 0 MS2 calibration points a file), and the search found 0 PSMs. So under a calibrating
         // profile the one call every file shares goes into every task; files that disagree cannot be calibrated as one.
@@ -819,7 +819,7 @@ public static class SearchStage
     }
 
     /// <summary>
-    /// <c>excluded_files</c> in the shape aging's batch_runner.py wrote and dataRepo reads (aging D52):
+    /// <c>excluded_files</c> in the shape aging's batch_runner.py wrote and dataRepo reads:
     /// <c>{files, reason}</c>. dataRepo drops these files from the deposit's runs; without the block, a QC-excluded blank
     /// injection came back as a run (PXD034059: 44 runs against the manifest's 43).
     /// </summary>
@@ -882,7 +882,7 @@ public static class SearchStage
 
     /// <summary>
     /// The contaminant database a search uses: the profile's shipped panel (D35), or MetaMorpheus's own, reduced by an
-    /// exclusion list when the profile names one (aging D54). The file name keeps "Contaminants": MetaMorpheus marks a
+    /// exclusion list when the profile names one. The file name keeps "Contaminants": MetaMorpheus marks a
     /// -d database as contaminant by its name. Shared by the search and the probe search, so both use the same panel.
     /// </summary>
     internal static (string Path, JsonObject? Record) Contaminants(Profile p, Machine m)

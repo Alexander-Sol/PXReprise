@@ -235,7 +235,7 @@ public static partial class CatalogBuilder
     /// <c>run_exclusions</c> from the same manifest's <c>excluded_runs</c> (G85). G85 did not bump it: "10" was
     /// unreleased when G85 joined it (1.1.0 carries both), so no published catalog says "10" without the table, and
     /// the exclusions themselves are hashed into the id, which moves whenever they do. The discovery census
-    /// (<c>dataset_candidates</c> from the manifest's <c>candidates</c> TSV, aging 088 AGING-P11) joined "10" on the
+    /// (<c>dataset_candidates</c> from the manifest's <c>candidates</c> TSV) joined "10" on the
     /// same reasoning: still unreleased, the census file's sha256 is hashed into the id when there is one, and a
     /// manifest naming none builds the catalog -- and the id -- it built before. "11" adds
     /// <c>dataset_restrictions</c> and <c>dataset_overview.restrictions</c> from the manifest's <c>restrictions</c>,
@@ -293,7 +293,7 @@ public static partial class CatalogBuilder
     public const string DepositsTable = "deposits";
 
     /// <summary>The PRIDE record tables, read at build from the records the operator fetched beside the bundles
-    /// (<see cref="PrideRecords"/>; 1.5.0 item 12, ptmQtl's DATAREPO-P35). Keyed by the bare accession.</summary>
+    /// (<see cref="PrideRecords"/>; 1.5.0 item 12). Keyed by the bare accession.</summary>
     public const string DepositRecordsTable = "deposit_records";
     public const string DepositContactsTable = "deposit_contacts";
     public const string DepositReferencesTable = "deposit_references";
@@ -311,7 +311,7 @@ public static partial class CatalogBuilder
     /// <summary>Views over the runs, created after the bundles are loaded; none in a Python 0.32.0 parity build.</summary>
     /// <remarks>One row per run whose raw file (<c>runs.sha256</c>) is in the catalog under another run too. A raw file's
     /// name is not its identity: one pair of deposits shares three renamed files, and PXD006815 holds one run under two
-    /// animals' names (our 061). Pooling across deposits counts the same raw data once only if it can see this, and a
+    /// animals' names. Pooling across deposits counts the same raw data once only if it can see this, and a
     /// view is computed at every read, so no one has to remember to run a query.</remarks>
     public static IReadOnlyList<KeyValuePair<string, string>> RunViews => AnnotationsActive ? RunViewBodies : [];
 
@@ -2043,7 +2043,7 @@ public static partial class CatalogBuilder
     /// <c>&lt;accession&gt;-&lt;group&gt;</c> keys. FAILS then, which stops the build.</summary>
     /// <remarks>Every number for the deposit would be counted twice -- once in the whole search and once in its parts --
     /// and nothing else in the build notices: every table reconciles per key. A producer retiring the whole search writes
-    /// <c>status: superseded</c> on its entry in the same manifest write that adds the parts (our PXReprise 093).
+    /// <c>status: superseded</c> on its entry in the same manifest write that adds the parts.
     /// Observed and expected are the split deposits served, so a passing row says how many there are.</remarks>
     internal static CatalogCheck SplitCheck(IReadOnlyList<BundleRef> bundles)
     {
@@ -2533,7 +2533,7 @@ public static partial class CatalogBuilder
     // are the same either way.
 
     /// <summary>What <c>protein_groups.unique_peptides</c> / <c>shared_peptides</c> count in a dataset, from the release of
-    /// MetaMorpheus that searched it (AGING-R1): <c>database</c> before 1.1.13 (a peptide no other protein
+    /// MetaMorpheus that searched it: <c>database</c> before 1.1.13 (a peptide no other protein
     /// in the searched databases has), <c>protein_group</c> from 1.1.13 (MetaMorpheus #2899/#2916: no other protein GROUP
     /// has it; DEF-PROT-UNIQUE). NULL for another engine, or a version that is not three dot-separated numbers: unknown,
     /// never a guess. Compared part by part as integers (a list or text comparison put 1.1.9 after 1.1.13).
@@ -2905,7 +2905,7 @@ public static partial class CatalogBuilder
             }
             if (layerTables.Contains("curated_design_factors") && layerTables.Contains("curated_run_design"))
             {
-                // A3 (ptmQtl, our aging 106): a design factor describes a sample, so every run of one sample (its
+                // A3 (ptmQtl): a design factor describes a sample, so every run of one sample (its
                 // fractions, its injections) carries the same factor rows. Only the catalog knows which runs share
                 // a sample, so this is checked here and not by `datarepo study`.
                 var (split, example) = CountAndExample(con, @"

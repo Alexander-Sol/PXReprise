@@ -319,7 +319,7 @@ public sealed partial class CatalogServer
         var rows = new List<Dictionary<string, object?>>();
         if (Box.HasTable("organelle_term_categories"))
             rows = Maybe("protein_localizations",
-                // An annotation row names no map (go D28, schema 0.0.9), so the join gives one category row per map.
+                // An annotation row names no map (schema 0.0.9), so the join gives one category row per map.
                 "SELECT l.dataset_id, l.compartment, c.category_map_name, c.organelle_map_version, "
                 + "c.organelle_category, c.organelle_subcategory, "
                 + "l.evidence, count(DISTINCT l.protein_accession) AS n_proteins, "

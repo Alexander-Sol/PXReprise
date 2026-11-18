@@ -8,8 +8,8 @@ namespace PXReprise.Search;
 /// one. The user, 2026-11-03: "PTMs in the sample should closely mimic ptms in the database"; these libraries are meant
 /// for label-free library-based DIA, where every library entry is a candidate. The rule is per class: "if we enrich for
 /// ubiquitin, and we detect a phospho, i think it is okay to keep the phospho in the regular database and library (just
-/// not the GG in the regular library). that might need to be in a gg library." Measured before building
-/// (results/enrichment-split_2026-11-04): 71-79% of the regular libraries' phospho spectra were seen only in
+/// not the GG in the regular library). that might need to be in a gg library." Measured before building:
+/// 71-79% of the regular libraries' phospho spectra were seen only in
 /// phospho-enriched deposits.
 ///
 /// A class is judged by chemistry, not by name: the modification's monoisotopic mass, its residue and an "Anywhere."

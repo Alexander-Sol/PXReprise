@@ -17,7 +17,7 @@ public sealed record LibraryPlan(string Organism, string Mode, string? LibraryIn
 }
 
 /// <summary>
-/// Spectral libraries, one chain per organism, built up across searches (aging D33). The first search of an organism
+/// Spectral libraries, one chain per organism, built up across searches. The first search of an organism
 /// writes one; every later search updates the current one and consumes it; every version is kept so the chain can be
 /// rolled back. Search task only. The registry format is aging's (<c>aging-spectral-library-registry/1</c>), so the
 /// engine continues the chains the aging batch started.

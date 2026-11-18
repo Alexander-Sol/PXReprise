@@ -111,8 +111,8 @@ public sealed record Profile(
     bool EnrichedVariable = false)   // v0.4.40 (G66): a deposit's enriched PTM classes are variable in every task, MaxModsForPeptide 3
 {
     /// <summary>v0.4.40 (G66, D32 slice 4): <c>MaxModsForPeptide</c> in every task of a search under
-    /// <see cref="EnrichedVariable"/> whose deposit enriches a PTM class. The TMT phospho trial measured it
-    /// (results/tmtphospho-trial_2026-11-02): 405 peptidoforms with three phospho sites, none under MetaMorpheus's 2.</summary>
+    /// <see cref="EnrichedVariable"/> whose deposit enriches a PTM class. The TMT phospho trial measured it:
+    /// 405 peptidoforms with three phospho sites, none under MetaMorpheus's 2.</summary>
     public const int EnrichedMaxModsForPeptide = 3;
 
     /// <summary>The scopes of <c>[metamorpheus_settings]</c>: every task, or one task kind.</summary>

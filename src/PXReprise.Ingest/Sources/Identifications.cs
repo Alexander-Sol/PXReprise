@@ -715,7 +715,7 @@ public static class Identifications
     /// <remarks>
     /// <para>Target PSMs only, PEPs included, as ptmQtl's S7 decides it (<c>PtmQtlBundle.Tiers</c>), so the two can never
     /// put one search on different rules. mzLib's own comment asks for every match's PEP, decoys included; on every
-    /// served deposit the two give the same tier (<c>results/confidence_rule_2026-11-11/tier_targets_vs_all.py</c>).</para>
+    /// served deposit the two give the same tier.</para>
     /// <para>The values are reduced to what the rule reads before it is called, as S7 does: whether any PEP q-value or
     /// notch q-value is a probability, and up to two distinct finite PEPs. A row's own PEP q-value never decides:
     /// PXD058775 trained no PEP and still wrote 229 target rows at or below 1% in <c>PEP_QValue</c>.</para>

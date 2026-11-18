@@ -467,7 +467,7 @@ public static class Program
 
             case "worker":
             {
-                // v0.4.26, a probe worker's share (design/PLAN_worker.md):
+                // v0.4.26, a probe worker's share:
                 //   pxreprise worker sums <dir>             write <dir>\SHA256SUMS (a software folder or database set)
                 //   pxreprise worker check <dir> [--sums F] check <dir>'s files against SHA256SUMS (exit 1 on a mismatch)
                 //   pxreprise worker release <share> --reason "..." [--metamorpheus NAME] [--dotnet NAME] [--database-set NAME]

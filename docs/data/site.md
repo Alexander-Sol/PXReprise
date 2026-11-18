@@ -60,7 +60,7 @@ instead of passing off a partial sum as a total.
 **`--purpose TEXT`** states the question the instance serves, as the end of "for questions about
 ...", for example `--purpose "how organelle proteomes change with age"`. It appears in the tagline,
 the front page's overview, `llms.txt` and the catalog's structured data. Without it no page claims a
-purpose: the generator used to write aging's question onto every site, whoever ran it (PXR-D2).
+purpose: the generator used to write aging's question onto every site, whoever ran it.
 **`--keyword WORD`** (repeatable) adds a schema.org keyword to every dataset page.
 
 **`--notice`** puts a banner at the top of every page and of `llms.txt`, for example that the

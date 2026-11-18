@@ -17,7 +17,7 @@ namespace PXReprise.Batch;
 /// rule's reason for the same use.</item>
 /// </list>
 /// A restriction written by hand into the manifest is replaced at the next sync: the question is where one is declared.
-/// dataRepo needs only a rebuild for a changed restriction, never a re-ingest (their 044).
+/// dataRepo needs only a rebuild for a changed restriction, never a re-ingest.
 /// </summary>
 public static class Restrictions
 {

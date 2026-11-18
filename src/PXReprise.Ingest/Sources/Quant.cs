@@ -129,7 +129,7 @@ public static class Quant
     /// <param name="ambiguous">Under <see cref="IngestRules.Current"/>, the rows left out because their <c>Sequence</c>
     /// names several full sequences, by that cell, with their number of values.</param>
     /// <remarks>A <c>|</c>-joined <c>Sequence</c> is a peptide whose modification site MetaMorpheus did not settle
-    /// (MetaMorpheus #2917; QuantProject's naming ruling, their 055). 0.32.0 stored it under its first full sequence,
+    /// (MetaMorpheus #2917; QuantProject's naming ruling). 0.32.0 stored it under its first full sequence,
     /// which places the value on a site the search never decided. Under <see cref="IngestRules.Current"/> it is left out
     /// and counted instead. No search ingested to date writes one: 0 of 5,605,461 peptide rows
     /// in aging's 172 searches (2026-10-20).</remarks>

@@ -174,13 +174,13 @@ public static class IsobaricReporters
     /// v0.4.41: a channel whose median height is below this share of the channel one carbon-13 below it is that channel's
     /// isotope, not a channel. Every reporter's m/z is the channel two below it plus 1.00335, so a strong channel's isotope lands
     /// exactly on the next kit's channel, and the brighter the file the more spectra show it. Presence alone cannot tell them
-    /// apart. Measured 2026-11-06 (results/mm-1.1.14-trial_2026-11-06/KitShares.cs): isotopes 0.03 to 0.08, real channels 0.37 to
+    /// apart. Measured 2026-11-06: isotopes 0.03 to 0.08, real channels 0.37 to
     /// 1.39, on PXD034564, PXD043296 (TMTpro), PXD051031 and PXD027548.
     /// </summary>
     public const double MaxIsotopeHeight = 0.15;
 
     /// <summary>
-    /// v0.4.34 (TMT trial, results/tmt-trial_2026-10-29): the KIT, not just the family, for the search's
+    /// v0.4.34 (TMT trial): the KIT, not just the family, for the search's
     /// <c>MultiplexModId</c>. A channel is SEEN when it is present (mzLib's own reporter lookup, 3 mDa) in at least
     /// <see cref="MinChannelShare"/> of the spectra the typical channel is present in. Impurity and isotope peaks put a few
     /// hits on a missing channel; the share rule leaves them out. PXD034564's MS3: TMT10's channels in 2,500-5,000 of 3,000

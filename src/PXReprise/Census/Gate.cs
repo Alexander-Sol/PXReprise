@@ -56,7 +56,7 @@ public sealed record GateText(string Source, IReadOnlyList<(string Field, string
     /// <summary>
     /// ProteomeXchange's GetDataset XML: the DatasetSummary title, the Description, any cvParam whose name says "protocol",
     /// "tissue" or "disease", the KeywordList values, and the titles of the PublicationList's references. The ContactList is
-    /// never read. As aging's screen read it (aging results/selection_screen_2026-11-09/screen.cs).
+    /// never read. As aging's screen read it.
     /// </summary>
     public static GateText FromProteomeXchange(string xml)
     {

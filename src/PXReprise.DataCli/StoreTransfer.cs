@@ -92,7 +92,7 @@ public enum TransferOutcome
 /// written last, after every other file: a copy that stops halfway leaves files no reader counts, and running it again
 /// finishes it, because each file is written once and an identical file already there is accepted.</para>
 /// <para>A bundle's files are checked against its <c>bundle.json</c> before they are written: a file the record gives a
-/// <c>sha256</c> for (a copied source, and a table once 1.5.0 records one, dataRepo D61) must have it, and a table's
+/// <c>sha256</c> for (a copied source, and a table once 1.5.0 records one) must have it, and a table's
 /// Parquet row count must equal its count in <c>tables</c>. A file the record does not name is copied as it is. A
 /// bundle that does not match is refused and nothing marks it complete. Engine outputs and study deliveries are copied
 /// as they are; every file still carries its sha256 to the destination, which S3 checks on arrival.</para>

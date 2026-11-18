@@ -165,7 +165,7 @@ public static class QuestionLoader
             sx.RefuseUnknownKeys();
         }
 
-        // v0.4.46 (their D171): [gate], rules over a deposit's own text before the census queues it.
+        // v0.4.46: [gate], rules over a deposit's own text before the census queues it.
         GateTerms? gate = null;
         if (root.OptionalTable("gate") is { } gt)
         {

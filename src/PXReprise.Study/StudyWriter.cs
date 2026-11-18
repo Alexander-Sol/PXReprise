@@ -104,7 +104,7 @@ public static class StudyWriter
         };
 
     /// <summary>A number column of <c>curated_run_design</c> and the companion that holds a curator's reserved word
-    /// for it (ptmQtl A4, our aging 106): the number is empty and the word is in the companion, never both.</summary>
+    /// for it (ptmQtl A4): the number is empty and the word is in the companion, never both.</summary>
     private static readonly (string Number, string Word)[] ReservedCompanions =
     [
         ("injection", "injection_reserved"),
@@ -431,7 +431,7 @@ public static class StudyWriter
 
     /// <summary>Definition ids a table's rows carry that the delivery did not declare.</summary>
     /// <remarks>Checked against the delivery's OWN register rather than the core <c>definitions</c> table,
-    /// which is aging's correction to our offer (their 024 section 2a). A delivery that declares nothing is not
+    /// which is aging's correction to our offer. A delivery that declares nothing is not
     /// checked. That is deliberate rather than lax -- a producer who has not adopted the register yet is not
     /// silently handed a stricter contract than the one they agreed to, and a delivery that declares even one
     /// definition opts fully in.</remarks>

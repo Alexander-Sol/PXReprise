@@ -10,7 +10,7 @@ namespace PXReprise.Runner;
 /// <remarks>
 /// <para>Read with DuckDB over the bundle's own Parquet files, so a large PSM table is filtered rather than loaded.
 /// Each rule below is ptmQtl's (S1-S5), or what ptmQtl's own export (`tools/export_observations.py`, which built bundle
-/// v3) did where the definitions do not say. Those places are marked, and asked of ptmQtl (our ptmQtl 032).</para>
+/// v3) did where the definitions do not say. Those places are marked, and asked of ptmQtl.</para>
 /// <list type="bullet">
 /// <item><b>Observations (S7):</b> target PSMs that pass the shared quantified-PSM rule (ptmQtl D36; mzLib
 /// <see cref="QuantifiedPsmRule"/>, #1425) and are at ambiguity level 1, on one accession with one start, per (run,
@@ -101,7 +101,7 @@ public static class PtmQtlBundle
         return map;
     }
 
-    /// <summary>S7: each search's quantified-PSM tier (ptmQtl D36), as mzLib's <see cref="QuantifiedPsmRule.ChooseTier"/>
+    /// <summary>S7: each search's quantified-PSM tier, as mzLib's <see cref="QuantifiedPsmRule.ChooseTier"/>
     /// decides it from the search's PSMs.</summary>
     /// <remarks>From the search's target PSMs only, PEPs included, as S7 says ("from the search's target PSMs") and
     /// ptmQtl's export does (<c>export_observations.py</c>, <c>search_tier</c>). mzLib's own FlashLFQ caller passes every
@@ -426,7 +426,7 @@ public static class PtmQtlBundle
             }
         }
 
-        // S2e (ptmQtl D58): a methyl-K/R site whose PSMs mostly also carry a carbamyl, unless the search offered
+        // S2e: a methyl-K/R site whose PSMs mostly also carry a carbamyl, unless the search offered
         // carbamidomethyl on Met, Lys and the N-terminus. It is a share, so it counts the PSMs of the runs whose
         // occupancy it protects, the whole-proteome runs, as ptmQtl's list does: another run's PSMs could move a site
         // either way. S2c's "any" reads every run, since more evidence only leaves more out (the safer error).

@@ -10,7 +10,7 @@ namespace PXReprise.Ingest.Sources;
 /// (feature, file and channel); the raw one is copied into the bundle verbatim and gives no rows (QuantProject 068,
 /// DATAREPO-D9). Nothing is summed, normalized or combined: a plex's fractions stay separate assays, and combining them
 /// is statistics' job (STAT1 M11).</para>
-/// <para>QuantProject's reading rules (their 066) are applied when reading, never by rewriting a file:</para>
+/// <para>QuantProject's reading rules are applied when reading, never by rewriting a file:</para>
 /// <list type="number">
 /// <item>Protein rows hang on the groups <c>AllProteinGroups.tsv</c> writes, with their q-value and label, so the 1% view
 /// is <c>protein_groups_1pct</c>, as for label-free. The table itself carries neither.</item>

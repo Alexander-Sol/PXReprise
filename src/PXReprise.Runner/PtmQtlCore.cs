@@ -69,7 +69,7 @@ public sealed record PoolResult(List<Row> Rows, Dictionary<string, long> LeftOut
 /// <summary>One dataset's pairs: the <c>ptm_pairs</c> rows, and the mzLib pairs behind them, for pooling.</summary>
 public sealed record SitePairsResult(List<Row> Rows, List<(PtmPair Pair, PairSite A, PairSite B)> Pairs, Dictionary<string, long> LeftOut);
 
-/// <summary>One dataset's site-trait fits: the <c>trait_effects</c> rows and the side fields (our ptmQtl 031).</summary>
+/// <summary>One dataset's site-trait fits: the <c>trait_effects</c> rows and the side fields.</summary>
 public sealed record SiteTraitsResult(List<Row> Rows, List<Row> Fits, Dictionary<string, long> LeftOut);
 
 /// <summary>ptmQtl's definitions, applied through mzLib only: <c>ptmQtl:DEF-PTM-PAIR v2</c> and
@@ -87,10 +87,10 @@ public static class PtmQtlCore
     public const string PairDefinition = "ptmQtl:DEF-PTM-PAIR v2";
     public const string TraitDefinition = "ptmQtl:DEF-SITE-TRAIT v1";
 
-    /// <summary>S2: the mzLib categories whose modifications are biological (D26, D27; our ptmQtl 027).</summary>
+    /// <summary>S2: the mzLib categories whose modifications are biological (D26, D27).</summary>
     public static readonly IReadOnlyList<string> BiologicalCategories = ["Common Biological", "UniProt", "Trypsin Digested", "AspN Digested"];
 
-    /// <summary>S2: modifications of those categories that are not biological (ptmQtl D27).</summary>
+    /// <summary>S2: modifications of those categories that are not biological.</summary>
     public static readonly IReadOnlyList<string> Excluded = ["Common Biological:Hydroxylation on N", "Common Biological:Formylation on K"];
 
     /// <summary>The fraction of a dataset's runs in which a site must be quantified to enter type A.</summary>
@@ -227,7 +227,7 @@ public static class PtmQtlCore
         return SiteOccupancyCalculator.CombineRuns(MergeDuplicateSites(cells, leftOut), dataset.RunToSample).ToList();
     }
 
-    /// <summary>S5 (ptmQtl D70): one physical site under several accessions is one site within a dataset. MetaMorpheus
+    /// <summary>S5: one physical site under several accessions is one site within a dataset. MetaMorpheus
     /// writes a site on a peptide shared by isoforms or paralogs once per accession with identical cells; counted apart,
     /// it pairs with itself at rho = 1 and each of its pairs is counted once per accession.</summary>
     /// <remarks>ptmQtl's rule as their runner applies it (<c>tools/PtmQtlRunner/Program.cs</c>, <c>d9a7ee6</c>): sites with

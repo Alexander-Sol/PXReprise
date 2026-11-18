@@ -15,7 +15,7 @@ namespace PXReprise.Catalog;
 /// producer, holding the unrounded value, may not count them.</param>
 /// <param name="PeptidoformsAmbiguous">An ESTIMATE of the peptide file's notch-ambiguous passing rows: passing target
 /// peptidoforms whose best-scoring target PSM is notch-ambiguous. The bundle keeps no peptide file, so the exact term is
-/// not stored; this one ran 5-70x the exact count on aging's store (results/reconciliation_bound_2026-10-30).</param>
+/// not stored; this one ran 5-70x the exact count on aging's store.</param>
 /// <param name="PeptidoformsRounding">Passing target peptidoforms whose best q or best notch q is exactly the threshold.</param>
 public sealed record ReconciliationTerms(
     long PsmsRecount, long PsmsAmbiguous, long PsmsRounding, long PeptidoformsAmbiguous, long PeptidoformsRounding);

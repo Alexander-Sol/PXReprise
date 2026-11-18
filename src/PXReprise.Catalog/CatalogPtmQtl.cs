@@ -4,7 +4,7 @@ using DuckDB.NET.Data;
 
 namespace PXReprise.Catalog;
 
-/// <summary>The ptmQtl engines' artefacts in a catalog (our ptmQtl 026; <c>design/PTMQTL_ENGINE.md</c>).</summary>
+/// <summary>The ptmQtl engines' artefacts in a catalog (<c>design/PTMQTL_ENGINE.md</c>).</summary>
 /// <remarks>
 /// <para><b>Which artefacts.</b></para>
 /// <list type="bullet">
@@ -14,7 +14,7 @@ namespace PXReprise.Catalog;
 /// is in the catalog: a pooled row must rest on the dataset rows the catalog serves.</item>
 /// </list>
 /// <para>Two candidates for one slot are refused, never one picked, as for go and logs. All of a catalog's ptmQtl
-/// artefacts must share one enrichment list (S3), as go's must share one go.obo and map (GO-D9). A pooled result built
+/// artefacts must share one enrichment list (S3), as go's must share one go.obo and map. A pooled result built
 /// under one list beside dataset rows under another would describe two different gates.</para>
 /// <para><b>Rows.</b> Dataset rows carry their bundle's <c>dataset_id</c> and <c>bundle_id</c>, which is true of them.
 /// Pooled rows belong to no one bundle, so both are NULL there, and <c>scope</c> says <c>meta:&lt;species&gt;</c>. Every

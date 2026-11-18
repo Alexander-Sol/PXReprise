@@ -82,7 +82,7 @@ public sealed record FetchRequest(string Accession, string OutDir, Pick Pick, in
     [property: System.Text.Json.Serialization.JsonIgnore] Func<string, CancellationToken, Task<IReadOnlyDictionary<string, string>>>? PrideSha1Source = null,
     [property: System.Text.Json.Serialization.JsonIgnore] IReadOnlyDictionary<string, JsonObject>? Calibrated = null);
 
-/// <summary>Which raw files of a deposit a question searches, and why (<c>[exceptions]</c>, PXReprise D28).</summary>
+/// <summary>Which raw files of a deposit a question searches, and why (<c>[exceptions]</c>).</summary>
 public sealed record FileSelection([property: System.Text.Json.Serialization.JsonIgnore] Func<string, bool> Keeps, string Reason);
 
 /// <summary>A fetch would take the disk below the machine's floor (<c>min_free_gb</c>). Nothing is wrong with the deposit.</summary>

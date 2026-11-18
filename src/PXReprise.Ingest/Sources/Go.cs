@@ -42,22 +42,22 @@ public sealed class GoCategories
 /// <summary><c>go</c>'s two output files -> <c>protein_localizations</c> and <c>organelle_term_categories</c> rows (G53).</summary>
 /// <remarks>
 /// <para>go (the engine) annotates every non-decoy protein group of a search with GO terms, and writes two files
-/// per run (go D28): an <b>annotation file</b>, one row per (group, term), map-independent; and one <b>category
+/// per run: an <b>annotation file</b>, one row per (group, term), map-independent; and one <b>category
 /// file per consumer map</b>, one row per (term, category, subcategory). The contract is go's own,
 /// <c>go/design/PLAN.md</c> S5-S6 and rulings D1-D30. This module reads it and refuses a file that does not keep
 /// it; it computes nothing about GO.</para>
 /// <para>What it checks, each refusing the file on failure (<see cref="IngestException"/>):</para>
 /// <list type="bullet">
 /// <item><b>A released mzLib wrote it.</b> <c>#!mzlib_release none</c> is a build with no release tag. A reader
-/// may be built and tested against such a file (GO-A1), but it is never ingested; the refusal names the commit
+/// may be built and tested against such a file, but it is never ingested; the refusal names the commit
 /// from <c>#!mzlib_version</c>. <c>allowPrerelease</c> exists for tests only.</item>
-/// <item><b>The five header counters are the rows' own</b> (go D26), each counting groups at
+/// <item><b>The five header counters are the rows' own</b>, each counting groups at
 /// <c>q_value &lt;= counter_q_value_max</c> (D29), recounted here so a reader tests go's writer.</item>
 /// <item><b>Every row agrees with the header</b> on <c>go_release</c> and both sha256s, a non-empty <c>go_id</c>
 /// means <c>annotated</c> (D19), and <c>n_with</c> is the size of <c>accession_used</c> (D22).</item>
 /// <item><b>No group has entrapment members</b> (go D36's <c>entrapment_members</c>). An entrapment protein
-/// carries its target's GO (#1271), so no file from an entrapment search is ingested until GO-E1 is answered
-/// (our go 013). Before D36 the reader could not see this; now it refuses. go 018/020 (GO-D2): the refusal
+/// carries its target's GO (#1271), so no file from an entrapment search is ingested until GO-E1 is answered.
+/// Before D36 the reader could not see this; now it refuses. go 018/020: the refusal
 /// stays until go's D39 is in a released mzLib; our go 019 then takes go 018 section 1.3's narrower check.</item>
 /// <item><b>No accession sits in two groups.</b> go has never seen it, and a per-accession row
 /// would then have two group q-values. Refused until MetaMorpheus says whether parsimony can do it (our go
@@ -481,7 +481,7 @@ public static class Go
         return result;
     }
 
-    /// <summary>One go row's per-member qualifiers (go D33), checked against its pooled ones.</summary>
+    /// <summary>One go row's per-member qualifiers, checked against its pooled ones.</summary>
     /// <exception cref="IngestException">A per-member column names an accession outside <c>accession_used</c>,
     /// <c>evidence_by_member</c> does not cover exactly <c>accession_used</c>, or the pooled <c>inherited</c> /
     /// <c>propagated</c> are not what the per-member columns give. Each is go's writer breaking its own contract,
@@ -513,7 +513,7 @@ public static class Go
         return (direct, inherited, evidence);
     }
 
-    /// <summary><c>protein_localizations</c>: one row per (accession, CC term), over <c>accession_used</c> only (go D22).</summary>
+    /// <summary><c>protein_localizations</c>: one row per (accession, CC term), over <c>accession_used</c> only.</summary>
     /// <remarks>
     /// <para>A group member that does not carry a term gets no row for it.</para>
     /// <para>Each row is a fact about its accession, so its qualifiers are that member's (go D33, GO-D7, as

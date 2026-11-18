@@ -83,7 +83,7 @@ public static class SearchMetrics
     public static bool ProteinGroupAt1Pct(IReadOnlyDictionary<string, string> row) => Tsv.Number(row.GetValueOrDefault("Protein QValue")) <= 0.01;
 
     /// <summary>
-    /// Both contamination bounds (aging D53): the PSM share (aging DEF-CONTAM-PSM v1), the per-file intensity share
+    /// Both contamination bounds: the PSM share (aging DEF-CONTAM-PSM v1), the per-file intensity share
     /// (QuantProject DEF-QC-9 v3.5, the LOWER bound: MetaMorpheus's C) and, when the databases are given, the UPPER
     /// bound that also counts target groups made only of accessions shared between the contaminant panel and the
     /// proteome (aging DEF-CONTAM-INT-SHARED v1).

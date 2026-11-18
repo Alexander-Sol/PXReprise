@@ -81,7 +81,7 @@ public sealed record QcPayloadResult(JsonObject Payload, int Files, int? Protein
 public static class QcPayloadBuilder
 {
     /// <summary>
-    /// qc-payload/2 (qc D13, qctemplates 0.3.0; our qc 010): the per-file <c>psms</c>, <c>peptides</c> and
+    /// qc-payload/2 (qctemplates 0.3.0): the per-file <c>psms</c>, <c>peptides</c> and
     /// <c>protein_groups</c> are the whole search's 1% set restricted to the file (pxreprise:DEF-*-1PCT-RUN v1), one cutoff
     /// for every run. Every other field means the same as in /1. What new payloads are built as.
     /// </summary>
@@ -121,7 +121,7 @@ public static class QcPayloadBuilder
         ["dataset_psms"] = Def("aging:DEF-PSM-1PCT", "v1", "pipeline/docs/provenance.md"),
         ["dataset_peptides"] = Def("aging:DEF-PEPTIDE-1PCT", "v1", "pipeline/docs/provenance.md"),
         ["dataset_protein_groups"] = Def("aging:DEF-PROTEINGROUP-1PCT", "v1", "pipeline/docs/provenance.md"),
-        // Run grain, NOT the dataset-grain aging:DEF-CONTAM-PSM (aging D31): a number is stored at the grain it was measured at.
+        // Run grain, NOT the dataset-grain aging:DEF-CONTAM-PSM: a number is stored at the grain it was measured at.
         ["contaminant_psm_share"] = Def("aging:DEF-CONTAM-PSM-RUN", "v2", "pipeline/docs/provenance.md"),
         ["contaminant_intensity_frac"] = Def("QuantProject:DEF-QC-9", "v3.5", "QuantProject/design/DATA-DEFINITIONS.md"),
     };
@@ -399,7 +399,7 @@ public static class QcPayloadBuilder
     }
 
     /// <summary>
-    /// qc's <c>dataset.search_databases</c> (qc D14): one entry per database file the search read, from the search
+    /// qc's <c>dataset.search_databases</c>: one entry per database file the search read, from the search
     /// provenance's <c>inputs[]</c> (each with its own sha256). <c>kind</c> and <c>uniprot_release</c> are named only where
     /// the file name says so: <c>uniprot_canonical</c> for UniProt's gene-centric proteome, <c>uniprot_reviewed</c> for the
     /// reviewed download, the release from a <c>_YYYY_MM</c> token; a derived build (our agingPTM sites) keeps its source's
@@ -440,7 +440,7 @@ public static class QcPayloadBuilder
         string path, IReadOnlyDictionary<string, double?> runMinutes, QcBins bins, out Dictionary<string, RunSupport> support)
     {
         if (!Tsv.Header(path).Contains("QValue Notch"))
-            // Without it the population silently widens to QValue alone (qc 010 QC-Q12). Refuse rather than describe other PSMs.
+            // Without it the population silently widens to QValue alone. Refuse rather than describe other PSMs.
             throw new InvalidDataException($"{path} has no `QValue Notch` column: cannot apply the 1% filter MetaMorpheus uses");
         var per = new Dictionary<string, PsmAcc>(StringComparer.Ordinal);
         PsmAcc For(string? file)
@@ -700,10 +700,10 @@ public static class QcPayloadBuilder
                 m["pg_missing_frac_msms"] = SearchMetrics.PyRound((double)(qn - pg.Present.GetValueOrDefault(name)) / qn, 4);
             if (pg.ContaminantIntensity.TryGetValue(name, out double ci)) m["contaminant_intensity_frac"] = ci;
             var entry = new JsonObject { ["file"] = name, ["metrics"] = m, ["distributions"] = dists.GetValueOrDefault(name)?.DeepClone() ?? new JsonObject() };
-            // qc D12 (qctemplates 0.2.0, QC-Q20): a file left OUT of the search stays listed, with `excluded` set
+            // qc D12 (qctemplates 0.2.0): a file left OUT of the search stays listed, with `excluded` set
             // to WHY, so it trips no gate, counts toward no dataset number, and the report gives the reason. qc's schema takes
             // a non-empty string; qc 001 said `true`, which the schema rejects (PXD014274, 2026-10-12). A file searched with
-            // zero results is a real 0 (qc D6), never this.
+            // zero results is a real 0, never this.
             if (excluded.Contains(name))
                 entry["excluded"] = failReasons.TryGetValue(name, out string? why) ? $"qc: {why}"
                     : string.IsNullOrWhiteSpace(excludedReason) ? "excluded from the search" : excludedReason;
@@ -763,7 +763,7 @@ public static class QcPayloadBuilder
             ["run_label"] = runLabel,
             ["search_engine"] = new JsonObject { ["name"] = "MetaMorpheus", ["version"] = metamorpheusVersion },
         };
-        // Valid under /1 and /2 (qc D14). Written with /2 only, so a /1 payload stays the proven port of aging's builder.
+        // Valid under /1 and /2. Written with /2 only, so a /1 payload stays the proven port of aging's builder.
         if (v2 && SearchDatabases(searchProvenance) is { Count: > 0 } dbs) dataset["search_databases"] = dbs;
         dataset["notes"] = notes;
         var payload = new JsonObject

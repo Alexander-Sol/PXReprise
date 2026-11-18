@@ -45,11 +45,11 @@ public sealed record DatasetEntry
     /// <summary>Why the deposit was searched in parts (<c>split_reason</c>): one of <see cref="SplitReasons"/>, on
     /// an entry keyed <c>&lt;accession&gt;-&lt;group&gt;</c>. Null when the entry states none.</summary>
     /// <remarks>The one fact about a split that its key cannot carry: the key already gives the deposit and the group, so
-    /// neither is written twice (our PXReprise 093).</remarks>
+    /// neither is written twice.</remarks>
     public string? SplitReason { get; init; }
     public IReadOnlyDictionary<string, object?> Raw { get; init; } = new Dictionary<string, object?>();
 
-    /// <summary>The reasons a <c>split_reason</c> may give, each with what it means (PXReprise's 062 and 105).</summary>
+    /// <summary>The reasons a <c>split_reason</c> may give, each with what it means.</summary>
     /// <remarks>A fixed list for <see cref="RestrictionUses"/>' reason: a value from a list can be filtered on. PXReprise
     /// owns the list; a new reason is added when they ask.</remarks>
     public static readonly IReadOnlyDictionary<string, string> SplitReasons = new Dictionary<string, string>(StringComparer.Ordinal)
@@ -61,7 +61,7 @@ public sealed record DatasetEntry
         ["tissue"] = "the deposit's runs come from different tissues (a group may also be one sex), each searched on its own, so protein inference and site localisation stay within a tissue",
     };
 
-    /// <summary>The uses a <c>restrictions</c> entry may name, each with what it rules out (their 101).</summary>
+    /// <summary>The uses a <c>restrictions</c> entry may name, each with what it rules out.</summary>
     /// <remarks>A short fixed list, and the reason this is a field rather than a sentence in <c>notes</c>: a key from a
     /// list can be filtered on, and free text cannot. aging owns the list; a new key is added when they ask.</remarks>
     public static readonly IReadOnlyDictionary<string, string> RestrictionUses = new Dictionary<string, string>(StringComparer.Ordinal)
