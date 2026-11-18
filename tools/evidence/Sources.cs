@@ -1,4 +1,4 @@
-// The publication inputs beyond the paper's methods and the supplement tables (the user, 2026-11-04: "don't forget about
+// The publication inputs beyond the paper's methods and the supplement tables (the maintainer, 2026-11-04: "don't forget about
 // supplements. they are often key"; "include information in figures too"; sdrf G38 for the figure part):
 //   - the deposit's OWN supplementary files in PRIDE (sample sheets, design templates, README, an SDRF), which the pilot
 //     never fetched: 10 of its 15 deposits carry some, and 9 of them are exactly the deposits whose paper is not open;

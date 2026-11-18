@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 namespace PXReprise.Storage;
 
 // The one store layer (2026-11-13): the spectral library sync and `datarepo push` / `pull` both use it. It began as
-// dataRepo's DataRepo.Storage (feat/storage-push-pull); dataRepo folds into PXReprise (diabetes 004).
+// dataRepo's DataRepo.Storage (feat/storage-push-pull); dataRepo folds into PXReprise.
 
 /// <summary>One object in a store: its key (a '/'-separated path below the store's root) and its size.</summary>
 public sealed record StoreEntry(string Key, long Size);

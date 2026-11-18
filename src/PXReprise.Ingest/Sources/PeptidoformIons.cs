@@ -4,12 +4,12 @@ using Quantification;
 namespace PXReprise.Ingest.Sources;
 
 /// <summary>AllPeptides.psmtsv's matched fragment ions, verbatim, for the rows a search's confidence rule passes:
-/// <c>peptidoform_ions</c> (schema 0.0.17; D53, PXR-R44, 1.5.0 build list item 3).</summary>
+/// <c>peptidoform_ions</c> (schema 0.0.17; D53, 1.5.0 build list item 3).</summary>
 /// <remarks>
 /// <para>mzLib's psmtsv projection leaves the matched-ion fields out, having no faithful column shape for them
 /// (<see cref="Readers.ReadPsmtsv"/>), so the six cells are read here, from the file's own columns, in a second pass
 /// with <see cref="TsvReader"/>, one row at a time. Nothing is parsed: each cell is stored as MetaMorpheus wrote it.</para>
-/// <para>Which rows (the user, 2026-11-11): targets (<c>T</c>, <c>ET</c>) that pass the search's confidence rule strictly
+/// <para>Which rows (the maintainer, 2026-11-11): targets (<c>T</c>, <c>ET</c>) that pass the search's confidence rule strictly
 /// below 0.01, so a peptidoform has ions exactly when <c>peptidoforms_1pct</c> holds it; contaminants are left out, as
 /// that view leaves them out. An ambiguous row (<c>Full Sequence</c> naming several options joined by <c>|</c>) is kept
 /// under its first option, the one its peptidoform id names: MetaMorpheus writes "the ions matched to the best peptide

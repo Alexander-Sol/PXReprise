@@ -39,10 +39,10 @@ public sealed record DatasetEntry
     /// <summary><c>(run base name, reason)</c> pairs, sorted by run, from <c>excluded_runs: {run: reason}</c> (G85):
     /// runs the producer leaves out of ANALYSIS. They were searched and stay in the bundle.</summary>
     public IReadOnlyList<(string Run, string Reason)> ExcludedRuns { get; init; } = [];
-    /// <summary><c>(use, reason)</c> pairs, sorted by use, from <c>restrictions: {use: reason}</c> (aging DATAREPO-74):
+    /// <summary><c>(use, reason)</c> pairs, sorted by use, from <c>restrictions: {use: reason}</c>:
     /// uses the producer says the WHOLE dataset is unfit for. Each use is one of <see cref="RestrictionUses"/>.</summary>
     public IReadOnlyList<(string Use, string Reason)> Restrictions { get; init; } = [];
-    /// <summary>Why the deposit was searched in parts (<c>split_reason</c>, PXR-R32): one of <see cref="SplitReasons"/>, on
+    /// <summary>Why the deposit was searched in parts (<c>split_reason</c>): one of <see cref="SplitReasons"/>, on
     /// an entry keyed <c>&lt;accession&gt;-&lt;group&gt;</c>. Null when the entry states none.</summary>
     /// <remarks>The one fact about a split that its key cannot carry: the key already gives the deposit and the group, so
     /// neither is written twice (our PXReprise 093).</remarks>
@@ -61,7 +61,7 @@ public sealed record DatasetEntry
         ["tissue"] = "the deposit's runs come from different tissues (a group may also be one sex), each searched on its own, so protein inference and site localisation stay within a tissue",
     };
 
-    /// <summary>The uses a <c>restrictions</c> entry may name, each with what it rules out (aging DATAREPO-74, their 101).</summary>
+    /// <summary>The uses a <c>restrictions</c> entry may name, each with what it rules out (their 101).</summary>
     /// <remarks>A short fixed list, and the reason this is a field rather than a sentence in <c>notes</c>: a key from a
     /// list can be filtered on, and free text cannot. aging owns the list; a new key is added when they ask.</remarks>
     public static readonly IReadOnlyDictionary<string, string> RestrictionUses = new Dictionary<string, string>(StringComparer.Ordinal)
@@ -76,7 +76,7 @@ public sealed record DatasetEntry
 
     /// <summary>Manifest fields that shape what a bundle CONTAINS, so they go into its content hash.</summary>
     /// <remarks>Anything that reaches a written row is an input to the content hash, and nothing else
-    /// is: rewording a <c>reason</c> must not move a bundle id (aging 019 section 1). The order and the
+    /// is: rewording a <c>reason</c> must not move a bundle id. The order and the
     /// reasons are <c>manifest.CONTENT_FIELDS</c>'s.</remarks>
     public static readonly IReadOnlyList<string> ContentFields =
     [
@@ -128,7 +128,7 @@ public sealed record DatasetEntry
     public static string? Text(object? value) => value is null ? null : PyFormat.Str(value);
 }
 
-/// <summary>A producing instance's whole manifest: the ingest contract (aging 006).</summary>
+/// <summary>A producing instance's whole manifest: the ingest contract.</summary>
 public sealed record Manifest(
     string Path,
     int ManifestVersion,
@@ -370,7 +370,7 @@ public sealed record Manifest(
         return seen.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => (kv.Key, kv.Value)).ToList();
     }
 
-    /// <summary><c>{use: reason}</c> to <c>(use, reason)</c> pairs sorted by use (DATAREPO-74).</summary>
+    /// <summary><c>{use: reason}</c> to <c>(use, reason)</c> pairs sorted by use.</summary>
     /// <remarks>Read from the YAML node, as <see cref="ExcludedRunPairs"/> is, so a use is the key's text. A use not in
     /// <see cref="DatasetEntry.RestrictionUses"/> is refused rather than kept: a misspelt key would sit in the catalog
     /// where no filter on the real key finds it, and the dataset would look unrestricted.</remarks>
@@ -398,7 +398,7 @@ public sealed record Manifest(
         return seen.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => (kv.Key, kv.Value)).ToList();
     }
 
-    /// <summary>An entry's <c>split_reason</c>, or null when it writes none (PXR-R32).</summary>
+    /// <summary>An entry's <c>split_reason</c>, or null when it writes none.</summary>
     /// <remarks>Read from the YAML node, as <see cref="RestrictionPairs"/> is, so the reason is the text written. A reason
     /// not in <see cref="DatasetEntry.SplitReasons"/> is refused, as an unknown use is. So is a reason on an entry whose
     /// key names no group: a bare accession is a deposit searched whole, and a reason there would say a split happened

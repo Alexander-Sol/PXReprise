@@ -1,6 +1,6 @@
 #:package mzLib@1.0.598
 #:property PublishAot=false
-// What the paid evidence reading buys the designs (the user, 2026-11-12: "we spent lots of claude API money to download and search
+// What the paid evidence reading buys the designs (the maintainer, 2026-11-12: "we spent lots of claude API money to download and search
 // manuscripts and supplements to improve the quality of sdrfs. i want to see the results of all that effort and money pay off now").
 //
 // mzLib's SdrfDrafter takes a condition only from a Certain claim (a design table or an SDRF naming the run; sdrf MASSIVE-SDRF.md

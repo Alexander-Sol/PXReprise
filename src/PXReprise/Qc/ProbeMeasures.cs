@@ -10,7 +10,7 @@ namespace PXReprise.Qc;
 /// <c>Organism Name</c>: a PSM whose candidate proteins all come from one organism counts for it; one shared between
 /// organisms counts as shared. Cysteine, phospho, GG and acetyl-K are counted over PSMs with ONE candidate sequence only.
 /// Acetyl-K is MetaMorpheus's `Acetylation on K` or a UniProt `N6-acetyllysine` site from the database: counting only the
-/// first put PXD038328's capture runs at 10.8% instead of 27.9% (PXR-A88).
+/// first put PXD038328's capture runs at 10.8% instead of 27.9%.
 /// A PSM with a candidate protein from the contaminant panel counts for no species (<see cref="PanelPsms"/>, v0.4.13):
 /// MetaMorpheus keeps a panel entry whose accession a species database also holds as that species' target (human
 /// keratins: P13645 is KRT10 in both), so skin keratins from handling counted as human and parked PXD022196's mouse gel

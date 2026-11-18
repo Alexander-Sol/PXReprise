@@ -88,7 +88,7 @@ public static partial class Definitions
     public static List<PXReprise.Bundle.Row> Rows(ISet<string>? used = null) =>
         All.Where(d => used is null || used.Contains(d.DefinitionId)).Select(d => d.Row()).ToList();
 
-    /// <summary>The v3.6 replacements in QuantProject's occupancy text (QuantProject 009, 2026-10-04): DEF-OCC-ABSENT
+    /// <summary>The v3.6 replacements in QuantProject's occupancy text (2026-10-04): DEF-OCC-ABSENT
     /// corrected at every shipped version, DEF-OCC-COUNT amended, DEF-OCC-COVERED-ZERO added. Everything else is the
     /// v3.2 copy, word for word; <see cref="OccupancyV36"/> refuses to build if a replacement stops matching.</summary>
     internal static readonly (string Old, string New)[] OccupancyV36Edits =
@@ -122,7 +122,7 @@ public static partial class Definitions
         return Occupancy with { Version = "v3.6", Text = text };
     });
 
-    /// <summary>QuantProject's occupancy definition at v3.6 (thread 009), carried by bundles written under
+    /// <summary>QuantProject's occupancy definition at v3.6, carried by bundles written under
     /// <see cref="IngestRules.Current"/>; a <see cref="IngestRules.Python0320"/> bundle keeps the v3.2 copy.</summary>
     public static Def OccupancyV36 => OccupancyV36Lazy.Value;
 

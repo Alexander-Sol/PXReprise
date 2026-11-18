@@ -23,7 +23,7 @@ namespace PXReprise.Runner;
 /// <item><b>Samples (S4):</b> each run's label-free assay's `sample_id`. Runs sharing a sample are combined only when
 /// each carries a distinct `fraction`; a sample whose runs cannot be told apart that way is refused. Repeat injections
 /// are never combined. On aging's corpus (2026-10-06) one sample in 1,869 holds several runs.</item>
-/// <item><b>Pooled samples (DATAREPO-P32; schema 0.0.16):</b> MetaMorpheus's own value for a design sample made of
+/// <item><b>Pooled samples (schema 0.0.16):</b> MetaMorpheus's own value for a design sample made of
 /// fractions (a `design_sample` assay, `denominator_grouping = sample_group`) is that sample's S4 occupancy, so it is
 /// read as one cell of the sample. One that pools technical replicates is left out and counted (ptmQtl 046 (b), 049).
 /// Its runs must be the runs S4 combines into that sample, and none may hold a per-run cell of its own.</item>
@@ -272,8 +272,8 @@ public static class PtmQtlBundle
                 r[10] is false)).ToList();
         counts["occupancy cells"] = occupancy.Count;
 
-        // DATAREPO-P32: a design sample made of fractions of one injection is one S4 sample, and MetaMorpheus's value
-        // for it is already S4's combination (ptmQtl 046). Its cells carry the sample's key as their run.
+        // A design sample made of fractions of one injection is one S4 sample, and MetaMorpheus's value
+        // for it is already S4's combination. Its cells carry the sample's key as their run.
         var pooledMembers = new Dictionary<string, List<string>>(StringComparer.Ordinal);
         if (bundle.TablePath("assay_runs") is not null)
         {

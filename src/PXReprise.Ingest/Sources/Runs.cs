@@ -9,7 +9,7 @@ namespace PXReprise.Ingest.Sources;
 /// from the fetch manifest; what is in them comes from the spectra QC stage.
 ///
 /// The raw file header's facts (start time, instrument model, its PSI-MS term, serial) come from the QC report,
-/// which PXReprise writes from mzLib's <c>SourceFile</c> (DATAREPO-72, their 52cd138); dataRepo never reads a raw
+/// which PXReprise writes from mzLib's <c>SourceFile</c> (their 52cd138); dataRepo never reads a raw
 /// file itself. Under <see cref="IngestRules.Python0320"/> they are not read, as 0.32.0 did not: the instrument
 /// comes from the SDRF and the date stays NA (<see cref="ApplyRunHeader"/>, G87).
 /// Ported from <c>sources/runs.py</c>.
@@ -45,7 +45,7 @@ public static class Runs
     public static Dictionary<string, object?> LoadQcReport(string path) =>
         LoadJson(path) as Dictionary<string, object?> ?? throw new InvalidDataException($"{path} is not a JSON object");
 
-    /// <summary>The raw files the search left out, and the producer's reason (DATAREPO-51, aging D52).</summary>
+    /// <summary>The raw files the search left out, and the producer's reason (aging D52).</summary>
     /// <remarks>aging excludes a file that fails QC only on <c>too_few_ms2</c> (a blank or failed injection) and
     /// records it in the search's <c>excluded_files</c>. The QC report still lists it, truthfully, so a run
     /// built from the QC report would describe a measurement that is not in the data.</remarks>
@@ -175,15 +175,15 @@ public static class Runs
     }
 
     /// <summary>Fill a run's header columns from its QC entry, and its instrument from the SDRF where the QC entry has
-    /// none (G87, PXReprise DATAREPO-72).</summary>
+    /// none (G87).</summary>
     /// <remarks>
     /// <list type="bullet">
-    /// <item><b>A missing key means "not read"</b> (PXReprise 013): the column is NULL, never a default.</item>
+    /// <item><b>A missing key means "not read"</b>: the column is NULL, never a default.</item>
     /// <item><b>The model and its PSI-MS term come from one source</b>, recorded in <c>instrument_model_source</c>:
     /// the QC report when it names a model (this file's header), else the SDRF (<c>comment[instrument]</c>'s NT and
     /// AC). A QC model is never paired with an SDRF term, which may describe another instrument.</item>
     /// <item><b>A start time with no zone is never a UTC timestamp.</b> A Thermo RAW header's time is the
-    /// instrument's local clock (aging 055, mzLib #1349), so it is kept verbatim in <c>acquisition_start_local</c>.
+    /// instrument's local clock (mzLib #1349), so it is kept verbatim in <c>acquisition_start_local</c>.
     /// Only a value carrying <c>Z</c> or an offset reaches <c>acquisition_datetime</c>, converted to UTC; it is
     /// passed as a <see cref="DateTimeOffset"/>, because the writer reads a zoneless string as UTC.</item>
     /// </list>
@@ -220,7 +220,7 @@ public static class Runs
         var (utc, local) = StartTime(HeaderText(qcEntry, "start_time", fileName), fileName);
         run["acquisition_datetime"] = utc;
         run["acquisition_start_local"] = local;
-        // 1.5.0 (DATAREPO-88 b; PXReprise 098, PXR-R50): whether this file's reporters were read at MS2 or MS3, as the QC
+        // 1.5.0: whether this file's reporters were read at MS2 or MS3, as the QC
         // report's `sps_ms3` says; NULL where it says nothing. The ingest clears it for a search that is not isobaric.
         run["reporter_level"] = Get(qcEntry, "sps_ms3") switch { true => "ms3", false => "ms2", _ => null };
     }
@@ -292,7 +292,7 @@ public static class Runs
 
     /// <summary>Fill each run's <c>enrichment</c> and <c>enrichment_source</c>, and say whether the runs differ (G63).</summary>
     /// <remarks>
-    /// The rules are the ones agreed with aging (thread 054 section 2, their 058), and each failure
+    /// The rules are the ones agreed with aging (their 058), and each failure
     /// refuses the ingest rather than writing a guess:
     /// <list type="bullet">
     /// <item><b>A per-run map must cover every run.</b> A partial map would leave some runs NULL beside some
@@ -387,7 +387,7 @@ public static class Runs
     }
 
     /// <summary>Every rule <see cref="AssignEnrichment"/> refuses a run map on, in the order it applies them; ingest
-    /// refuses on the first, <c>datarepo manifest</c> reports them all (PXReprise 009).</summary>
+    /// refuses on the first, <c>datarepo manifest</c> reports them all.</summary>
     /// <param name="runBaseNames">The dataset's run base names, or null when its runs cannot be read, which skips
     /// the two rules that need them (unknown runs, coverage).</param>
     public static List<string> EnrichmentProblems(

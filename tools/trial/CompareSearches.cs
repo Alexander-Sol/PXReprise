@@ -10,8 +10,8 @@
 //   - every output table's header: columns added or removed;
 //   - modifications seen (Full Sequence brackets), per name, with the five families dataRepo 021 named called out;
 //   - PEP and PEP q-value of the 1% target PSMs (median, and the share with PEP_QValue <= 0.01);
-//   - protein N-terminal occupancy entries (pos0/pos1 in CountOccupancy_), mzLib #1337 (logs 001);
-//   - cysteine-containing share of 1% target peptides (aging PXR-A37);
+//   - protein N-terminal occupancy entries (pos0/pos1 in CountOccupancy_), mzLib #1337;
+//   - cysteine-containing share of 1% target peptides;
 //   - per-task wall time from provenance, and whether a design and a search SDRF were used.
 using System.Globalization;
 using System.Text;
@@ -112,7 +112,7 @@ static Run Load(string searchDir)
     var bases = r.BaseSeqs.Where(s => !s.Contains('|')).ToList();
     r.CysShare = bases.Count == 0 ? double.NaN : (double)bases.Count(s => s.Contains('C')) / bases.Count;
     // An isobaric search writes no AllQuantifiedProteinGroups.tsv, only AllProteinGroups.tsv with the same Protein QValue and
-    // target columns (dataRepo 110, PXR-R60): take that one, or a TMT search's groups would read as none.
+    // target columns: take that one, or a TMT search's groups would read as none.
     string pg = Path.Combine(task, "AllQuantifiedProteinGroups.tsv");
     if (!File.Exists(pg)) pg = Path.Combine(task, "AllProteinGroups.tsv");
     if (File.Exists(pg))

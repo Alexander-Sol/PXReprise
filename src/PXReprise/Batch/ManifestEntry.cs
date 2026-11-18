@@ -59,7 +59,7 @@ public static class ManifestEntry
     /// <param name="split">v0.4.43 (D33): the group this search is of a split deposit, or null for a whole deposit. Its entry
     /// is keyed by the search key and carries <c>split_reason</c> (dataRepo 093: the one fact the key cannot carry), and the
     /// deposit's own entry, if still served, is retired in the same write (<c>status: superseded</c>), because the store
-    /// serves the bare bundle and both halves side by side, silently, while it is not (dataRepo 093, R31).</param>
+    /// serves the bare bundle and both halves side by side, silently, while it is not (R31).</param>
     /// <param name="restrictions">v0.4.46: the uses the question declares for this entry (<c>[restrictions.&lt;key&gt;]</c>);
     /// <see cref="Restrictions"/> adds its rule and writes the key in the same write as the entry.</param>
     public static void Append(string manifestPath, QueueEntry e, Profile profile, string runDir, JsonObject? state, string workRoot, SplitGroup? split = null,
@@ -95,13 +95,13 @@ public static class ManifestEntry
         int taxon = profile.Databases[e.Organism].Taxon
                     ?? throw new InvalidOperationException($"{profile.Key} gives no taxon for '{e.Organism}'");
         // v0.4.24: a re-search keeps the entry's enrichment. The screen reads only the deposit's text, which has not changed,
-        // and the owner curates the value: PXD021762's isolated mitochondria are 'other' (aging PXR-A45), PXD057407's
-        // global arm 'none' (PXR-A97), and v0.4.23's re-search wrote back the screen's 'none' and 'phospho'.
+        // and the owner curates the value: PXD021762's isolated mitochondria are 'other', PXD057407's
+        // global arm 'none', and v0.4.23's re-search wrote back the screen's 'none' and 'phospho'.
         string screened = state?["enrichment"]?.GetValue<string>() ?? "none";
         string enrichment = earlier?.Enrichment is { Length: > 0 } curated ? curated : screened;
         var search = JsonNode.Parse(File.ReadAllText(Path.Combine(runDir, "04_search", "provenance.json")))!;
         string mm = search["tools"]?["MetaMorpheus"]?["release"]?.GetValue<string>() ?? profile.MetaMorpheus;
-        // v0.4.26 (aging 137, PXR-A124): an overlay keeps its name when its content changes (aging D125), so the note gives
+        // v0.4.26: an overlay keeps its name when its content changes (aging D125), so the note gives
         // each one's sha256 prefix from the search's own inputs: that is what tells two versions apart.
         string Sha12(string name) =>
             search["inputs"]?.AsArray().FirstOrDefault(i => i?["path"]?.GetValue<string>() is { } p
@@ -124,7 +124,7 @@ public static class ManifestEntry
             notes.Add($"QUESTION EXCEPTION: {exception}.");
             flags.Add("question_exception");
         }
-        // v0.4.39 (aging 197, PXR-A158): raw files the question replaced are not PRIDE's bytes; each is named with PRIDE's
+        // v0.4.39: raw files the question replaced are not PRIDE's bytes; each is named with PRIDE's
         // SHA-1, the replacement's SHA-256 and why, from the fetch's own record.
         string fetchManifest = Path.Combine(runDir, "02_fetch", "fetch_manifest.json");
         if (File.Exists(fetchManifest) && JsonNode.Parse(File.ReadAllText(fetchManifest))?["files"] is JsonArray fetched)
@@ -134,11 +134,11 @@ public static class ManifestEntry
                 notes.Add($"REPLACED RAW FILES: {replaced.Count} of {fetched.Count} raw files searched are the question's replacements, not PRIDE's bytes: "
                     + string.Join("; ", replaced.Select(f => $"{f["name"]} (PRIDE SHA-1 {f["replaced"]!["pride_sha1"]}, replacement SHA-256 {f["replaced"]!["sha256"]}: {f["replaced"]!["note"]})")) + ".");
         }
-        // aging 043 (PXR-A37): too few cysteine peptides for a whole proteome points to an alkylant the search did not use.
+        // Too few cysteine peptides for a whole proteome points to an alkylant the search did not use.
         if (enrichment == "none" && searchFlags.FirstOrDefault(f => f.StartsWith("cysteine_poor:", StringComparison.Ordinal)) is { } cysPoor)
         {
             flags.Add("cysteine_poor");
-            // aging 098 (PXR-A99): with no alkylation, only free cysteines are found and disulfide-bonded ones stay invisible,
+            // With no alkylation, only free cysteines are found and disulfide-bonded ones stay invisible,
             // so a low share is what the chemistry predicts, not a missed alkylant.
             bool unalkylated = state?["chemistry"]?["alkylation"]?["value"]?.GetValue<string>() == "none";
             notes.Add($"CYSTEINE-POOR: {cysPoor["cysteine_poor: ".Length..]}."
@@ -154,7 +154,7 @@ public static class ManifestEntry
             notes.Add($"ENRICHED ({enrichment}): {says}. Intensities describe the enriched material, not the whole proteome; never pool them with whole proteomes as abundance.");
             flags.Add("enriched");
         }
-        // PXR-A88 (aging 082): the probe search's measurement used to stop at state.json, so an enrichment the text did not
+        // The probe search's measurement used to stop at state.json, so an enrichment the text did not
         // state reached the store as a whole proteome. It is a prose flag and a note, like G16 below: which run is which is
         // curation (`enrichment`, `run_enrichment`, `mixed_enrichment`), because three probe runs are not every run.
         if (enrichment == "none" && state?["enrichment_measured"]?.GetValue<string>() is { Length: > 0 } measured)
@@ -202,7 +202,7 @@ public static class ManifestEntry
             }
         }
 
-        // v0.4.37 (dataRepo 076/078, our 074 promised it): an isobaric search's entry names the reagent and its plex, which
+        // v0.4.37 (our 074 promised it): an isobaric search's entry names the reagent and its plex, which
         // name the channels; datarepo 1.4.1 refuses reporter tables under `labelling: none` (PXD043296, PXD034564 were).
         string quant = profile.QuantMethod == "flashlfq" ? "label-free" : profile.QuantMethod;
         if (profile.QuantMethod == "reporter_ion")
@@ -338,8 +338,8 @@ public static class ManifestEntry
 
     /// <summary>
     /// The deposits the manifest excludes as copies of <paramref name="acc"/>: <c>status: exclude</c> with a <c>reason</c>
-    /// that opens <c>duplicate_of: &lt;acc&gt;</c>, the form of aging's exclusion of PXD012985 (PXR-A8). Such a copy is not
-    /// an original that <paramref name="acc"/> duplicates. v0.4.16: PXD011740's re-search (PXR-A103) was refused as a
+    /// that opens <c>duplicate_of: &lt;acc&gt;</c>, the form of aging's exclusion of PXD012985. Such a copy is not
+    /// an original that <paramref name="acc"/> duplicates. v0.4.16: PXD011740's re-search was refused as a
     /// duplicate of PXD012985, its own excluded copy, searched in September before the duplicate screen existed.
     /// </summary>
     internal static IReadOnlySet<string> ExcludedCopiesOf(string text, string acc)

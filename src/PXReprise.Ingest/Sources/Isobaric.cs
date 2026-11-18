@@ -18,7 +18,7 @@ namespace PXReprise.Ingest.Sources;
 /// <item>A column is placed by its label, <c>{sample name}_{file}_{channel}</c>, on the design row that names that file
 /// and channel, never by position; <c>-calib</c> and <c>-averaged</c> are stripped from the file to reach the run.</item>
 /// <item>A peptide carrying no multiplex label is stored as written and counted in a finding, until MetaMorpheus quantifies
-/// labelled matches only (QuantProject 068, ruling 1).</item>
+/// labelled matches only (ruling 1).</item>
 /// </list>
 /// <para>Only isobaric bundles are read this way, and each declares <see cref="ReaderVersion"/> into its id, so a change
 /// here moves isobaric bundles alone.</para>
@@ -33,13 +33,13 @@ public static class Isobaric
     /// <summary>The isobaric reader's version, declared into every isobaric bundle's id and no other bundle's. Bump it in
     /// the same commit as any change to what this reader reads or writes. "2" (feat/1.4.2 at <c>c834cce</c>, pushed, never
     /// released): <c>DEF-TMT-*</c> at QuantProject's v3.19, and the <c>isobaric_peptide_q_psm_level</c> finding. "3"
-    /// (1.4.2): the same at v3.22, which retracts v3.14's per-file claim (QuantProject 073), in the texts and the finding.
+    /// (1.4.2): the same at v3.22, which retracts v3.14's per-file claim, in the texts and the finding.
     /// "4" (1.5.0): a multiplex search by MetaMorpheus up to 1.1.13 is refused, not ingested with a finding (the user,
     /// 2026-11-12: re-search it), so the finding is gone and dataRepo's note in the texts says so.</summary>
     public const string ReaderVersion = "4";
 
     /// <summary>The last MetaMorpheus release known to write a multiplex search's <c>AllPeptides.psmtsv</c> with each
-    /// peptide's best PSM's PSM-level q-values instead of peptide-level ones (MetaMorpheus #2941, QuantProject 071).</summary>
+    /// peptide's best PSM's PSM-level q-values instead of peptide-level ones (MetaMorpheus #2941).</summary>
     public static readonly Version LastPsmLevelPeptideQ = new(1, 1, 13);
 
     /// <summary>The first MetaMorpheus release that carries #2941 (merged 2026-11-04; released 2026-11-06).</summary>
@@ -61,7 +61,7 @@ public static class Isobaric
     private const string ChannelColumn = "TMT Channel";
     private const string SampleTypeColumn = "Sample Type";
 
-    /// <summary>The <c>Sample Type</c> a design gives a channel no sample was put in (PXReprise v0.4.41, PXR-R54).</summary>
+    /// <summary>The <c>Sample Type</c> a design gives a channel no sample was put in (PXReprise v0.4.41).</summary>
     public const string EmptySampleType = "empty";
 
     // A multiplex label in a MetaMorpheus full sequence: `[Multiplex Label:TMT10 on K]`.
@@ -84,7 +84,7 @@ public static class Isobaric
     {
         public string AssayId(string datasetId) => $"{datasetId}:{Run}:{Channel}";
 
-        /// <summary>The design marks the channel <c>empty</c> (PXReprise v0.4.41, PXR-R54): no sample was put in it.</summary>
+        /// <summary>The design marks the channel <c>empty</c> (PXReprise v0.4.41): no sample was put in it.</summary>
         public bool IsEmpty => string.Equals(SampleType, EmptySampleType, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>Whether the search read this file calibrated (or averaged): its searched name carries the suffix.</summary>
@@ -143,8 +143,8 @@ public static class Isobaric
 
     /// <summary>The design's assays, each on the SDRF sample its (run, channel) names, or else on the design's own
     /// sample (its <c>Sample Name</c>), or on none when the design marks the channel <c>empty</c> and no SDRF names a
-    /// sample for it (PXR-R54, the user 2026-11-12: its values are kept, and it is never a sample). Every assay keeps the
-    /// design's <c>Plex</c> and <c>Sample Type</c> verbatim (DATAREPO-88 a, schema 0.0.17).</summary>
+    /// sample for it (the user 2026-11-12: its values are kept, and it is never a sample). Every assay keeps the
+    /// design's <c>Plex</c> and <c>Sample Type</c> verbatim (schema 0.0.17).</summary>
     /// <param name="sdrfAssays">The assays the SDRF gave, after the data-file gate; their channels are the SDRF's labels.</param>
     /// <returns>The assays; the samples they name (SDRF samples kept, design samples added); the SDRF characteristics of
     /// the kept samples; and how many assays found an SDRF sample.</returns>
@@ -161,7 +161,7 @@ public static class Isobaric
         {
             var runId = $"{datasetId}:{c.Run}";
             if (sdrfSample.TryGetValue((runId, c.Channel), out var id)) return id;
-            // PRIDE's CV names TMT10's one 131 channel `TMT131`; mzLib reads it as 131N (QuantProject 068, D11). Only where
+            // PRIDE's CV names TMT10's one 131 channel `TMT131`; mzLib reads it as 131N (D11). Only where
             // the plex has no 131C, so a TMT11 131N is never taken for it.
             if (c.Channel == "TMT131N" && !plexTags[c.Plex].Contains("131C") && sdrfSample.TryGetValue((runId, "TMT131"), out id)) return id;
             return null;

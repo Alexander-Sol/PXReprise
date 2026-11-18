@@ -55,13 +55,13 @@ public static partial class SiteGenerator
                 "where the search trained PEP, otherwise its notch q-value. So its counts are not the search engine's own " +
                 "peptide count, which is in `metrics` (`name = 'peptides'`), and two datasets on different rules rest on " +
                 "different q-values.");
-        // DATAREPO-88 d (aging 135): only when the catalog labels each dataset's value scale (format 17).
+        // Only when the catalog labels each dataset's value scale (format 17).
         if (facts.Datasets.Any(ds => ds.ContainsKey("quant_scale")))
             lines.Insert(lines.IndexOf("Before you answer from this data:") + 3,
                 "- Never pool values across `dataset_overview.quant_scale` (label-free, TMT read at MS2, TMT read at MS3); " +
                 "effects may be combined under `aging:DEF-AGE-EFFECT-META` v1.4, TMT read at MS3 only, with one method term " +
                 "per dataset (`age_effect_method_terms`).");
-        // PXR-R32: only when something is split, so a catalog with no split writes the file it always wrote.
+        // Only when something is split, so a catalog with no split writes the file it always wrote.
         if (facts.SplitDeposits.Count > 0)
             lines.Add(
                 "- A deposit searched in parts (a split, e.g. one search per species) has one dataset per part, keyed " +
@@ -109,7 +109,7 @@ public static partial class SiteGenerator
 
     /// <summary>Said wherever a dataset's organism is shown, because it reads as a fact about the sample and
     /// it is not one: PXD050351 is a human cell line, and an agent judged it "maybe a mouse sample" from the
-    /// title while <c>organisms</c> said only which proteome was searched (aging 070 57g).</summary>
+    /// title while <c>organisms</c> said only which proteome was searched.</summary>
     public const string OrganismsAre =
         "`organisms` is the organism of the protein DATABASE the search used, not a statement about " +
         "the samples. Sample annotation, where any exists, is in the catalog's `samples` and " +
@@ -163,8 +163,8 @@ public static partial class SiteGenerator
         return entry;
     }
 
-    /// <summary><c>datasets.json</c>: one entry per dataset and, when a deposit is served in parts, one per such deposit
-    /// (PXR-R32). With nothing split it is the file it always was.</summary>
+    /// <summary><c>datasets.json</c>: one entry per dataset and, when a deposit is served in parts, one per such deposit.
+    /// With nothing split it is the file it always was.</summary>
     private static Dict DatasetsIndex(SiteFacts facts, Dict catalogBlock, string? baseUrl)
     {
         var doc = new Dict
@@ -228,8 +228,8 @@ public static partial class SiteGenerator
     /// <summary>Python's <c>str.isalnum()</c> for one character.</summary>
     private static bool IsAlnum(char c) => char.IsLetterOrDigit(c) || char.IsNumber(c);
 
-    /// <summary><c>proteins/&lt;shard&gt;.json</c>, <c>genes/&lt;letter&gt;.json</c> and <c>proteins/index.json</c>
-    /// (DATAREPO-56).</summary>
+    /// <summary><c>proteins/&lt;shard&gt;.json</c>, <c>genes/&lt;letter&gt;.json</c> and <c>proteins/index.json</c>.
+    /// </summary>
     private const string ProteinsAre =
             "Accessions with evidence that passed acceptance (an accepted protein group OR an " +
             "accepted peptidoform) in at least one dataset; decoys excluded, contaminants kept and " +
@@ -368,7 +368,7 @@ public static partial class SiteGenerator
             ["index.html"] = IndexHtml(facts, title, baseUrl, options.About),
             ["llms.txt"] = LlmsTxt(facts, title, dataUrl),
             // An INDEX, one small entry per dataset. The whole thing in one file was cut off by agent fetch
-            // tools after about 19 of 26 entries, and the agent could not tell (aging 069 55a).
+            // tools after about 19 of 26 entries, and the agent could not tell.
             ["datasets.json"] = Json(DatasetsIndex(facts, catalogBlock, baseUrl)),
         };
         var splitWarnings = new List<string>();

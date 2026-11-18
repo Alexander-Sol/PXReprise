@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace PXReprise.Batch;
 
 /// <summary>
-/// v0.4.46 (aging PXR-A51, DATAREPO-74; the user, 2026-11-11, "yes b"): a manifest entry's <c>restrictions</c>, the uses
+/// v0.4.46 (the maintainer, 2026-11-11, "yes b"): a manifest entry's <c>restrictions</c>, the uses
 /// datarepo 1.3.4+ marks a whole dataset unfit for in the catalog (<c>dataset_restrictions</c>). The engine owns the key.
 /// It is written from recorded facts and the question, nothing else, so it never goes stale the way the hand list of
 /// 2026-10-07 did (15 of its 41 rows no longer held a month later, and it missed every deposit delivered since):

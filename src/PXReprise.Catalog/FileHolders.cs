@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace PXReprise.Catalog;
 
-/// <summary>Which processes hold a file open, as Windows' Restart Manager reports them (aging DATAREPO-81 b).</summary>
+/// <summary>Which processes hold a file open, as Windows' Restart Manager reports them.</summary>
 /// <remarks>Diagnostic only: it names the holder in a refusal and never decides anything, so any failure to ask gives
 /// an empty answer rather than an error.</remarks>
 internal static class FileHolders

@@ -31,7 +31,7 @@ public static class WatchReason
 {
     /// <summary>Found only by the question's <c>watch_keywords</c>.</summary>
     public const string WatchList = "watch_list";
-    /// <summary>Found only by <c>disease_keywords</c>, and its record names no reference group (PXR-A27).</summary>
+    /// <summary>Found only by <c>disease_keywords</c>, and its record names no reference group.</summary>
     public const string NoReferenceGroup = "no_reference_group_found";
     /// <summary>v0.4.46: the question's gate sent it to the watch list; <c>gate.tsv</c> says why.</summary>
     public const string Gate = "gate_watch";
@@ -110,7 +110,7 @@ public sealed class CensusRunner(IProjectSearch search)
             var acquisition = AcquisitionClassifier.Classify(r);
             var relevance = Relevance.Evaluate(r, q.Relevance);
             // The search index is for discovery only: its metadata fields can carry SDRF column headers as terms
-            // (PXD043476, pride 001). A deposit the census acts on takes its organisms from the project record,
+            // (PXD043476). A deposit the census acts on takes its organisms from the project record,
             // fetched only for those, so a census stays one search per keyword plus one record per in-scope deposit.
             var (organisms, source, project) = relevance.IsIn
                 ? await OrganismsOfRecordAsync(acc, r, record, ct).ConfigureAwait(false)
@@ -123,11 +123,11 @@ public sealed class CensusRunner(IProjectSearch search)
             GateDecision? gate = null;
             if (q.Gate is { } terms && route.Kind == RouteKind.Search)
             {
-                // v0.4.46 (aging PXR-A179): the question's gate decides, with the reference-group rule inside it (its
+                // v0.4.46: the question's gate decides, with the reference-group rule inside it (its
                 // reference_group key), on the deposit's own text: the project record, else ProteomeXchange's, else the index's.
                 bool noReference = watch == WatchReason.NoReferenceGroup;
                 if (noReference) watch = null;
-                // A hand include in the decisions file is a person's reading: queued without the gate (aging PXR-A180).
+                // A hand include in the decisions file is a person's reading: queued without the gate.
                 gate = Gate.Decided(q, acc);
                 if (gate is null)
                 {
@@ -153,14 +153,14 @@ public sealed class CensusRunner(IProjectSearch search)
         var watched = rows.Where(x => x.Watch is not null).ToList();
         if (q.Gate is not null)
         {
-            // v0.4.46 (aging PXR-A179, part A4): every gate decision, with the keywords that brought the deposit in and each match.
+            // v0.4.46 (part A4): every gate decision, with the keywords that brought the deposit in and each match.
             string gateFile = Path.Combine(outDir, "gate.tsv");
             Gate.WriteTsv(gateFile, rows.Where(x => x.Gate is not null).Select(x => (x.Accession, (IReadOnlyCollection<string>)x.KeywordsHit, x.Gate!)));
             record.Output(gateFile);
         }
         if (q.More.Disease.Count > 0 || q.More.Watch.Count > 0 || q.Gate is not null)
         {
-            // PXR-A26: the watch list is its own table: discovered and screened, never queued.
+            // The watch list is its own table: discovered and screened, never queued.
             string watchFile = Path.Combine(outDir, "watch.tsv");
             WriteTsv(watchFile, watched);
             record.Output(watchFile);
@@ -178,7 +178,7 @@ public sealed class CensusRunner(IProjectSearch search)
             Count(inScope, x => Snake(x.Acquisition.Labelling.ToString())),
             failed, Path.GetFullPath(outDir), queue.Count, noDatabase,
             OrganismSources: Count(rows, x => x.OrganismSource),
-            // Per keyword, the deposits the queue would hold: after every screen and the reference-group rule (PXR-A25).
+            // Per keyword, the deposits the queue would hold: after every screen and the reference-group rule.
             QueuedByKeyword: q.Keywords.Concat(q.More.Disease).ToDictionary(k => k,
                 k => rows.Count(x => queued.Contains(x.Accession) && x.KeywordsHit.Contains(k))),
             Watched: Count(watched, x => x.Watch!),

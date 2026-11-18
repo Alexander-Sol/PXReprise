@@ -32,7 +32,7 @@ public sealed class SiteFacts
     /// 0.32.0 catalog holds them.</summary>
     public bool PsmsInCatalog { get; init; }
 
-    /// <summary>How many deposits (ProteomeXchange accessions) the datasets were searched from (PXR-R32). Equal to
+    /// <summary>How many deposits (ProteomeXchange accessions) the datasets were searched from. Equal to
     /// <see cref="Datasets"/>' count unless a deposit is served in parts; a catalog before format 16 names no
     /// deposit, so each dataset counts as its own.</summary>
     public int DepositCount { get; init; }
@@ -255,7 +255,7 @@ public static partial class SiteGenerator
                 ["reconciliation_failed"] = (Get(bundle, "reconciliation_failed") as List<object?> ?? []).ToList(),
                 ["path"] = Get(bundle, "path"),
             };
-            // Catalog format 15 (DATAREPO-86); a parity catalog has no such column, and its page keeps 0.32.0's keys.
+            // Catalog format 15; a parity catalog has no such column, and its page keeps 0.32.0's keys.
             if (bundle is not null && bundle.ContainsKey("reconciliation_explained"))
                 ((Dict)d["bundle"]!)["reconciliation_explained"] = (Get(bundle, "reconciliation_explained") as List<object?> ?? []).ToList();
             d["licence"] = licence;
@@ -291,7 +291,7 @@ public static partial class SiteGenerator
             ds["finding_codes"] = Findings(ds).Select(f => PyText.Str(f["code"])).Distinct()
                 .OrderBy(c => c, StringComparer.Ordinal).Cast<object?>().ToList();
         }
-        // PXR-R32: the catalog names each dataset's deposit from format 16. A split search learns its siblings here, and
+        // The catalog names each dataset's deposit from format 16. A split search learns its siblings here, and
         // only a split search: an unsplit dataset's dictionary, and so its JSON, keeps exactly the keys it had.
         var byDeposit = datasets.GroupBy(DepositOf, StringComparer.Ordinal).OrderBy(g => g.Key, StringComparer.Ordinal).ToList();
         var splitDeposits = new List<Dict>();
@@ -323,7 +323,7 @@ public static partial class SiteGenerator
     /// <summary>Whether a dataset is one search of a deposit served in parts: the catalog gave it a group.</summary>
     internal static bool IsSplitSearch(Dict ds) => ds.GetValueOrDefault("split_group") is string;
 
-    /// <summary>A CTE naming each dataset's deposit, for counting deposits in SQL (PXR-R32): the catalog's
+    /// <summary>A CTE naming each dataset's deposit, for counting deposits in SQL: the catalog's
     /// <c>dataset_overview.accession</c>, or the dataset itself in a catalog before format 16.</summary>
     private static string DepositKeys(DuckDBConnection con) =>
         "WITH deposit_keys AS (SELECT dataset_id, "
@@ -343,7 +343,7 @@ public static partial class SiteGenerator
         Rows(con, "SELECT column_name FROM information_schema.columns WHERE table_name = ?", table)
             .Select(r => (string)r["column_name"]!).ToHashSet();
 
-    /// <summary>Every accession with accepted evidence somewhere, and where (aging 070, DATAREPO-56).</summary>
+    /// <summary>Every accession with accepted evidence somewhere, and where.</summary>
     /// <remarks>The site could answer no protein-level question at all -- is albumin identified, which
     /// datasets have tau -- because nothing below the dataset reached it. This is the smallest thing that
     /// does: per accession, the datasets where a protein group or peptidoform passed, with the contaminant
@@ -384,7 +384,7 @@ public static partial class SiteGenerator
     /// datasets cannot supply says how many did, rather than presenting a partial sum as a total.</remarks>
     private static List<Dict> FiguresOfMerit(DuckDBConnection con, string schemaVersion)
     {
-        // Datasets are counted as DEPOSITS (PXR-R32): a deposit searched in parts is one public dataset, and counting its
+        // Datasets are counted as DEPOSITS: a deposit searched in parts is one public dataset, and counting its
         // parts would count one study twice. With nothing split the counts are the ones they always were.
         var keys = DepositKeys(con);
         var o = One(con, keys + "SELECT count(DISTINCT k.accession), sum(o.n_runs), sum(o.n_psms_1pct), sum(o.n_ptm_sites) "
@@ -395,7 +395,7 @@ public static partial class SiteGenerator
             "WHERE m.scope = 'dataset' AND m.name = 'ms2'");
         var (ms2, ms2Datasets) = (o[0], o[1]);
         // Per dataset, because the contaminant label is: human albumin is a target in a human search and a
-        // contaminant in a rodent one, and a corpus-wide flag dropped it from every count (aging 070 57f). An
+        // contaminant in a rodent one, and a corpus-wide flag dropped it from every count. An
         // accession counts in a dataset where it was accepted and was not a contaminant, and a deposit once.
         var spread = Rows(con,
             keys + "SELECT n, count(*) FROM (" +

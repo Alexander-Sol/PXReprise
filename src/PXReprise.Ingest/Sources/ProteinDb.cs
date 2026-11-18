@@ -100,7 +100,7 @@ public sealed class ProteinSequences
     private readonly Dictionary<string, SortedSet<string>> _datasets = new(StringComparer.Ordinal);
     private readonly Dictionary<string, SortedSet<string>> _taxa = new(StringComparer.Ordinal);
 
-    /// <summary>Records one target entry's <c>dataset</c> attribute and taxon (DATAREPO-84).</summary>
+    /// <summary>Records one target entry's <c>dataset</c> attribute and taxon.</summary>
     public void NoteEntry(string accession, string? dataset, string? taxon)
     {
         if (dataset is { Length: > 0 })
@@ -116,7 +116,7 @@ public sealed class ProteinSequences
     }
 
     /// <summary>The source a target accession's own database entries name, when it is not UniProt: the entry's
-    /// <c>dataset</c> attribute lower-cased (<c>ensembl</c> for aging's Ensembl-only isoforms, DATAREPO-84), with the
+    /// <c>dataset</c> attribute lower-cased (<c>ensembl</c> for aging's Ensembl-only isoforms), with the
     /// entry's own NCBI taxon. Null for a UniProt entry (<c>Swiss-Prot</c>, <c>TrEMBL</c>), an accession no target
     /// XML carried, or entries that disagree.</summary>
     public (string Source, string? Taxon)? OtherSource(string accession)
@@ -127,7 +127,7 @@ public sealed class ProteinSequences
     }
 }
 
-/// <summary>The search's protein database -> one sequence per accession, for placing sites (DATAREPO-32).</summary>
+/// <summary>The search's protein database -> one sequence per accession, for placing sites.</summary>
 /// <remarks>
 /// <c>ptm_sites</c> needs each PTM's position in every protein a peptide maps to. The psmtsv cannot supply
 /// it: MetaMorpheus writes <c>Start and End Residues In Full Sequence</c> <b>de-duplicated</b>, one span per
@@ -139,7 +139,7 @@ public sealed class ProteinSequences
 /// </code>
 /// Beta- and gamma-actin share a span, so it is written once. Across aging's ten datasets 140,818
 /// target PSMs at 1% FDR have a span count different from their accession count, and 9,093 have MORE
-/// spans than accessions (aging 043). No pairing of the two cells is right in general, including the
+/// spans than accessions. No pairing of the two cells is right in general, including the
 /// case where the counts happen to agree. So the position comes from the sequence: find the peptide
 /// in each member protein, which is what MetaMorpheus's own occupancy code does.
 ///
@@ -184,8 +184,8 @@ public static class ProteinDb
     /// <para>Under <see cref="IngestRules.Current"/> an element is matched on its local name in any namespace, as
     /// mzLib's loader matches it (<c>xml.Name == "entry"</c>), so the search read it. UniProt's own files declare
     /// <c>https://uniprot.org/uniprot</c> and mzLib's <c>ProteinDbWriter</c> can write <c>undefined</c>. Python
-    /// 0.32.0 read only <c>http://uniprot.org/uniprot</c>, and anything else read as an empty database
-    /// (PXR-R12).</para></remarks>
+    /// 0.32.0 read only <c>http://uniprot.org/uniprot</c>, and anything else read as an empty database.
+    /// </para></remarks>
     /// <param name="onEntry">Given, it also receives each entry's <c>dataset</c> attribute (<c>Swiss-Prot</c>,
     /// <c>TrEMBL</c>, or another source's name, such as aging's <c>Ensembl</c>; DATAREPO-84) and its organism's NCBI
     /// taxon id, as <c>(accession, dataset, taxon)</c>.</param>
@@ -331,7 +331,7 @@ public static class ProteinDb
     /// <returns>How many entries were read.</returns>
     /// <exception cref="IngestException">Neither <c>.xml</c> nor <c>.fasta</c>/<c>.fa</c>; or, under
     /// <see cref="IngestRules.Current"/>, a file with no entries. The search found proteins in it, so an empty read is
-    /// this reader failing, and it would place no site with no word said (PXR-R12). Python 0.32.0 read it as
+    /// this reader failing, and it would place no site with no word said. Python 0.32.0 read it as
     /// empty.</exception>
     public static int ReadDatabase(string path, ProteinSequences into, IngestRules rules = IngestRules.Current)
     {

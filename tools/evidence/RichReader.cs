@@ -60,7 +60,7 @@ internal static class RichReader
         }
     }
 
-    /// <summary>Overloaded (529, also sent as an SSE error event mid-stream), rate limited (429) or a 5xx.</summary>
+    /// <summary>Overloaded (also sent as an SSE error event mid-stream), rate limited or a 5xx.</summary>
     internal static bool Transient(Exception e) => e is Anthropic5xxException or AnthropicRateLimitException
         || (e is AnthropicSseException && (e.Message.Contains("overloaded_error", StringComparison.Ordinal) || e.Message.Contains("api_error", StringComparison.Ordinal)))
         || e is AnthropicIOException;

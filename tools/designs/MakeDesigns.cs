@@ -1,7 +1,7 @@
 #:package mzLib@1.0.593
 #:property PublishAot=false
 #:property JsonSerializerIsReflectionEnabledByDefault=true
-// Curated label-free designs (G15, aging PXR-A15): one SDRF per deposit, generated from aging's per-run ages tables
+// Curated label-free designs (G15): one SDRF per deposit, generated from aging's per-run ages tables
 // (aging instance/ages/<PXD>.tsv, written by their make_age_tables.cs; never by hand), for a question's [designs] dir.
 // Each SDRF is checked by mzLib's SdrfLabelFreeDesign against the files the deposit's fetch delivered, exactly as
 // DesignStage reads it before a search; a refused design is reported and not written.

@@ -284,7 +284,7 @@ public static class IsobaricReporters
     }
 
     /// <summary>
-    /// v0.4.37 (dataRepo 076/078): the manifest's <c>labelling</c> and <c>labelling_plex</c> for a kit's modification id
+    /// v0.4.37: the manifest's <c>labelling</c> and <c>labelling_plex</c> for a kit's modification id
     /// (<see cref="ModificationId"/>): the family and the number of channels the kit has, used or not. TMT18 is 18
     /// (a TMTpro 16 deposit is searched under TMT18's label). Null for an id no kit has.
     /// </summary>

@@ -6,7 +6,7 @@ using Quantification.PtmQtl;
 
 namespace PXReprise.Runner;
 
-/// <summary>The <c>ptmqtl.*</c> engines (ptmQtl 025; our 026, 031): site pairs per search, pooled pairs per species,
+/// <summary>The <c>ptmqtl.*</c> engines (our 026): site pairs per search, pooled pairs per species,
 /// and site-trait fits per search and trait.</summary>
 /// <remarks>
 /// <para>The method is ptmQtl's (<c>ptmQtl:DEF-PTM-PAIR v2</c>, <c>ptmQtl:DEF-SITE-TRAIT v1</c>), applied by

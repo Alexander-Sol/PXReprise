@@ -1,6 +1,6 @@
 #:package DuckDB.NET.Data.Full@1.5.5
 #:package YamlDotNet@16.3.0
-// PXR-T5 (QuantProject 040): every delivered deposit with more than one value in an SDRF sample-type column (organism
+// Every delivered deposit with more than one value in an SDRF sample-type column (organism
 // part, cell type, enrichment, sample or material type, fraction or compartment), with its manifest flags.
 // Reads what was DELIVERED: each bundle's sample_characteristics.parquet in the store (the bundle named by state.json),
 // not the run folder, whose SDRF may be gone after cleanup. Reserved values ("not applicable", "not available") are

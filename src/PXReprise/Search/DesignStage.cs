@@ -228,7 +228,7 @@ public static class DesignStage
     };
 
     /// <remarks>
-    /// The SDRF is first restricted to this search's files by mzLib's <see cref="SdrfSearchScope"/> (QuantProject 085): an
+    /// The SDRF is first restricted to this search's files by mzLib's <see cref="SdrfSearchScope"/>: an
     /// SDRF an earlier search wrote names that search's files (<c>X-calib.mzML</c>) in <c>comment[searched data file]</c>,
     /// the column the reader keys on, and only the scope replaces them with this search's names. What the scope could not
     /// join goes in <paramref name="scope"/>.
@@ -309,7 +309,7 @@ public static class DesignStage
                 ["refusals"] = new JsonArray((error is null ? d!.Refusals.Take(5) : new[] { error }).Select(x => (JsonNode?)x).ToArray()),
             });
         }
-        // D31 (the user, 2026-10-07): every searched set of files gets an SDRF and a design. With neither SDRF usable, ours
+        // D31 (the maintainer, 2026-10-07): every searched set of files gets an SDRF and a design. With neither SDRF usable, ours
         // says only what design-less quantification assumes, on the record: one condition, each file its own sample.
         string why = deposited.Count == 0 ? "no curated design and no deposited SDRF" : "no curated design; every deposited SDRF was refused";
         string fallback = WriteDefaultSdrf(spectraDir, searchedFiles, organism, accession);
@@ -388,7 +388,7 @@ public static class DesignStage
         ["conditions"] = new JsonArray(d.Files.Select(f => f.Condition).Distinct().Order(StringComparer.Ordinal).Select(c => (JsonNode?)c).ToArray()),
         ["files"] = d.Files.Count,
         ["notes"] = new JsonArray(d.Notes.Select(n => (JsonNode?)n).ToArray()),
-        // QuantProject 012 (PXR-U1): mzLib's whole account, kept per deposit. Since mzLib 1.0.596 (#1426, v0.4.33) the
+        // MzLib's whole account, kept per deposit. Since mzLib 1.0.596 (#1426, v0.4.33) the
         // SDRF's own replicate and fraction numbers are kept, gaps included; MetaMorpheus 1.1.13 quantifies a gap (#2928),
         // 1.1.12 refuses it, so this engine must not search a 1.1.12 profile with a gapped SDRF.
         ["report"] = d.Report(),

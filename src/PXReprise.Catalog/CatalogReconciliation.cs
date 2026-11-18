@@ -29,7 +29,7 @@ public sealed record ReconciliationRow(
 
 public static partial class CatalogBuilder
 {
-    /// <summary>The catalog table of every reconciliation check, judged at build (DATAREPO-86).</summary>
+    /// <summary>The catalog table of every reconciliation check, judged at build.</summary>
     public const string ReconciliationTable = "catalog_reconciliation";
 
     /// <summary>One row of <see cref="ReconciliationTerms"/> over a deposit's <c>psms</c> and <c>peptidoforms</c>, with

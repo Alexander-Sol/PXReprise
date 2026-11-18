@@ -162,7 +162,7 @@ public sealed class WorkerShare(string root)
         {
             if (value is not null && !Directory.Exists(Path.Combine(Software, value)))
                 throw new UsageException($"{name} = {value}: there is no {Path.Combine(Software, value)}");
-            // v0.4.40 (PXRworker 037, PXR-M13): the worker refuses to run a folder it cannot check, so a release must not
+            // v0.4.40: the worker refuses to run a folder it cannot check, so a release must not
             // name one. metamorpheus-1.1.13 reached the share on 10-28 without its sums and generation 7 stopped there.
             if (value is not null && !File.Exists(Path.Combine(Software, value, Sha256Sums.FileName)))
                 throw new UsageException($"{name} = {value}: {Path.Combine(Software, value, Sha256Sums.FileName)} does not exist (run `pxreprise worker sums` on the folder first)");

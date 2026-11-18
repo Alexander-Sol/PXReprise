@@ -77,8 +77,8 @@ public static class SchemaContract
     /// <summary>Every core column that was required in Python 0.32.0's schema and is optional since, with the version
     /// that relaxed it. A parity bundle writes it as required, as Python did (the Parquet field's nullability).</summary>
     /// <remarks>provenance_schema: a record stating no schema was stored as the text "None", a value it never wrote
-    /// (G83 item 16); from 0.0.15 it is NULL. assays.run_id: NULL from 0.0.16 for a pooled design sample (PXR-R23).
-    /// assays.sample_id: NULL from 0.0.17 for a TMT channel the design marks `empty` (PXR-R54).</remarks>
+    /// (G83 item 16); from 0.0.15 it is NULL. assays.run_id: NULL from 0.0.16 for a pooled design sample.
+    /// assays.sample_id: NULL from 0.0.17 for a TMT channel the design marks `empty`.</remarks>
     public static readonly IReadOnlyList<(string Version, string Table, string Column)> RelaxedColumns =
     [
         ("0.0.15", "provenance_records", "provenance_schema"),
@@ -144,7 +144,7 @@ public static class SchemaContract
     ];
 
     /// <summary>Every study column added to a table that already existed, with the layer version that added it.</summary>
-    /// <remarks>Layer 0.7.0 (DATAREPO-88 c, aging DEF-AGE-EFFECT-META v1.4) keys <c>age_effect_meta</c> by
+    /// <remarks>Layer 0.7.0 (aging DEF-AGE-EFFECT-META v1.4) keys <c>age_effect_meta</c> by
     /// <c>method_scope</c> in place of <c>quant_method</c>, with two counts per method and the method terms used. A table
     /// at an earlier layer version has the columns it had then (<see cref="RemovedStudyColumns"/>).</remarks>
     public static readonly IReadOnlyList<(string Layer, string Version, string Table, string Column)> AddedStudyColumns =

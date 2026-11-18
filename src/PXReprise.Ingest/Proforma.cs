@@ -128,8 +128,8 @@ public static class Proforma
             var (residue, bracket) = pieces[index];
             // MetaMorpheus writes a C-terminal modification as `...L-[mod]`: the `-` is ProForma's
             // terminus marker, not a residue. It used to be appended to the base sequence, so the one
-            // C-terminal site in the corpus was keyed on residue `-` one past the protein's end
-            // (DATAREPO-33). Only a trailing `-` is a terminus; anywhere else it is kept as written.
+            // C-terminal site in the corpus was keyed on residue `-` one past the protein's end.
+            // Only a trailing `-` is a terminus; anywhere else it is kept as written.
             var cTerminal = residue == "-" && index == pieces.Count - 1 && bracket is not null;
             if (residue.Length > 0 && !cTerminal) baseResidues.Add(residue);
             var position = cTerminal ? CTerminus : (residue.Length > 0 ? baseResidues.Count : NTerminus);

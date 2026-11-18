@@ -98,7 +98,7 @@ public static class QcStage
                         ["spectra_checked"] = t.SpectraChecked, ["y1_tmt"] = t.Tmt, ["y1_tmtpro"] = t.TmtPro, ["reagent"] = t.Reagent,
                     };
             }
-            // DATAREPO-72: a key only for a value the reader gave; a missing key means "not read".
+            // A key only for a value the reader gave; a missing key means "not read".
             if (r.Run is { } run)
             {
                 var entry = report[Path.GetFileName(f)]!.AsObject();

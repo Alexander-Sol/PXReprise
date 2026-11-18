@@ -14,7 +14,7 @@ namespace PXReprise.Runner;
 /// content-addressed and written beside the bundles, never inside one (U12). The four rules it keeps (charter
 /// section 2, aging 055 section 1, design/RUNNER.md):</para>
 /// <list type="number">
-/// <item><b>Released inputs only.</b> A development build of datarepo is refused (aging 063): an artefact stamped
+/// <item><b>Released inputs only.</b> A development build of datarepo is refused: an artefact stamped
 /// by unreleased code is reproducible by nobody.</item>
 /// <item><b>Idempotent.</b> The artefact id is a sha256 over the engine, its release, every input's role and
 /// sha256, the definition id, <see cref="RunnerVersion"/> and the schema version (U13).</item>
@@ -37,7 +37,7 @@ public static class EngineRunner
         PtmQtlEngine.SitePairsEngine, PtmQtlEngine.PoolPairsEngine, PtmQtlEngine.SiteTraitsEngine,
     ];
 
-    /// <summary>Which datarepo build is running, or a refusal (aging 063).</summary>
+    /// <summary>Which datarepo build is running, or a refusal.</summary>
     /// <remarks>A release build carries its version and the commit it was built from (CI stamps both: Version and
     /// SourceRevisionId). A development build (<c>-dev</c>, or no commit) is refused: the code can change under
     /// a running operator, which is how a 0.18.0 working tree was on aging's PATH mid-release.</remarks>

@@ -142,7 +142,7 @@ namespace PXReprise.DataCli
             catch (Exception e)
             {
                 // A defect of ours. The stack first and the message LAST: a log that keeps only the tail lost the
-                // message twice (aging DATAREPO-81 d, PXReprise PXR-R14).
+                // message twice.
                 Console.Error.WriteLine(e);
                 Console.Error.WriteLine($"{Prog} {command}: unexpected {e.GetType().FullName}: {e.Message.ReplaceLineEndings(" ")}");
                 return 70;
@@ -202,7 +202,7 @@ namespace PXReprise.DataCli
                 .Option("--json", Args.Kind.Flag, "print one JSON envelope on stdout; the human report goes to stderr")
                 .Parse(argv);
             var json = args.Flag("--json");
-            // PXReprise 009: a calling pipeline reads one envelope on stdout and the exit code; everything for a
+            // A calling pipeline reads one envelope on stdout and the exit code; everything for a
             // human goes to stderr, so the envelope is the only thing on stdout.
             var human = json ? Console.Error : Console.Out;
             var datasets = new List<Dictionary<string, object?>>();
@@ -337,7 +337,7 @@ namespace PXReprise.DataCli
                 if (entry.Flags.Count > 0) Console.WriteLine($"     flags  {string.Join(", ", entry.Flags)}");
                 if (entry.Reason is not null && PyFormat.Str(entry.Reason).Length > 0)
                     Console.WriteLine($"     reason {string.Join(" ", PyFormat.Str(entry.Reason).Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))}");
-                // PXReprise 009: a run map ingest would refuse is refused here too, so a wrong map is found
+                // A run map ingest would refuse is refused here too, so a wrong map is found
                 // before a re-ingest. The runs are read where the run folder is reachable.
                 if (entry.RunEnrichment.Count > 0)
                 {
@@ -363,16 +363,16 @@ namespace PXReprise.DataCli
                             : "     excluded_runs  runs not readable here, so the names were not checked; build checks them against the bundle");
                     unmatched += problems.Count > 0 ? 1 : 0;
                 }
-                // DATAREPO-74: uses the whole dataset is unfit for. An unknown use was already refused when the
+                // Uses the whole dataset is unfit for. An unknown use was already refused when the
                 // manifest loaded, so each one listed here is a key `build` will serve.
                 foreach (var (use, reason) in entry.Restrictions)
                     Console.WriteLine($"     restricted {use}: {string.Join(" ", reason.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))}");
-                // PXR-R32: one part of a deposit searched in parts. An unknown reason was already refused on load.
+                // One part of a deposit searched in parts. An unknown reason was already refused on load.
                 var deposit = Usi.DepositAccession(entry.Accession);
                 if (deposit != entry.Accession)
                     Console.WriteLine($"     split  part of {deposit}, {(entry.SplitReason is { } why ? $"split by {why}" : "no split_reason stated")}");
             }
-            // PXR-R31: `build` refuses a deposit served whole beside its parts, since every count would be counted twice. A
+            // `build` refuses a deposit served whole beside its parts, since every count would be counted twice. A
             // whole entry still `include` beside an `include` part is that mistake, found here before a build.
             var wholeBesideParts = manifest.Datasets.Values.Where(e => e.Ingestable)
                 .GroupBy(e => Usi.DepositAccession(e.Accession), StringComparer.Ordinal)

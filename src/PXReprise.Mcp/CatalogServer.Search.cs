@@ -188,7 +188,7 @@ public sealed partial class CatalogServer
                 + "FDR; they are not proteins and must never be counted as evidence");
         if (rows.Any(r => PyValues.Truthy(r.GetValueOrDefault("n_datasets_contaminant"))))
             // There used to be one corpus-wide `is_contaminant`, and P02768 read `true` while it is a target in all
-            // 17 human datasets; an agent concluded albumin was excluded (aging 070).
+            // 17 human datasets; an agent concluded albumin was excluded.
             notes.Add(
                 "the contaminant label is PER DATASET: n_datasets_contaminant counts the datasets "
                 + "whose search labelled this accession a contaminant, out of n_datasets. Human "
@@ -314,7 +314,7 @@ public sealed partial class CatalogServer
     private (List<Dictionary<string, object?>>, List<Dictionary<string, object?>>) SearchLocalization(string query, int limit)
     {
         var like = $"%{PyValues.Lower(query)}%";
-        // The category is a property of the term (go 004, DATAREPO-29), so it is joined in rather than read off the
+        // The category is a property of the term, so it is joined in rather than read off the
         // protein row. A catalog from before schema 0.0.8 has neither table shape; it gets no rows.
         var rows = new List<Dictionary<string, object?>>();
         if (Box.HasTable("organelle_term_categories"))
@@ -410,7 +410,7 @@ public sealed partial class CatalogServer
         if (aboutSamples.Count > 0)
         {
             output["study_tables_on_these_samples"] = aboutSamples;
-            // G69 again, one step later (aging 078): a curated tissue or cell line lives in a study table and never
+            // G69 again, one step later: a curated tissue or cell line lives in a study table and never
             // in `samples`. Not a refusal, and it names no value: it says where else to look.
             output["study_tables_on_these_samples_mean"] =
                 $"This query reads sample tables. {string.Join(", ", aboutSamples)} hold rows about "

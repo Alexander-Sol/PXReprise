@@ -17,7 +17,7 @@ public interface IPrideFiles
     Task<string> DownloadAsync(PrideArchiveFile file, string dir, CancellationToken ct);
 
     /// <summary>
-    /// The download, checked against PRIDE's MD5 and size as the bytes arrive (mzLib #1427, #1449; pride PXR-W6): a copy
+    /// The download, checked against PRIDE's MD5 and size as the bytes arrive (mzLib #1427, #1449): a copy
     /// that fails never reaches the file's name, and after mzLib's own retries it throws <see cref="MzLibUtil.MzLibException"/>.
     /// This default (for the offline fakes) downloads, then checks the whole file the same way.
     /// </summary>
@@ -51,7 +51,7 @@ public sealed class PrideFiles(PrideArchiveClient client) : IPrideFiles
     /// <summary>
     /// mzLib 1.0.594 (#1412) throws, after its own retries, where 1.0.593 returned an empty list: "PRIDE FTP listing of
     /// project X's root directory came back empty although the project exists". It carries no status code and no inner
-    /// exception, so it is neither unavailability nor a transient status; pride 005 (PXR-S1) names the two marks.
+    /// exception, so it is neither unavailability nor a transient status; pride 005 names the two marks.
     /// </summary>
     public static bool IsEmptyFtpRoot(HttpRequestException e) =>
         e.StatusCode is null && e.InnerException is null && e.Message.Contains("came back empty", StringComparison.Ordinal);
@@ -107,11 +107,11 @@ public sealed record DiskFloor(Func<double> FreeGb, double MinFreeGb)
 /// <summary>
 /// One accession's raw files (and SDRF, if deposited), with the engine's retry policy. mzLib's client never retries
 /// by design; the caller owns the policy (aging fetch.py, S33/S52): transport failures and the HTTP statuses EBI has
-/// returned transiently (403, 408, 429, 5xx) are retried; anything else fails at once. Since mzLib 1.0.594 (#1412) the
+/// returned transiently (5xx) are retried; anything else fails at once. Since mzLib 1.0.594 (#1412) the
 /// client itself retries each call 3 times and RESUMES a broken download from its <c>.partial</c> (plus
 /// <c>.partial.validator</c>, both left in the spectra folder on purpose), so our attempts sit on top of its own. Keep
 /// <c>fetch_stall_minutes</c> at 5 or more: a cancellation deletes the <c>.partial</c>, and mzLib's own recovery can be
-/// silent for up to 3 minutes (pride 005, PXR-S2).
+/// silent for up to 3 minutes.
 /// </summary>
 public static class FetchStage
 {
@@ -154,7 +154,7 @@ public static class FetchStage
 
     /// <summary>What a file still adds to the disk: all of it, less a copy already there (that one is checked, not fetched again).</summary>
     /// <summary>
-    /// v0.4.39 (aging 197, PXR-A158): puts a question's replacement in place of a raw file, instead of downloading it.
+    /// v0.4.39: puts a question's replacement in place of a raw file, instead of downloading it.
     /// PRIDE must still list the SHA-1 the replacement was made for: if it lists another (PRIDE replaced the file) or none,
     /// the repair is not known to stand for what PRIDE serves, and the fetch stops (InvalidDataException settles the
     /// deposit; a person decides). The copy must have the question's SHA-256. A file already in place with that SHA-256 is
@@ -240,7 +240,7 @@ public static class FetchStage
         int nOversize = nListed - raws.Count;
         var chosen = Choose(raws, r.Pick, r.MaxFiles);
         var sdrfs = rest.Where(f => IsSdrf(f.FileName)).ToList();
-        // PRIDE's REST list can miss submitted files that the FTP tree holds (pride 007, PXR-S8). An SDRF there is
+        // PRIDE's REST list can miss submitted files that the FTP tree holds. An SDRF there is
         // flagged, as a missing raw is; fetching it waits for pride's SDRF verb, which reads both lists.
         var sdrfFtpOnly = ftp.Where(IsSdrf).Except(sdrfs.Select(f => f.FileName), StringComparer.Ordinal).Order(StringComparer.Ordinal).ToList();
         if (sdrfFtpOnly.Count > 0) flags.Add($"sdrf_ftp_only: {string.Join(", ", sdrfFtpOnly)} (in the FTP tree, not in PRIDE's file list; not fetched)");
@@ -254,7 +254,7 @@ public static class FetchStage
         string spectraDir = Path.Combine(outDir, "spectra"), metaDir = Path.Combine(outDir, "metadata");
         Directory.CreateDirectory(spectraDir);
         string manifestFile = Path.Combine(outDir, "fetch_manifest.json");
-        // v0.4.45 (the user, 2026-11-11): a chosen raw that is not on disk and has a calibrated stand-in (Search.CalibratedStandIns)
+        // v0.4.45 (the maintainer, 2026-11-11): a chosen raw that is not on disk and has a calibrated stand-in (Search.CalibratedStandIns)
         // is not fetched again. The stand-in carries the raw's entry from the fetch manifest of the search it came from (name,
         // SHA-256, PRIDE checksum: what dataRepo builds a run from), and that entry is written again here.
         var earlier = r.Calibrated ?? new Dictionary<string, JsonObject>(StringComparer.Ordinal);
@@ -270,7 +270,7 @@ public static class FetchStage
         // response written into the data (Integrity); a file that fails is deleted and fetched again.
         var sha1 = r.Sha1Source is null ? new Dictionary<string, string>() : await r.Sha1Source(deposit, ct).ConfigureAwait(false);
         prov.Set("pride_sha1_known", (JsonNode)chosen.Count(f => sha1.ContainsKey(f.FileName)));
-        // v0.4.39 (aging PXR-A158): a file the question replaces is not downloaded. PRIDE's own SHA-1 for it is read first
+        // v0.4.39: a file the question replaces is not downloaded. PRIDE's own SHA-1 for it is read first
         // (an outage throws and the deposit waits for a later pass), so the replacement is known to stand for PRIDE's file.
         var replace = chosen.Where(f => r.Replace?.ContainsKey(f.FileName) == true).ToDictionary(f => f.FileName, f => r.Replace![f.FileName], StringComparer.Ordinal);
         var prideSha1 = replace.Count == 0 ? new Dictionary<string, string>()
@@ -408,7 +408,7 @@ public static class FetchStage
     /// costs a few attempts, never the deposit. A DAMAGED Aspera copy sends the file's remaining attempts to HTTPS at
     /// once (pride 014: Aspera damaged 24% of transfers 2026-10-08 to 10-12; the Globus host none of 15). HTTPS comes from
     /// <paramref name="https"/>'s host; a Globus attempt that fails to deliver (not a damaged copy) is followed by one
-    /// from <c>ftp.pride.ebi.ac.uk</c>, then Globus again. Every transfer logs its route, size and time (pride PXR-G1).
+    /// from <c>ftp.pride.ebi.ac.uk</c>, then Globus again. Every transfer logs its route, size and time.
     /// </para>
     /// </summary>
     public static async Task<(string Path, double Seconds, int Attempts)> DownloadWithRetry(IPrideFiles pride, PrideArchiveFile f,
@@ -435,7 +435,7 @@ public static class FetchStage
             string route = overAspera ? "Aspera" : viaGlobus is not null ? "Globus HTTPS" : "ftp.pride HTTPS";
             skipGlobus = false;
             bool damaged = false;
-            // v0.4.34 (pride PXR-W6): over HTTPS, a file PRIDE lists an MD5 for is checked by mzLib as it arrives (and a
+            // v0.4.34: over HTTPS, a file PRIDE lists an MD5 for is checked by mzLib as it arrives (and a
             // copy already on disk is checked before it is kept), so it is not read again here. Aspera copies and files
             // with only a SHA-1 keep this engine's own check (Integrity).
             bool mzLibChecks = !overAspera && expectedChecksum is { Length: 32 } && f.FileSizeBytes > 0;

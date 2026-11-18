@@ -66,7 +66,7 @@ public static class ProfileLoader
         string chemistry = eng.OptionalString("chemistry") ?? "fixed";
         if (!Profile.Chemistries.Contains(chemistry))
             throw new ConfigException(file, $"engine.chemistry must be one of {string.Join(", ", Profile.Chemistries)}, not '{chemistry}'");
-        // MetaMorpheus 1.1.12+ (#2816, #2870; sdrf PXR-E1/E2): each search writes experiment.sdrf.tsv, stamped with the
+        // MetaMorpheus 1.1.12+ (#2816, #2870): each search writes experiment.sdrf.tsv, stamped with the
         // deposit's accession. A key the pinned MetaMorpheus lacks fails the task-file edit, never silently.
         bool writeSdrf = eng.OptionalBool("write_sdrf") ?? false;
         // v0.4.40 (G66, D32 slice 4): the PTM classes a deposit enriches (LibraryRouting: the curated manifest enrichment over
@@ -80,7 +80,7 @@ public static class ProfileLoader
         string lowResTolerance = eng.OptionalString("low_res_product_tolerance") ?? Profile.DefaultLowResProductTolerance;
         if (!System.Text.RegularExpressions.Regex.IsMatch(lowResTolerance, @"^±\d+\.\d{4} (PPM|Absolute)$"))
             throw new ConfigException(file, $"engine.low_res_product_tolerance must be written as MetaMorpheus writes one, e.g. \"±0.5000 Absolute\", not '{lowResTolerance}'");
-        // PXR-A68 (aging 072): HCD read in an ion trap (a Fusion/Lumos/Eclipse "HCD-IT" method) is searched as HCD with
+        // HCD read in an ion trap (a Fusion/Lumos/Eclipse "HCD-IT" method) is searched as HCD with
         // low_res_product_tolerance. Off unless a profile turns it on, so an existing profile version never changes.
         bool ionTrapHcd = eng.OptionalBool("ion_trap_hcd") ?? false;
         if (ionTrapHcd && fragmentation != "per_file")
@@ -117,7 +117,7 @@ public static class ProfileLoader
             }
             thiolReagents = map;
         }
-        // v0.4.29 (ptmQtl PXR-P18, PXR-P19): a side reaction the chemistry reads -> a GPTMD modification, never variable (the
+        // v0.4.29: a side reaction the chemistry reads -> a GPTMD modification, never variable (the
         // user, 2026-10-25: variable only for a modification on most peptides, as oxidised methionine is). GPTMD may put it
         // where the search holds another modification on the residue (MetaMorpheus GptmdEngine.GetPossibleMods), so ring-
         // opened NEM sits beside NEM and propionamide beside fixed carbamidomethyl.

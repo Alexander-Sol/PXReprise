@@ -35,9 +35,9 @@ public sealed record GoBundleInputs(
 /// read), from the bundle's own <c>bundle.json</c> and refused unless the file still hashes to what the bundle
 /// recorded; and <c>ontology</c> (go.obo) and <c>category_map</c> (the consumer's map, aging's for aging) from
 /// <c>--input</c>.</para>
-/// <para><b>Contaminant panels are not annotation input.</b> go's own pre-release run (go 010 section 1) annotated
+/// <para><b>Contaminant panels are not annotation input.</b> go's own pre-release run annotated
 /// from the searched target XML alone, and <c>annotation_db_sha256</c> names one database. go's status precedence
-/// (go 012 section 2, aging 011 section 2) was ruled on the premise that a contaminant has no annotation entry, so
+/// was ruled on the premise that a contaminant has no annotation entry, so
 /// that a trypsin or bovine albumin group reads <c>contaminant</c>; MetaMorpheus's contaminant XML carries its own
 /// GO (3,557 GO references on 264 entries in aging's copy), so passing it would turn those groups into
 /// <c>annotated</c> rows of porcine and bovine terms, and <c>protein_localizations</c> carries no contaminant mark

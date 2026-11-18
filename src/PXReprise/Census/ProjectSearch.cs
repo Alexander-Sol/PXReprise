@@ -10,12 +10,12 @@ public interface IProjectSearch
 
     /// <summary>
     /// The project record (<c>/projects/{accession}</c>), or null when PRIDE has no such project. The search index's
-    /// metadata fields can disagree with it (PXD043476, pride 001), so values the engine acts on come from here.
+    /// metadata fields can disagree with it (PXD043476), so values the engine acts on come from here.
     /// </summary>
     Task<PrideProject?> TryGetProjectAsync(string accession, CancellationToken ct);
 
     /// <summary>
-    /// v0.4.46 (aging PXR-A179, part A1): ProteomeXchange's GetDataset XML for the gate when PRIDE's project record cannot be
+    /// v0.4.46 (part A1): ProteomeXchange's GetDataset XML for the gate when PRIDE's project record cannot be
     /// had, or null when there is none. The default has none (offline fakes).
     /// </summary>
     Task<string?> TryGetProteomeXchangeXmlAsync(string accession, CancellationToken ct) => Task.FromResult<string?>(null);

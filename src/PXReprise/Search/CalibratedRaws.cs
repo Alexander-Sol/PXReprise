@@ -1,7 +1,7 @@
 namespace PXReprise.Search;
 
 /// <summary>
-/// v0.4.35 (the user, 2026-11-02: "perhaps it should be a standing rule to delete raw files as their calibration is
+/// v0.4.35 (the maintainer, 2026-11-02: "perhaps it should be a standing rule to delete raw files as their calibration is
 /// successful"): once MetaMorpheus has calibrated a raw file, GPTMD and the search read only its <c>-calib.mzML</c>, and
 /// after the search the cleanup deletes the raw anyway. So a raw is deleted as soon as its calibration is finished,
 /// while the search runs, which frees its space hours earlier. Finished means a non-empty <c>&lt;name&gt;-calib.mzML</c>

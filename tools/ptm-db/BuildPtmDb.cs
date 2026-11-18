@@ -35,7 +35,7 @@
 //   dotnet run BuildPtmDb.cs -- --from-sites DIR ...   use DIR/sites_<organism>.tsv instead of the catalog (to prove the
 //                               port: v1's site lists must rebuild v1's XMLs byte for byte)
 //
-// --mode isoforms (aging PXR-A16): the port of aging's isoform_sites.py, for the D43 isoform XMLs
+// --mode isoforms: the port of aging's isoform_sites.py, for the D43 isoform XMLs
 // (aging_isoforms_tier1-2_<organism>.xml). A biological site on an isoform accession (P02751-8) goes on the isoform only
 // where MetaMorpheus's parsimony put it in a 1%-FDR target protein group that lists the isoform and NOT its canonical
 // (aging's rule, 2026-09-27). A group listing both is ambiguous. Every site the rule assigns is written ("loose"); the
@@ -45,7 +45,7 @@
 //       writes isoform_site_verdicts.tsv and isoform_sites_selected.tsv to --sites-out, <xml>_<T>.xml, isoform_provenance_<T>.json
 //   dotnet run BuildPtmDb.cs -- --mode isoforms --from-sites DIR ...   DIR/isoform_sites_selected.tsv instead of the catalog
 // An Ensembl-only entry (<entry dataset="Ensembl">, aging D128: ENSMUSP00000292642) has no -N suffix to name its
-// canonical (aging PXR-A135). Its canonical is the Swiss-Prot entry of its gene in that organism's proteome: the one
+// canonical. Its canonical is the Swiss-Prot entry of its gene in that organism's proteome: the one
 // whose Ensembl gene ID matches the entry's, else the one whose primary gene name does; none or several leaves the
 // entry unresolved (recorded in the provenance, no sites). The same rule then applies. Needs --proteome organism=path.
 //       [--proteome mouse=UP000000589.xml ...]   the proteomes the Ensembl-only entries' canonicals are read from
@@ -70,7 +70,7 @@ if (xmls.Count == 0 || xmls.Keys.Any(k => !Orgs.Values.Contains(k))) return Usag
 Directory.CreateDirectory(outDir);
 Directory.CreateDirectory(sitesOut);
 string mode = opt.GetValueOrDefault("mode")?[0] ?? "proteome";
-// --exclude-enriched FILE (the user, 2026-10-07): a site of a PTM class is not counted from a deposit that ENRICHES that
+// --exclude-enriched FILE (the maintainer, 2026-10-07): a site of a PTM class is not counted from a deposit that ENRICHES that
 // class (phospho from a phospho enrichment, GG from a ubiquitin pulldown); applied to regular searches, enriched-for
 // sites would flood them with false positives. FILE (declared): dataset<TAB>excluded_classes (comma-separated Bio
 // classes)[<TAB>source]. To it the catalog adds MEASURED enrichment: any run whose 1% target PSMs carry phospho at
@@ -243,7 +243,7 @@ static int RunIsoforms(string? catalog, string? fromSites, string outDir, string
 {
     var all = Stopwatch.StartNew();
     JsonObject? meta = null;
-    // Ensembl-only entry -> its gene's Swiss-Prot canonical (PXR-A135); the resolution of each goes into the provenance.
+    // Ensembl-only entry -> its gene's Swiss-Prot canonical; the resolution of each goes into the provenance.
     var canon = new Dictionary<string, string>(StringComparer.Ordinal);
     var ensemblProv = new JsonObject();
     foreach (var (org, src) in xmls.OrderBy(kv => kv.Key, StringComparer.Ordinal))
@@ -458,7 +458,7 @@ static List<IsoVerdict> IsoformVerdicts(string catalog, Dictionary<string, strin
     }
     string names = string.Join(",", Bio.Keys.Select(n => "'" + n.Replace("'", "''") + "'"));
     static string Lit(string s) => "'" + s.Replace("'", "''") + "'";
-    // An Ensembl-only accession's canonical comes from its gene (PXR-A135); an isoform's from its -N suffix.
+    // An Ensembl-only accession's canonical comes from its gene; an isoform's from its -N suffix.
     string canonMap = canon.Count == 0 ? "SELECT NULL::VARCHAR AS acc, NULL::VARCHAR AS canon WHERE false"
         : "SELECT * FROM (VALUES " + string.Join(", ", canon.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => $"({Lit(kv.Key)}, {Lit(kv.Value)})")) + ") t(acc, canon)";
     var rows = new List<IsoVerdict>();
@@ -793,7 +793,7 @@ static partial class Program
         ["Acetylation on K"] = ("acetylK", 'K'), ["Acetylation on X"] = ("acetylNterm", null),
         ["Methylation on K"] = ("me1K", 'K'), ["Dimethylation on K"] = ("me2K", 'K'), ["Trimethylation on K"] = ("me3K", 'K'),
         ["Methylation on R"] = ("me1R", 'R'), ["Dimethylation on R"] = ("me2R", 'R'),
-        // agingPTM-v5 (the user, 2026-10-26/27: "clean the databases and keep them clean until other PRs produce clean
+        // agingPTM-v5 (the maintainer, 2026-10-26/27: "clean the databases and keep them clean until other PRs produce clean
         // databases"): Hydroxylation on P and K are not selected. GPTMD's sites of both carry the misplaced Met/Trp
         // oxidation fingerprint (results/gptmd-census_2026-10-25). Put them back once GPTMD's own filters make them clean.
         // agingPTM-v7: Malonylation on K is not selected either. Its GPTMD sites run 10.1% on entrapment partners under

@@ -80,7 +80,7 @@ public static class QuestionLoader
         string? studyLayer = pub?.OptionalString("study_layer");
         string? manifest = pub?.OptionalString("manifest");
         var command = pub?.StringList("command") ?? Array.Empty<string>();
-        // D41 rule 6 (PXR-A72, PXR-A75): one build per 6 hours at most, not one per ingest; a build of aging's catalog
+        // D41 rule 6: one build per 6 hours at most, not one per ingest; a build of aging's catalog
         // passed an hour on 2026-10-11, so the old fixed 1-hour limit killed every one.
         double everyHours = pub?.OptionalNumber("every_h") ?? 6, publishTimeout = pub?.OptionalNumber("timeout_h") ?? 4;
         if (everyHours < 0) throw new ConfigException(file, "publish.every_h must be 0 (after each ingest) or more");
@@ -165,7 +165,7 @@ public static class QuestionLoader
             sx.RefuseUnknownKeys();
         }
 
-        // v0.4.46 (aging PXR-A179, their D171): [gate], rules over a deposit's own text before the census queues it.
+        // v0.4.46 (their D171): [gate], rules over a deposit's own text before the census queues it.
         GateTerms? gate = null;
         if (root.OptionalTable("gate") is { } gt)
         {
@@ -244,7 +244,7 @@ public static class QuestionLoader
         string? species = t.OptionalString("species");
         if (species is not null && !Regex.IsMatch(species, "^[a-z]+(_[a-z]+)*$"))
             throw new ConfigException(file, $"{where}.species must be a profile database key such as \"rat\" (got '{species}')");
-        // v0.4.39 (aging PXR-A158): [exceptions.PXD.replace_files."<raw file name>"] path, pride_sha1, sha256, note.
+        // v0.4.39: [exceptions.PXD.replace_files."<raw file name>"] path, pride_sha1, sha256, note.
         Dictionary<string, FileReplacement>? replace = null;
         if (t.OptionalTable("replace_files") is { } rt)
         {

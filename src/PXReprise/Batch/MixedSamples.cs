@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace PXReprise.Batch;
 
 /// <summary>
-/// G16 (aging 024): a deposit whose raw file names say it holds different kinds of sample. PXD077298 is 8
+/// G16: a deposit whose raw file names say it holds different kinds of sample. PXD077298 is 8
 /// <c>Lysate_*</c>, 8 <c>IP_*</c> and 6 <c>EV_*</c> runs under one dataset-level enrichment, so a catalog reader could
 /// pool lysates with pulldowns. This only raises the question: which run is which enrichment is curation
 /// (<c>run_enrichment</c>, as PXD058611 and PXD077298 have it), because a file name is a hint, not a protocol.
@@ -23,7 +23,7 @@ public static class MixedSamples
         ["ev"] = "vesicle", ["evs"] = "vesicle", ["exosome"] = "vesicle", ["exosomes"] = "vesicle",
         ["secretome"] = "secreted", ["conditioned"] = "secreted",
         ["phospho"] = "phospho", ["tio2"] = "phospho", ["imac"] = "phospho",
-        // PXR-A88 (aging 082): PXD038328's 20 `_acetylom_` and 20 `_proteom_` runs went unflagged.
+        // PXD038328's 20 `_acetylom_` and 20 `_proteom_` runs went unflagged.
         ["proteom"] = "whole", ["phosphoproteome"] = "phospho", ["phosphoproteom"] = "phospho",
         ["acetylome"] = "acetyl", ["acetylom"] = "acetyl", ["succinylome"] = "succinyl", ["succinylom"] = "succinyl",
     };

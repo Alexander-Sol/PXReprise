@@ -1,5 +1,5 @@
 #:property PublishAot=false
-// Compares the label-free quantification of two searches of ONE deposit (the user, 2026-10-19: "let's focus on getting
+// Compares the label-free quantification of two searches of ONE deposit (the maintainer, 2026-10-19: "let's focus on getting
 // good quant into the results"). Reads AllQuantifiedPeptides.tsv and AllQuantifiedProteinGroups.tsv in each search's
 // Task*SearchTask and writes a Markdown report. Companion to CompareSearches.cs, which compares the identifications.
 //

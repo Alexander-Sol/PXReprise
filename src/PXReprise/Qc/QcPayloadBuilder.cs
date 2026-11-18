@@ -9,7 +9,7 @@ using PXReprise.Search;
 namespace PXReprise.Qc;
 
 /// <summary>
-/// The histogram bin rule for the payload's distributions. The rule is qc's (<c>qctemplates.spec</c>, qc 007 §4): when a
+/// The histogram bin rule for the payload's distributions. The rule is qc's (<c>qctemplates.spec</c>): when a
 /// Python with qctemplates installed is configured, its constants are read from there; otherwise a vendored copy is
 /// used and the payload SAYS so in <c>dataset.notes</c> (the fallback announces itself, never passes silently).
 /// </summary>
@@ -399,7 +399,7 @@ public static class QcPayloadBuilder
     }
 
     /// <summary>
-    /// qc's <c>dataset.search_databases</c> (qc D14, PXR-C6): one entry per database file the search read, from the search
+    /// qc's <c>dataset.search_databases</c> (qc D14): one entry per database file the search read, from the search
     /// provenance's <c>inputs[]</c> (each with its own sha256). <c>kind</c> and <c>uniprot_release</c> are named only where
     /// the file name says so: <c>uniprot_canonical</c> for UniProt's gene-centric proteome, <c>uniprot_reviewed</c> for the
     /// reviewed download, the release from a <c>_YYYY_MM</c> token; a derived build (our agingPTM sites) keeps its source's
@@ -570,7 +570,7 @@ public static class QcPayloadBuilder
     /// not measurable, so everything is empty rather than a quantified count of zero.
     /// <para>A group is quantified when ANY SpectralCount_ column has it, a sample spanning several files included: seen in
     /// a sample is seen in at least one run. The runs-per-group histogram counts runs, so it is empty (not measurable) once
-    /// any sample spans several files. Before qc 016 (PXR-C11) both were counted over the single-file columns alone, as if
+    /// any sample spans several files. Before qc 016 both were counted over the single-file columns alone, as if
     /// those were the whole table: PXD051203, 39 runs and 19 multi-run samples, read 236 groups, all {"1": 236}.</para>
     /// </summary>
     public static ProteinGroupPass ParseProteinGroups(string path)
@@ -628,7 +628,7 @@ public static class QcPayloadBuilder
     /// used for an excluded file the QC report gives no reason for.
     /// </summary>
     /// <param name="schema"><see cref="Schema"/> (/2, the default) or <see cref="SchemaV1"/>. A payload is built as one or the
-    /// other, never mixed: whole-search counts never go out under /1 (qc 011).</param>
+    /// other, never mixed: whole-search counts never go out under /1.</param>
     public static QcPayloadResult Build(string searchDir, string qcDir, string accession, string runLabel,
         string? metamorpheusVersion, QcBins bins, IEnumerable<string>? extraNotes = null, IEnumerable<string>? excludedFiles = null,
         string? excludedReason = null, string schema = Schema)
@@ -700,7 +700,7 @@ public static class QcPayloadBuilder
                 m["pg_missing_frac_msms"] = SearchMetrics.PyRound((double)(qn - pg.Present.GetValueOrDefault(name)) / qn, 4);
             if (pg.ContaminantIntensity.TryGetValue(name, out double ci)) m["contaminant_intensity_frac"] = ci;
             var entry = new JsonObject { ["file"] = name, ["metrics"] = m, ["distributions"] = dists.GetValueOrDefault(name)?.DeepClone() ?? new JsonObject() };
-            // qc D12 (qctemplates 0.2.0, qc PXR-C1, QC-Q20): a file left OUT of the search stays listed, with `excluded` set
+            // qc D12 (qctemplates 0.2.0, QC-Q20): a file left OUT of the search stays listed, with `excluded` set
             // to WHY, so it trips no gate, counts toward no dataset number, and the report gives the reason. qc's schema takes
             // a non-empty string; qc 001 said `true`, which the schema rejects (PXD014274, 2026-10-12). A file searched with
             // zero results is a real 0 (qc D6), never this.
@@ -778,7 +778,7 @@ public static class QcPayloadBuilder
     }
 }
 
-/// <summary>qc's own tool, run as a process: <c>&lt;python&gt; -m qctemplates validate|render</c>. qc owns it (it ships a pyproject.toml, qc 007).</summary>
+/// <summary>qc's own tool, run as a process: <c>&lt;python&gt; -m qctemplates validate|render</c>. qc owns it (it ships a pyproject.toml).</summary>
 public static class QcTemplates
 {
     public static (int Rc, string Output) Run(string python, IReadOnlyList<string> args, TimeSpan timeout)

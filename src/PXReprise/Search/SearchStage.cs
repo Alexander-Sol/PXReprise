@@ -43,7 +43,7 @@ public static class SearchStage
     public const double CysteinePoorBelow = 0.05;
 
     /// <summary>
-    /// v0.4.45 (aging PXR-A181): the chemistry of a search run outside the batch (<c>pxreprise search</c>), e.g. a deposit
+    /// v0.4.45: the chemistry of a search run outside the batch (<c>pxreprise search</c>), e.g. a deposit
     /// hosted at MassIVE, of which PRIDE has no record. A profile that reads each deposit's chemistry (G19) takes it from the
     /// SDRF given with <c>--design</c> (PXReprise writes every deposit's, D65), and with none from the defaults; each fact's
     /// source goes to provenance as in the batch. PRIDE is never asked. Null for a profile that keeps its own chemistry.
@@ -144,7 +144,7 @@ public static class SearchStage
         string qcReport = Path.Combine(r.QcDir, "qc_report.json");
         if (!File.Exists(qcReport)) throw new UsageException($"no QC report at {qcReport}: run `pxreprise qc` first");
         var qc = JsonNode.Parse(File.ReadAllText(qcReport))!.AsObject();
-        // v0.4.45 (the user, 2026-11-11): a raw whose calibration an interrupted search finished is searched from that
+        // v0.4.45 (the maintainer, 2026-11-11): a raw whose calibration an interrupted search finished is searched from that
         // calibration (CalibratedStandIns), whether or not the raw is still here. `files` holds every searched raw's path (a
         // stand-in's raw may be gone); `toCalibrate` the ones MetaMorpheus calibrates in this search.
         var standIns = CalibratedStandIns.In(r.SpectraDir).ToDictionary(s => s.RawName, StringComparer.Ordinal);
@@ -171,7 +171,7 @@ public static class SearchStage
         // v0.4.46: no SDRF, no isobaric search) from beside the first spectra file; written here, before any task runs.
         var design = kit is not null ? DesignStage.PrepareIsobaric(r.SpectraDir, files, r.CuratedDesign, r.DesignConditionColumns, kit)
             : p.Design == "sdrf" ? DesignStage.Prepare(r.SpectraDir, files, r.CuratedDesign, r.DesignConditionColumns, r.Organism, r.Accession) : null;
-        // v0.4.27 (dataRepo 052, PXR-R28): the SDRF the design came from is kept in the search's own output, and the record
+        // v0.4.27: the SDRF the design came from is kept in the search's own output, and the record
         // names that copy. A question's SDRF can be edited after its search (seven of aging's were), and the record must
         // still name the bytes the search used. `sdrf_sha256` is the copy's too: the bytes are the same.
         if (design is not null && design["written"]!.GetValue<bool>() && design["sdrf"]?.GetValue<string>() is { } used && File.Exists(used))
@@ -198,7 +198,7 @@ public static class SearchStage
         {
             ["metamorpheus_cmd"] = m.CmdFor(p.MetaMorpheus),
             ["metamorpheus_version"] = p.MetaMorpheus,
-            // v0.4.34 (reader fix R6; QuantProject 075, ptmQtl 033, go 015): the mzLib MetaMorpheus itself runs on, which
+            // v0.4.34 (reader fix R6): the mzLib MetaMorpheus itself runs on, which
             // need not be the engine's own (provenance's `mzlib`).
             ["metamorpheus_mzlib_version"] = MetaMorpheusMzLib(m.CmdFor(p.MetaMorpheus)),
             ["accept_thermo_licence"] = m.AcceptThermoLicence,
@@ -272,7 +272,7 @@ public static class SearchStage
             });
 
         // The organism's spectral library, resolved before the task files because it decides two of their values. An
-        // isobaric kit has a chain of its own, which starts blank (the user, 2026-10-29).
+        // isobaric kit has a chain of its own, which starts blank (the maintainer, 2026-10-29).
         // 2026-11-11: with the machine's spectral_library_remote, the chain is fetched from the cloud first and the new version
         // is claimed there (LibraryCloud); a chain another machine moved meanwhile is merged, not refused.
         using var libraryCloud = p.SpectralLibrary && r.UseLibrary ? LibraryCloud.Open(m.SpectralLibraryRemote) : null;
@@ -457,7 +457,7 @@ public static class SearchStage
             return a;
         }
         if (m.AcceptThermoLicence) prov.Note("Thermo RawFileReader licence accepted via the machine configuration (operator's recorded choice).");
-        // v0.4.35 (the user, 2026-11-02): each raw is deleted once its calibration is finished, while the search runs.
+        // v0.4.35 (the maintainer, 2026-11-02): each raw is deleted once its calibration is finished, while the search runs.
         bool sweep = m.DeleteRawAfterCalibration && p.Tasks.Contains("Calibration");
         var calibratedGone = new List<string>();
         async Task<RunResult> RunMetaMorpheus(List<string> a, string logName, IReadOnlyList<string> sweepFiles)
@@ -580,7 +580,7 @@ public static class SearchStage
             prov.Note($"FAILED: the run carries TmtDesign.txt but its reporter quantification did not use it: {tmtWhy}");
         }
         // v0.4.34 (reader fixes R3, R4): what MetaMorpheus 1.1.13 states about its own run. R4: every database a task loaded,
-        // and every GPTMD database's parents, must be the bytes this search was given (MetaMorpheus #2898; logs PXR-O11).
+        // and every GPTMD database's parents, must be the bytes this search was given (MetaMorpheus #2898).
         // R3: the identification filter its count lines state, any PEP-not-done sentence (#2919), and the design gaps it
         // quantified with a warning (#2928). Releases before 1.1.13 write none of these lines; nothing is then recorded.
         if (Directory.Exists(mm))
@@ -641,8 +641,8 @@ public static class SearchStage
             {
                 try
                 {
-                    // v0.4.32 (the user, 2026-10-27; cleavageRules PXR-V8): every new version is cleaned, judged against
-                    // this search's own target databases and the modifications it could name. v0.4.34 (cleavageRules 009):
+                    // v0.4.32 (the maintainer, 2026-10-27): every new version is cleaned, judged against
+                    // this search's own target databases and the modifications it could name. v0.4.34:
                     // the blocked-C-terminus rule is off for a search that respected cleavage-blocking modifications.
                     var cleaning = LibraryCleaning.For(
                         Directory.EnumerateFiles(Path.Combine(Path.GetDirectoryName(cmd)!, "Mods"), "*.txt")
@@ -730,7 +730,7 @@ public static class SearchStage
         // default), so it has no design flag. Until v0.4.45 a default gave `no_channel_design` here.
         if (kit is null && !hasDesign)
             flags.Add("no_design_file: FlashLFQ treated each file as its own biorep under one blank condition; no normalization; not usable for condition comparisons (owner: QuantProject projection)");
-        // MetaMorpheus #2816: a failed SDRF write never fails the search; it leaves SdrfWriter_crash.txt (sdrf PXR-E1).
+        // MetaMorpheus #2816: a failed SDRF write never fails the search; it leaves SdrfWriter_crash.txt.
         string? sdrfCrash = Directory.Exists(mm) ? Directory.EnumerateFiles(mm, "SdrfWriter_crash.txt", SearchOption.AllDirectories).FirstOrDefault() : null;
         if (sdrfCrash is not null)
         {
@@ -744,8 +744,8 @@ public static class SearchStage
         {
             var written = Directory.EnumerateFiles(mm, "*.sdrf.tsv", SearchOption.AllDirectories).Order(StringComparer.Ordinal).ToList();
             foreach (string sdrf in written) prov.Output(sdrf);
-            // v0.4.46 (the user, 2026-11-11: "make the output sdrf read-only by default"): the SDRF a search writes states the
-            // facts its quantities came from. A corrected fact is a new search, never an edit of this file (dataRepo PXR-R58).
+            // v0.4.46 (the maintainer, 2026-11-11: "make the output sdrf read-only by default"): the SDRF a search writes states the
+            // facts its quantities came from. A corrected fact is a new search, never an edit of this file.
             // Not under Individual File Results, which the prune stage deletes.
             if (m.OutputSdrfReadOnly)
             {
@@ -755,7 +755,7 @@ public static class SearchStage
                     prov.Note($"output SDRF made read-only ({string.Join(", ", locked.Select(f => Path.GetRelativePath(outDir, f)))}; machine output_sdrf_read_only): a corrected sample fact is a new search, never an edit of this file");
             }
         }
-        // aging 043 (PXR-A37): a whole proteome runs 12-26% cysteine-containing target peptides at 1%; every chemistry
+        // A whole proteome runs 12-26% cysteine-containing target peptides at 1%; every chemistry
         // mismatch found so far (NEM, MMTS searched as carbamidomethyl) sat below 5%. A measurement and a flag, never a gate:
         // an enrichment is cysteine-poor by design, so the manifest keeps the flag only for non-enriched deposits.
         if (key["AllPeptides.psmtsv"] is { } peptides && CysteineShare(peptides) is double cys)
@@ -819,7 +819,7 @@ public static class SearchStage
     }
 
     /// <summary>
-    /// <c>excluded_files</c> in the shape aging's batch_runner.py wrote and dataRepo reads (DATAREPO-51, aging D52):
+    /// <c>excluded_files</c> in the shape aging's batch_runner.py wrote and dataRepo reads (aging D52):
     /// <c>{files, reason}</c>. dataRepo drops these files from the deposit's runs; without the block, a QC-excluded blank
     /// injection came back as a run (PXD034059: 44 runs against the manifest's 43).
     /// </summary>
@@ -912,7 +912,7 @@ public static class SearchStage
     }
 
     /// <summary>
-    /// v0.4.29 (ptmQtl PXR-P18/P19): each side reaction the deposit's chemistry read that the profile maps to a GPTMD
+    /// v0.4.29: each side reaction the deposit's chemistry read that the profile maps to a GPTMD
     /// modification. A side reaction the profile does not map is read and recorded, never searched.
     /// </summary>
     internal static IReadOnlyList<(Discovery.ChemistryArtifact Artifact, string ModId)> ArtifactMods(Profile p, Discovery.DepositChemistry? chem) =>

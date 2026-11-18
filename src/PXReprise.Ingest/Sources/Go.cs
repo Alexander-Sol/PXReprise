@@ -50,7 +50,7 @@ public sealed class GoCategories
 /// <list type="bullet">
 /// <item><b>A released mzLib wrote it.</b> <c>#!mzlib_release none</c> is a build with no release tag. A reader
 /// may be built and tested against such a file (GO-A1), but it is never ingested; the refusal names the commit
-/// from <c>#!mzlib_version</c> (go 010 section 2). <c>allowPrerelease</c> exists for tests only.</item>
+/// from <c>#!mzlib_version</c>. <c>allowPrerelease</c> exists for tests only.</item>
 /// <item><b>The five header counters are the rows' own</b> (go D26), each counting groups at
 /// <c>q_value &lt;= counter_q_value_max</c> (D29), recounted here so a reader tests go's writer.</item>
 /// <item><b>Every row agrees with the header</b> on <c>go_release</c> and both sha256s, a non-empty <c>go_id</c>
@@ -59,10 +59,10 @@ public sealed class GoCategories
 /// carries its target's GO (#1271), so no file from an entrapment search is ingested until GO-E1 is answered
 /// (our go 013). Before D36 the reader could not see this; now it refuses. go 018/020 (GO-D2): the refusal
 /// stays until go's D39 is in a released mzLib; our go 019 then takes go 018 section 1.3's narrower check.</item>
-/// <item><b>No accession sits in two groups.</b> go has never seen it (go 010 section 3), and a per-accession row
+/// <item><b>No accession sits in two groups.</b> go has never seen it, and a per-accession row
 /// would then have two group q-values. Refused until MetaMorpheus says whether parsimony can do it (our go
 /// 011).</item>
-/// <item><b>Coverage</b> (go 009 section 4): every <c>go_id</c> of a category file is a term of its annotation
+/// <item><b>Coverage</b>: every <c>go_id</c> of a category file is a term of its annotation
 /// file, under the same <c>go_release</c> and ontology sha256. A mismatched pair stored would be a join that
 /// silently drops categories.</item>
 /// </list>
@@ -430,7 +430,7 @@ public static class Go
         };
     }
 
-    /// <summary>Refuse a category file that is not the pair of this annotation file (go 009 section 4).</summary>
+    /// <summary>Refuse a category file that is not the pair of this annotation file.</summary>
     /// <exception cref="IngestException">A different ontology release or sha256, or a category term the annotation
     /// file does not carry.</exception>
     public static void CheckCoverage(GoAnnotation annotation, GoCategories categories)

@@ -8,7 +8,7 @@ public enum AcquisitionMode { Dda, Dia }
 /// <summary>
 /// <see cref="Mixed"/>: the record names both an isobaric and a metabolic label (e.g. PXD047864, PXD054682). The text
 /// cannot say which the search needs, so no profile takes it and it waits for a hand decision.
-/// <see cref="O18"/>: enzymatic 16O/18O labelling at the C-terminus (PXD028282, aging 017); searched label-free, most
+/// <see cref="O18"/>: enzymatic 16O/18O labelling at the C-terminus (PXD028282); searched label-free, most
 /// spectra carry a mass shift no label-free profile looks for.
 /// <see cref="Dileu"/>: N,N-dimethyl leucine tags (DiLeu, iDiLeu; PXD030724, D19). Not routed as isobaric: the isobaric
 /// profile searches TMT masses.
@@ -20,7 +20,7 @@ public enum InstrumentClass { OrbitrapHcdOnly, OrbitrapHybrid, Astral, Timstof, 
 /// <summary>
 /// What a deposit's acquisition is, as far as its PRIDE record says. Routing reads this; nothing else does.
 /// <see cref="Crosslinked"/>: crosslinking MS (XL-MS). Its peptides are linked pairs, which a linear search cannot
-/// identify (PXD062841: calibration failed on 35 of 35 runs, aging 017).
+/// identify (PXD062841: calibration failed on 35 of 35 runs).
 /// <see cref="NonspecificCleavage"/>: the peptides were not made by a protease the profiles search with: MHC/HLA
 /// immunopeptidomes and endogenous peptidomes (PXD034059 and PXD058775: about 0.0015 identification rate under a tryptic
 /// search, aging 030).
@@ -66,10 +66,10 @@ public static class AcquisitionClassifier
         @"pulsed?[- ]?SILAC", @"metabolic(ally)? label", @"\b13C6\b", "heavy (lysine|arginine)",
     }), Opt);
 
-    // Aging 017 (PXR-A11). PXD028282's keywords say "O18 labelling"; its authors searched "Label 18O (1 or 2) C-term".
+    // Aging 017. PXD028282's keywords say "O18 labelling"; its authors searched "Label 18O (1 or 2) C-term".
     private static readonly Regex O18 = new(@"\b(16O/)?18O\b|\bO-?18\b|oxygen-18|H2 ?18O", Opt);
 
-    // Aging 017 (PXR-A11). The names that only mean crosslinking MS are enough alone. DSS (also dextran sulfate sodium,
+    // Aging 017. The names that only mean crosslinking MS are enough alone. DSS (also dextran sulfate sodium,
     // a colitis model) and PIR (also the Protein Information Resource) count only within 80 characters of a crosslinking
     // word. "Crosslink" alone never counts: hydrogels are crosslinked, and ChIP samples are crosslinked with formaldehyde.
     private static readonly Regex CrosslinkingMs = new(string.Join("|", new[]
@@ -79,7 +79,7 @@ public static class AcquisitionClassifier
     }), Opt);
     private static readonly Regex AmbiguousReagent = new(@"\b(DSS|PIR)\b", Opt);
 
-    // Aging 030 (PXR-A23). PXD034059 (MHC class I, hupo-hipp tag) and PXD058775 (MHC-II) passed the screen and were
+    // Aging 030. PXD034059 (MHC class I, hupo-hipp tag) and PXD058775 (MHC-II) passed the screen and were
     // searched as tryptic. MHC/HLA counts only when it names peptides or ligands: "MHC class I expression" is proteome
     // biology. The enzyme phrases are how authors say they searched without one.
     private static readonly Regex NonspecificCleavageText = new(string.Join("|", new[]
@@ -122,7 +122,7 @@ public static class AcquisitionClassifier
     // v0.4.44: PXD002479: "TMT-tagged peptides were enriched with immobilized anti-TMT resin".
     private const string AntiTagResin = @"anti-?TMT (resin|antibod)";
 
-    // PXR-A88 (aging 082): PXD038328 ("acetyl-lysine enrichment") and PXD061654 ("enriched for acetylated peptides using a
+    // PXD038328 ("acetyl-lysine enrichment") and PXD061654 ("enriched for acetylated peptides using a
     // specific antibody"; keyword "Acetylome") were screened as whole proteomes: no acetyl term existed. Each phrase names
     // an enrichment, so "Acetyl (Protein N-term)" as a variable modification and "enrichment of acetylated proteins" in a
     // GO analysis do not match.
@@ -139,7 +139,7 @@ public static class AcquisitionClassifier
         ("ubiquitin_GG", new(@"\bk-?gg\b|di-?gly(cine)? remnant|ubiquitin remnant", Opt)),
         ("acetyl", new(AcylEnrichment("acetyl"), Opt)),
         ("succinyl", new(AcylEnrichment("succinyl"), Opt)),
-        // v0.4.17 (aging 108, PXR-A107): "lectin" as a word. Inside "collecting" it made a FLAG/HA immunoprecipitation glyco.
+        // v0.4.17: "lectin" as a word. Inside "collecting" it made a FLAG/HA immunoprecipitation glyco.
         ("glyco", new(@"glyco(peptide)?[- ]?enrich|\blectins?\b", Opt)),
         ("proximity_labelling", new(@"\bturboid\b|\bbioid\b|\bapex2\b|proximity[- ]labell?ing", Opt)),
         ("chemical_probe", new(@"kinobead|chemical probe|activity-based probe|\bdcp-?bio|" + ChemicalProbeWords, Opt)),

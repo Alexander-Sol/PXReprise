@@ -5,7 +5,7 @@ namespace PXReprise.Batch;
 /// <summary>
 /// Refuses a deposit whose raw files are already searched under another accession, before any download: PRIDE lists
 /// names and sizes for free. PXD012985 is PXD011740 deposited again (the same 12 raw files, byte-identical sizes), and
-/// was fetched and searched in full before aging's QC saw it (aging 015, PXR-A9). A file is its name and its size;
+/// was fetched and searched in full before aging's QC saw it. A file is its name and its size;
 /// a deposit is a duplicate when EVERY one of its raw files is in one searched deposit. Sharing some files is logged,
 /// never refused (PXD026955 and PXD027754 share one probe file and are different experiments).
 /// </summary>
@@ -23,7 +23,7 @@ public static class DuplicateScreen
     /// <param name="inFlight">
     /// Run folders fetched in full and being searched now, with no search provenance yet. The next deposit is screened
     /// while the current one searches, so without them a deposit is never compared with the one just before it:
-    /// PXD042302 (PXD042301 deposited again) was screened 7 s after PXD042301's search started (2026-10-04, PXR-A21).
+    /// PXD042302 (PXD042301 deposited again) was screened 7 s after PXD042301's search started (2026-10-04).
     /// </param>
     public static List<Searched> Index(IEnumerable<string> roots, IEnumerable<string>? inFlight = null)
     {

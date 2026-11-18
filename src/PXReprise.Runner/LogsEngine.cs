@@ -35,14 +35,14 @@ public sealed class RunResult
 
 /// <summary><c>logs.resolve_genes</c>: protein to Ensembl gene, per searched database (G64, D28 U15).</summary>
 /// <remarks>
-/// <para>The method is logs' (<c>logs:DEF-GENE-RESOLUTION v2</c>, logs 034; v1 was logs 017); the code is mzLib's
+/// <para>The method is logs' (<c>logs:DEF-GENE-RESOLUTION v2</c>; v1 was logs 017); the code is mzLib's
 /// <see cref="EnsemblGeneResolver"/>, called directly (the Python called it through pyMzLib's
 /// <c>proteins.resolve_genes</c>, whose projection is reproduced here column for column). This computes nothing
 /// about genes: it decides WHAT to run on, checks every input, calls the resolver, and refuses rows that do not
 /// keep logs' contract.</para>
 /// <para><b>The unit is one searched target database</b>, not a bundle: fifteen human datasets search one
 /// proteome, so one artefact serves all of them. <b>The contaminant database is never resolved</b> (our logs
-/// 018): a contaminant must not be mapped through anything (logs 002 section 0).</para>
+/// 018): a contaminant must not be mapped through anything.</para>
 /// <para>Inputs by role (U14), each checked before anything runs: <c>gene_set</c> (logs' compact gene table,
 /// hashed), <c>xref</c> (Ensembl's UniProt xref, required: without it the run is not v1), <c>logs_manifest</c>
 /// (used only to CHECK, so recorded and not hashed), and the searched databases from each bundle's own
@@ -54,12 +54,12 @@ public sealed class RunResult
 public static class LogsEngine
 {
     public const string Engine = "logs.resolve_genes";
-    /// <summary>The definition every run writes from datarepo 1.5.0 (logs 034/035, D59): v1's rows, with
+    /// <summary>The definition every run writes from datarepo 1.5.0 (D59): v1's rows, with
     /// <c>ensembl_xref_agreement</c> filled from mzLib's <c>GeneResolution.EnsemblXrefAgreement</c> (#1578, mzLib 1.0.598).
     /// It is hashed into the artefact id, so a v1 and a v2 run of one database never share an id.</summary>
     public const string DefinitionId = "logs:DEF-GENE-RESOLUTION v2";
 
-    /// <summary>The definition runs wrote up to datarepo 1.4.5, with no <c>ensembl_xref_agreement</c> (logs 017). No run
+    /// <summary>The definition runs wrote up to datarepo 1.4.5, with no <c>ensembl_xref_agreement</c>. No run
     /// writes it any more; a v1 row is never read as a v2 one.</summary>
     public const string DefinitionIdV1 = "logs:DEF-GENE-RESOLUTION v1";
     public const string Table = "gene_resolutions";
@@ -69,7 +69,7 @@ public static class LogsEngine
     private static readonly HashSet<string> NotStored = new(StringComparer.Ordinal) { "source_index", "source_path" };
 
     /// <summary>The resolution table's columns, as the bridge projects them (mzLib's GeneResolutionTsv headers
-    /// after the two source columns). <c>ensembl_xref_agreement</c> is mzLib #1578's last column (logs 034).</summary>
+    /// after the two source columns). <c>ensembl_xref_agreement</c> is mzLib #1578's last column.</summary>
     public static readonly IReadOnlyList<string> GeneResolutionColumns =
     [
         "source_index", "source_path", "accession", "entry_accession", "isoform", "namespace", "outcome",
@@ -238,7 +238,7 @@ public static class LogsEngine
 
     /// <summary>The resolver's table as <c>gene_resolutions</c> rows, after logs' acceptance checks (RUNNER.md).</summary>
     /// <exception cref="RunnerException">A failed read, a row for another database, a row whose gene set or xref
-    /// differ from logs' manifest (logs 016 section 1), an outcome outside mzLib's six, or no rows at all.</exception>
+    /// differ from logs' manifest, an outcome outside mzLib's six, or no rows at all.</exception>
     public static List<IReadOnlyDictionary<string, object?>> RowsFrom(ResolveResult result, string databaseSha, IReadOnlyDictionary<string, object?> rowValues)
     {
         if (result.FailedCount > 0) throw new RunnerException($"the resolver failed to read {result.FailedCount} database file(s)");
@@ -254,7 +254,7 @@ public static class LogsEngine
             ["gene_set_release"] = S(rowValues["gene_set_release"]),
         };
         var stored = names.Where(c => !NotStored.Contains(c)).ToList();
-        // A v2 row without the column would read as "no gene" (logs 034): a resolver that writes none is not v2's.
+        // A v2 row without the column would read as "no gene": a resolver that writes none is not v2's.
         if (!stored.Contains("ensembl_xref_agreement"))
             throw new RunnerException(
                 $"the resolver wrote no ensembl_xref_agreement, so its rows are not {DefinitionId} (logs 034). It needs an "
@@ -281,7 +281,7 @@ public static class LogsEngine
             }
             if (row.GetValueOrDefault("outcome") is not string outcome || !outcomes.Contains(outcome))
                 throw new RunnerException($"{where}: outcome {PyFormat.Repr(row.GetValueOrDefault("outcome"))} is not one of mzLib's [{string.Join(", ", outcomes.Order(StringComparer.Ordinal).Select(o => $"'{o}'"))}]");
-            // Schema 0.0.17 (logs 034/035, D59): the column is checked against the schema's three words, since the writer
+            // Schema 0.0.17 (D59): the column is checked against the schema's three words, since the writer
             // checks no enum, and against ensembl_xref_agrees as logs' table pairs them: `agrees` exactly where that is
             // true, empty exactly where that is empty.
             var agreement = row.GetValueOrDefault("ensembl_xref_agreement");

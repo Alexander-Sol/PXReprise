@@ -87,7 +87,7 @@ public static class PtmQtlCore
     public const string PairDefinition = "ptmQtl:DEF-PTM-PAIR v2";
     public const string TraitDefinition = "ptmQtl:DEF-SITE-TRAIT v1";
 
-    /// <summary>S2: the mzLib categories whose modifications are biological (D26, D27; our ptmQtl 027, 029).</summary>
+    /// <summary>S2: the mzLib categories whose modifications are biological (D26, D27; our ptmQtl 027).</summary>
     public static readonly IReadOnlyList<string> BiologicalCategories = ["Common Biological", "UniProt", "Trypsin Digested", "AspN Digested"];
 
     /// <summary>S2: modifications of those categories that are not biological (ptmQtl D27).</summary>

@@ -26,7 +26,7 @@ public sealed record QcFileResult(
     TagEvidence? IsobaricTag = null);                  // v0.4.48 (G108): a TMT kit's reagent, TMT or TMTpro, from the labelled lysine's y1
 
 /// <summary>
-/// What the raw file says about its own acquisition (DATAREPO-72), recorded while the file still exists: the search's
+/// What the raw file says about its own acquisition, recorded while the file still exists: the search's
 /// cleanup deletes it, and nothing downstream re-reads spectra. Each value is the reader's, unconverted; null means
 /// the reader did not give it. A Thermo RAW start time is the instrument's local clock with no zone (mzLib #1349).
 /// </summary>

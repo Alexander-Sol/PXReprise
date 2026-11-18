@@ -78,7 +78,7 @@ public sealed record StudyResult(string BundlePath, string BundleId, string Laye
 /// NOT decide, because they are aging's to decide and a check here would freeze a guess into the data:
 /// <c>feature_id</c> at meta grain is not resolved against anything (DATAREPO-20(c) asks what a feature's
 /// cross-dataset identity even is); and <c>definition_id</c> is resolved against the delivery's OWN declared
-/// definitions, not the core <c>definitions</c> table (aging 024 section 2a): their definitions are not
+/// definitions, not the core <c>definitions</c> table: their definitions are not
 /// produced by a search, and a <c>definition_id</c> that is not among them refuses the write.</para>
 /// </remarks>
 public static class StudyWriter
@@ -91,7 +91,7 @@ public static class StudyWriter
     /// (<c>sample_characteristics.value_reserved</c>). A curator's <c>not applicable</c> (a cell line has no
     /// tissue) and <c>not available</c> (the sources were read and do not say) are answers, and no row means
     /// "not curated". Refusing the words, as the first draft did, made the second and third look the same: G42
-    /// from the curator's side (aging 078, REQ-DATAREPO-6). Computed rather than trusted, so it cannot disagree
+    /// from the curator's side. Computed rather than trusted, so it cannot disagree
     /// with the value.</remarks>
     public static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> StudyReservedFlags =
         new Dictionary<string, IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>(StringComparer.Ordinal)

@@ -119,7 +119,7 @@ public sealed record Profile(
     public static readonly string[] MetaMorpheusSettingScopes = { "all", "calibration", "gptmd", "search" };
 
     /// <summary>The search task runs with <c>RespectCleavageBlockingModifications = true</c> (scope <c>all</c> or
-    /// <c>search</c>), so it writes no peptide ending at a cut in a blocking modification (cleavageRules PXR-V9).</summary>
+    /// <c>search</c>), so it writes no peptide ending at a cut in a blocking modification.</summary>
     public bool SearchRespectsCleavageBlocking => MetaMorpheusSettings?.Any(s =>
         s.Key == "RespectCleavageBlockingModifications" && (s.Scope is "all" or "search")
         && s.TomlValue.Trim().Equals("true", StringComparison.OrdinalIgnoreCase)) == true;

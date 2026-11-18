@@ -8,7 +8,7 @@ using PXReprise.Cli;
 namespace PXReprise.Search;
 
 /// <summary>
-/// Which spectra a spectral library leaves out until clean libraries come from the search itself (the user, 2026-10-27:
+/// Which spectra a spectral library leaves out until clean libraries come from the search itself (the maintainer, 2026-10-27:
 /// "clean the libraries now and keep them clean until clean libraries are produced"; cleavageRules PXR-V8). Two rules,
 /// each judged on the spectrum's full sequence (its "Name:" line):
 /// <list type="bullet">
@@ -24,8 +24,8 @@ namespace PXReprise.Search;
 /// their UniProt names and stay.</item>
 /// </list>
 /// Every library this engine registers is filtered, so a library cleaned once stays clean. The first rule is left off for a
-/// search that ran with <c>RespectCleavageBlockingModifications</c> (v0.4.34; cleavageRules 009): it adds no such spectrum
-/// (PXD061654 under <c>label-free-dda@12</c>: 0 of 1,225,187), and its parent version is already clean.
+/// search that ran with <c>RespectCleavageBlockingModifications</c> (v0.4.34): it adds no such spectrum
+/// (PXD061654 under <c>label-free-dda@12</c>: 0 of 1), and its parent version is already clean.
 /// </summary>
 public sealed class LibraryCleaning
 {
@@ -33,7 +33,7 @@ public sealed class LibraryCleaning
     public static readonly IReadOnlyList<string> DoubtfulClasses = new[] { "Common Biological:Hydroxylation on P", "Common Biological:Hydroxylation on K" };
 
     /// <summary>The protease every library spectrum is judged against: every profile digests with trypsin, and a deposit
-    /// searched otherwise contributes few spectra (cleavageRules PXR-V8).</summary>
+    /// searched otherwise contributes few spectra.</summary>
     public const string Protease = "trypsin";
 
     private readonly Dictionary<string, Modification> _mods;
