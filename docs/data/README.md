@@ -30,7 +30,7 @@ how its counts reconcile against yours.
 → [**architecture.md**](architecture.md) — how the pieces fit, and which parts are decided versus
 proposed.
 → [**schema/core.md**](schema/core.md) — every table, column, type and vocabulary. Generated from
-`schema/datarepo.yaml`; do not edit by hand.
+`schemas/datarepo/datarepo.yaml`; do not edit by hand.
 
 **"I run an instance: I have searches and want them served."**
 → [**operating.md**](operating.md): the operator's loop (install a release, write the manifest,

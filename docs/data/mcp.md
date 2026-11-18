@@ -79,9 +79,9 @@ over SQL the agent would write anyway, and several answer questions no measureme
   number, and which metrics cite it.
 - **`"tables"`** — every table with its kind and what one row of it is.
 
-The column meanings are generated from `schema/datarepo.yaml` into
-`dotnet/src/DataRepo.Bundle/Generated/SchemaDocs.g.cs` by the same tool that generates the table
-definitions (`DataRepo.SchemaGen`), and CI fails on drift. A description an agent
+The column meanings are generated from `schemas/datarepo/datarepo.yaml` into
+`src/PXReprise.Bundle/Generated/SchemaDocs.g.cs` by the same tool that generates the table
+definitions (`PXReprise.SchemaGen`), and CI fails on drift. A description an agent
 reads therefore cannot fall out of step with the column it describes.
 
 ### `datarepo_search(query, kind=None, limit=25)`
@@ -219,7 +219,7 @@ it counts are absent from `protein_groups_1pct` — so its description says so i
 
 ## What the sandbox does, and what it does not
 
-`datarepo_sql` runs inside the sandbox (`Sandbox` in `DataRepo.Mcp`), which is **stage one** of a two-stage design. What
+`datarepo_sql` runs inside the sandbox (`Sandbox` in `PXReprise.Mcp`), which is **stage one** of a two-stage design. What
 ships now bounds **blast radius and provenance**; it is not claimed as a security boundary, because
 locally the agent already has your filesystem through Claude Code. The sqlglot AST allow-list in
 FRAMEWORK section 4 is stage two, for the day a public no-login endpoint exists and the thing being
