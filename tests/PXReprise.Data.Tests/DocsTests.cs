@@ -11,8 +11,8 @@ namespace PXReprise.Data.Tests;
 /// relative link in README.md, CONTRIBUTING.md and docs/ lands on a file and a heading that exist.</summary>
 /// <remarks>
 /// <para>Ported from the Python release's <c>tests/test_getting_started.py</c> and <c>tests/test_docs_links.py</c>,
-/// which now run only at the frozen v0.32.0 tag. docs/cli.md has its own check, <c>tools/build_cli_docs.py
-/// --check</c>, run by CI against the CLI it builds.</para>
+/// which now run only at the frozen v0.32.0 tag. docs/data/cli.md and docs/data/schema/*.md have their own checks, in
+/// <c>GeneratedPagesTests</c>.</para>
 /// <para>The tutorial promises that a reader on its stated version gets the ids it prints. A catalog id hashes the
 /// program's version, so every release silently falsified the page until a test held it (0.30.0's tutorial quoted
 /// a 0.29.0 catalog id, and a stranger found it first). Tests are built as <c>0.0.0-dev</c>, so the catalog id this
