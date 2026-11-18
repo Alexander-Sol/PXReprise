@@ -1,7 +1,7 @@
 # `datarepo ingest`
 
 Turns one dataset's pipeline output into one immutable Parquet bundle that conforms to
-[`schema/datarepo.yaml`](../../schemas/datarepo/datarepo.yaml).
+[`schemas/datarepo/datarepo.yaml`](../../schemas/datarepo/datarepo.yaml).
 
 dataRepo stores and serves. The ingester re-runs nothing, recomputes nothing, and decides nothing the
 producer has already decided.
@@ -150,7 +150,7 @@ name has meant two different counts:
 | `pxreprise-provenance/1` | layout 3, under PXReprise's question-neutral name for the same document |
 
 Anything else is refused, naming the schemas that are read. A new schema name is one line in
-`Provenance.Layouts` (`dotnet/src/DataRepo.Ingest/Sources/Provenance.cs`), and it is added only once its fields are known to match a layout.
+`Provenance.Layouts` (`src/PXReprise.Ingest/Sources/Provenance.cs`), and it is added only once its fields are known to match a layout.
 The schema string is kept verbatim in `provenance_records.provenance_schema`, and the file's bytes
 are part of the bundle id, so renaming the schema gives a new bundle id and nothing else changes.
 
@@ -207,7 +207,7 @@ the same types the Python release reached through pyMzLib's bridge, and reproduc
 projection, so the rows are the same. Where dataRepo reads a file itself it is because mzLib has no
 reader for it, and `bundle.json`'s `readers` block records which backend read every file, so the
 in-house code is deletable rather than permanent. The table, with the reason for each in-house read,
-is in `Readers` (`dotnet/src/DataRepo.Ingest/Readers.cs`).
+is in `Readers` (`src/PXReprise.Ingest/Readers.cs`).
 
 That deletion has already happened once. dataRepo read `*.sdrf.tsv` itself because pyMzLib's *generic*
 projection joined header and cells with `;`, which SDRF values contain themselves, so the columns
@@ -322,8 +322,8 @@ is written last the same way. An engine artefact is written in a staging folder 
 place whole. `ingest --overwrite` and `study --overwrite` rewrite a folder in place while its manifest
 file exists, so never pass them on a store that other machines read.
 
-Column names, order and types come from the LinkML schema: `DataRepo.SchemaGen` generates
-`dotnet/src/DataRepo.Bundle/Generated/Tables.g.cs` from it, and CI fails if that file is stale. There is no second, drifting
+Column names, order and types come from the LinkML schema: `PXReprise.SchemaGen` generates
+`src/PXReprise.Bundle/Generated/Tables.g.cs` from it, and CI fails if that file is stale. There is no second, drifting
 copy of the column list.
 
 ### Rules the writer enforces

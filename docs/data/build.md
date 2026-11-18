@@ -125,8 +125,8 @@ the split -- is not recoverable.
 
 A **study layer** adds tables keyed on core identifiers and never alters a core table (U5). The core
 schema knows nothing about aging, so another reanalysis project could use it unchanged; the
-aging-specific tables live in `schema/study/aging.yaml` and are generated into `Tables.Study`
-separately from `Tables.Core` (`dotnet/src/DataRepo.Bundle/Generated/Tables.g.cs`).
+aging-specific tables live in `schemas/datarepo/study/aging.yaml` and are generated into `Tables.Study`
+separately from `Tables.Core` (`src/PXReprise.Bundle/Generated/Tables.g.cs`).
 
 | Table | Grain | Definition |
 |---|---|---|
@@ -284,7 +284,7 @@ passes, so **a failed build leaves the previous catalog serving**.
   thing a content hash cannot catch: Parquet that was truncated or edited after the manifest was
   written.
 - **Identifiers are unique** within a dataset, and **references resolve** within a dataset — driven
-  by the same lists in `Integrity` (`DataRepo.Bundle`) that the ingester checks a bundle against, so there is one
+  by the same lists in `Integrity` (`PXReprise.Bundle`) that the ingester checks a bundle against, so there is one
   statement of what points at what.
 - **Schema version.** A bundle written against a different schema version is refused with the
   version it carries, rather than unioned into columns that no longer mean the same thing.

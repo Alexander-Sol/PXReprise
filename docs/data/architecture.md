@@ -10,7 +10,7 @@ proposal, with its reasoning and the research behind it, is [`design/FRAMEWORK.m
 | D1 | **Hosting.** Prototype locally; production runs from a portable Docker Compose package, handed to operators (NCEMS). No Windows-only paths. |
 | D2 | **Access.** Public from day one, no login anywhere. Rate limiting lives in the operators' proxy. Every release is versioned and gets a DOI. |
 | D3 | **Licences.** Code MIT; data CC BY 4.0. |
-| D4 | **Format.** A QPX-compatible superset: QPX names and types where QPX has a matching view, plus extensions for proteoforms, USIs, organelles and study layers. Each file records the QPX version it matches. |
+| D4 | **Format.** Designed to map onto QPX: QPX names and types where QPX has a matching view, plus extensions for proteoforms, USIs, organelles and study layers. Each file records the QPX version its names follow; the column-level mapping is not yet checked against a QPX release. |
 | D5 | **Scope.** Human and rodent; DDA and DIA; label-free and TMT. These are real columns, and quantities are long (assay, feature, value). Ingesters are written as producers deliver each kind of data. |
 | D6 | **Benchmark.** The question set comes from the producing project (aging). dataRepo is scored against it and doesn't set the science agenda. |
 | D7 | **Open questions** are tracked with defaults in [`design/OPEN_QUESTIONS.md`](https://github.com/smith-chem-wisc/dataRepo/blob/master/design/OPEN_QUESTIONS.md). Work proceeds on the defaults. |
@@ -26,8 +26,8 @@ The parts of the proposal below that it settled in practice:
 - **The manifest is the contract.** The ingester reads the producing instance's `manifest.yaml`
   rather than scanning its work root, so which run is canonical and whether it may be loaded is the
   producer's recorded decision (aging thread 006).
-- **Parquet columns come from the schema.** `DataRepo.SchemaGen` generates the table definitions
-  from `schema/datarepo.yaml`, so there is no second column list to drift.
+- **Parquet columns come from the schema.** `PXReprise.SchemaGen` generates the table definitions
+  from `schemas/datarepo/datarepo.yaml`, so there is no second column list to drift.
 - **Bundles are content-addressed.** The directory name hashes the inputs, the schema version and
   the ingester version, which makes re-ingest idempotent and makes a cited bundle safe.
 - **Every bundle recounts itself** against the producer's own totals, and a disagreement becomes a
@@ -57,8 +57,8 @@ The parts of the proposal below that it settled in practice:
 **Serving (layer 3)** is implemented for agents and people: `datarepo mcp` serves one catalog over
 MCP ([`mcp.md`](mcp.md)) and `datarepo site` writes a static site from it ([`site.md`](site.md)).
 
-**The program is C#** from 1.0.0 (D41): one .NET solution under `dotnet/`, one project per layer
-(`DataRepo.Ingest`, `DataRepo.Catalog`, `DataRepo.Mcp`, `DataRepo.Site`, …), released as a
+**The program is C#** from 1.0.0 (D41): part of PXReprise's .NET solution (`PXReprise.slnx`), one project per layer
+(`PXReprise.Ingest`, `PXReprise.Catalog`, `PXReprise.Mcp`, `PXReprise.Site`, …), released as a
 self-contained `datarepo` executable per platform. The Python package it replaced is frozen at
 0.32.0; the port was checked row by row against that release's output on real data.
 
@@ -93,8 +93,10 @@ Still to build: REST and the deploy package.
 
 ## Schema
 
-- The schema is written once in **LinkML**. JSON Schema, Pydantic models, SQL DDL and the
-  [reference docs](schema/core.md) are all generated from it.
+- The schema is written once in **LinkML**. `PXReprise.SchemaGen` generates the program's table definitions
+  (`Tables.g.cs`) and the column descriptions the MCP server serves (`SchemaDocs.g.cs`) from it, and a test fails
+  if either is stale. The [reference docs](schema/core.md) follow the same schema; [CONTRIBUTING](CONTRIBUTING.md)
+  says how they are kept current.
 - The **core** is generic.
 - **Study layers** add tables keyed on core IDs and never alter core tables.
 - Coverage against the benchmark: [`design/SCHEMA_COVERAGE.md`](https://github.com/smith-chem-wisc/dataRepo/blob/master/design/SCHEMA_COVERAGE.md).

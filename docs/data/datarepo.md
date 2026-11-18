@@ -97,7 +97,7 @@ data would be wrong. Read it before trusting one.
 | [**Query cookbook**](querying.md) | Real questions, the SQL that answers them, and queries that look right and are wrong |
 | [**Limitations**](limitations.md) | What this data cannot tell you, with the measurement behind each |
 | [**MCP server**](mcp.md) | The agent tools and the guarantees each answer carries |
-| [**Schema reference**](schema/core.md) | Every table and column, generated from [`schema/datarepo.yaml`](../../schemas/datarepo/datarepo.yaml) |
+| [**Schema reference**](schema/core.md) | Every table and column, generated from [`schemas/datarepo/datarepo.yaml`](../../schemas/datarepo/datarepo.yaml) |
 | [**All documentation**](README.md) | The index, a glossary, and the five rules behind the design |
 
 ## The schema at a glance

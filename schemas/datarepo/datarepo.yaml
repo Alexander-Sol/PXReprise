@@ -8,7 +8,7 @@
 #   - Missing is NA, never 0. A 0 is stored only where its definition makes 0 a measurement (a count).
 #   - Every stored number that has a producer-defined meaning carries a definition_id (owner's DEF-*).
 #   - One peptidoform notation everywhere: ProForma 2 with UNIMOD accessions.
-#   - Format is a QPX-compatible superset (D4). `qpx_view` annotations mark the tables that map to a
+#   - Format is designed to map onto QPX (D4). `qpx_view` annotations mark the tables meant to map to a
 #     QPX view. Column-level QPX mapping is NOT yet checked against a QPX release; see design/SCHEMA_V0.md.
 #   - Scope columns are real columns from v0 (D5, DATAREPO-2): organism, acquisition, quant_method,
 #     labelling, enrichment, instrument_vendor.

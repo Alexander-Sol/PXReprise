@@ -23,7 +23,19 @@ public class BundleTests
         var root = RepoRoot();
         var rendered = SchemaGenerator.Render(DataPaths.Schema, DataPaths.StudySchemas);
         var committed = File.ReadAllText(Path.Combine(DataPaths.Generated, "Tables.g.cs")).Replace("\r\n", "\n");
-        Assert.That(committed, Is.EqualTo(rendered), "schema changed: run dotnet run --project dotnet/src/PXReprise.SchemaGen");
+        Assert.That(committed, Is.EqualTo(rendered), "schema changed: run dotnet run --project src/PXReprise.SchemaGen");
+    }
+
+    /// <summary>
+    /// The column and table descriptions the MCP <c>describe</c> tool serves come from <c>SchemaDocs.g.cs</c>. A description
+    /// edited in the schema without regenerating would reach agents stale, so this fails as the table check does.
+    /// </summary>
+    [Test]
+    public void TheGeneratedSchemaDocsAreCurrent()
+    {
+        var rendered = SchemaGenerator.RenderDocs(DataPaths.Schema, DataPaths.StudySchemas);
+        var committed = File.ReadAllText(Path.Combine(DataPaths.Generated, "SchemaDocs.g.cs")).Replace("\r\n", "\n");
+        Assert.That(committed, Is.EqualTo(rendered), "schema descriptions changed: run dotnet run --project src/PXReprise.SchemaGen");
     }
 
     [Test]

@@ -61,7 +61,7 @@ Three things depend on running a release:
 - **`datarepo run` refuses a development build.** It records the exact build behind every engine
   output: the version and the commit the release was built from. A build that reports `0.0.0-dev`,
   or carries no commit, has no fixed identity to record.
-- **Each download was verified by running it.** The `dotnet-binaries` workflow publishes each
+- **Each download was verified by running it.** The `datarepo-binaries` workflow publishes each
   platform's program, runs the example instance end to end with no .NET on the machine's `PATH`,
   checks that it reports the tagged version, and only then attaches the archive to a draft release,
   which a person publishes.
@@ -102,17 +102,17 @@ first build (`results/reingest_150_2026-11-12/`).
 To build the program yourself you need the [.NET 10 SDK](https://dotnet.microsoft.com/download):
 
 ```bash
-git clone https://github.com/smith-chem-wisc/dataRepo.git
-dotnet build dataRepo/dotnet/src/DataRepo.Cli -c Release -o datarepo-dev
+git clone https://github.com/smith-chem-wisc/PXReprise.git
+dotnet build PXReprise/src/PXReprise.DataCli -c Release -o datarepo-dev
 datarepo-dev/datarepo --version                    # datarepo 0.0.0-dev
 ```
 
 A source build reports version `0.0.0-dev`, and `datarepo run` refuses it by design. It is for
 development and testing; serve an instance from a release. A self-contained folder like a release's
-comes from `dotnet publish dataRepo/dotnet/src/DataRepo.Cli -c Release -r <rid> --self-contained -o
+comes from `dotnet publish PXReprise/src/PXReprise.DataCli -c Release -r <rid> --self-contained -o
 <dir>` (`<rid>` is `win-x64`, `linux-x64`, `osx-arm64` or `osx-x64`); a release build also passes
 `-p:Version=<version>` and `-p:SourceRevisionId=<commit>`, which is what
-`.github/workflows/dotnet-binaries.yml` does.
+`.github/workflows/datarepo-binaries.yml` does.
 
 ## 2. Describe your instance: `manifest.yaml`
 
