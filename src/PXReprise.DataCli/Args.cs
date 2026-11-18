@@ -32,7 +32,7 @@ public sealed class Args
     /// <summary>One command's grammar.</summary>
     /// <param name="prog">The command as typed, e.g. <c>datarepo ingest</c>.</param>
     /// <param name="description">What the command does, one line; <c>-h</c> prints it under the usage line, and
-    /// docs/cli.md is generated from that output (<c>tools/build_cli_docs.py</c>).</param>
+    /// docs/data/cli.md is generated from that output (<c>PXReprise.SchemaGen --cli</c>).</param>
     public sealed class Spec(string prog, string? description = null)
     {
         private readonly List<(string Name, string Arity, string Help)> _positionals = [];

@@ -32,19 +32,31 @@ benchmark questions the schema can't yet answer, and producer file formats the i
 # 1. edit schemas/datarepo/datarepo.yaml (or a study layer in schemas/datarepo/study/)
 #    every class, column and vocabulary needs a description: agents read them
 
-# 2. regenerate the program's table definitions and column descriptions, and commit them
+# 2. regenerate the program's table definitions and column descriptions and the schema reference
+#    pages, and commit them
 dotnet run --project src/PXReprise.SchemaGen            # writes src/PXReprise.Bundle/Generated/*.g.cs
-dotnet run --project src/PXReprise.SchemaGen -- --check # exits 1 if they are stale
+                                                        # and docs/data/schema/*.md
+dotnet run --project src/PXReprise.SchemaGen -- --check # exits 1 if any of them is stale
 
 # 3. note the change in docs/data/CHANGELOG.md's unreleased section
 ```
 
-`tests/PXReprise.Data.Tests` fails if `Tables.g.cs` no longer matches the schema.
+`tests/PXReprise.Data.Tests` fails if `Tables.g.cs`, `SchemaDocs.g.cs` or a page in `docs/data/schema/`
+no longer matches the schema.
 
-Not yet replaced since the move: the Python tools that linted the schema (LinkML), regenerated
-`docs/data/schema/*.md` and `docs/data/cli.md`, and validated `schemas/datarepo/examples/` stayed in
-smith-chem-wisc/dataRepo (no Python here: decision 0008). Until C# equivalents exist, edit those pages
-by hand to match the schema and the CLI's `-h` output, and say so in the pull request.
+**Changing a command's arguments or help text** changes `docs/data/cli.md`, which is generated from the
+program's own `-h` output:
+
+```bash
+dotnet run --project src/PXReprise.SchemaGen -- --cli            # builds the CLI, then writes docs/data/cli.md
+dotnet run --project src/PXReprise.SchemaGen -- --cli --check    # exits 1 if it is stale
+```
+
+A new command must also be placed in a group in `CliDocs.Groups` (`src/PXReprise.SchemaGen/CliDocs.cs`);
+the generator refuses a command it cannot place. `tests/PXReprise.Data.Tests` fails if `cli.md` is stale.
+
+Not yet replaced since the move: the Python tools that linted the schema (LinkML) and validated
+`schemas/datarepo/examples/` stayed in smith-chem-wisc/dataRepo (no Python here: decision 0008).
 
 ## Working on the ingester
 
