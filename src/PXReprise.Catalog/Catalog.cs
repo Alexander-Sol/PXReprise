@@ -353,6 +353,15 @@ public static partial class CatalogBuilder
     /// <c>notes</c> cannot be.</summary>
     public static readonly IReadOnlyList<string> RestrictionFields = ["restrictions"];
 
+    /// <summary>The <see cref="DatasetEntry.NonContentFields"/> no catalog table carries, each with the reason. With
+    /// <see cref="AnnotationFields"/>, <see cref="RunExclusionFields"/> and <see cref="RestrictionFields"/> they are every
+    /// non-content field but <c>raw</c> (a test).</summary>
+    public static readonly IReadOnlyDictionary<string, string> NotCarriedFields = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        ["delivery"] = "the batch's own record of its ingest, and a catalog is built from delivered bundles only: every dataset it serves was delivered",
+        ["delivered_utc"] = "when the batch recorded that ingest: the batch's state, not the dataset's",
+    };
+
     /// <summary>The package version a catalog id hashes and <c>catalog_meta.builder_version</c> records
     /// (Python's <c>__version__</c>): this assembly's informational version, without build metadata.</summary>
     public static readonly string PackageVersion = BundleWriter.PackageVersion;
