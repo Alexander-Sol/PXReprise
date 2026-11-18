@@ -26,7 +26,7 @@ public static class Restrictions
     private static readonly JsonSerializerOptions Quoted = new() { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
     /// <summary>
-    /// v0.4.46 (G69; the user and QuantProject 120, 2026-11-11): the <c>quantitation</c> reason of an isobaric entry searched
+    /// v0.4.46 (G69; the maintainer and QuantProject 120, 2026-11-11): the <c>quantitation</c> reason of an isobaric entry searched
     /// on the default design v0.4.34 to v0.4.45 made when no SDRF stated one (provenance flag
     /// <see cref="Search.DesignStage.NoChannelDesign"/>). Each file was its own plex, so fractions and repeat injections of one
     /// plex are separate samples. QuantProject asked that the note say what a sample is there.

@@ -29,12 +29,12 @@ public sealed class BundleWriter(string store, string datasetId, string? ingestP
     /// first released C# ingest path: G76 (D40), G81, D37 and covered_zero, on schema 0.0.14. cs-1.1.0: G83's
     /// fixes to the behaviours 0.32.0 had, and G87's run start time and instrument, on schema 0.0.15. cs-1.2.0
     /// (1.4.0, one re-ingest): G106, a source name whose SDRF rows disagree on a sample-level cell gets no value there
-    /// and an <c>sdrf_conflicting_rows</c> finding; PXR-R12, a UniProt XML in any namespace, and an empty database
+    /// and an <c>sdrf_conflicting_rows</c> finding; a UniProt XML in any namespace, and an empty database
     /// refused; G101, sites and occupancy placed only against the copy of an accession the search's TCAmbiguity kept;
     /// G26, modification accessions and masses from mzLib's own loaders, by the exact token; G107 and PXR-R22, the
     /// SDRF read is the manifest's operator_sdrf, else the sha256-checked SDRF the search's design came from; schema
     /// 0.0.16: assay kinds, sequence_window, and PXR-R23's pooled assays for a design sample of several files;
-    /// DATAREPO-84, a target entry of another source than UniProt says so in source_db; DATAREPO-D7, a
+    /// a target entry of another source than UniProt says so in source_db; a
     /// localization-ambiguous peptide row is left out with a finding, never stored under its first full sequence.
     /// cs-1.3.0 (1.5.0, one re-ingest; <c>design/RELEASE_1.5.0.md</c>'s build list): mzLib 1.0.597, which moves
     /// peptidoform keys (#1416, #1524); schema 0.0.17: each search's confidence rule (D55) in

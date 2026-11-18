@@ -111,7 +111,7 @@ public sealed record DesignSettings(string Dir, IReadOnlyList<string> ConditionC
 }
 
 /// <summary>
-/// A question's exception for one deposit (<c>[exceptions.PXD...]</c>, the user's D-2): the deposit's own
+/// A question's exception for one deposit (<c>[exceptions.PXD...]</c>, the maintainer's D-2): the deposit's own
 /// value for any of the profile's <c>[deposit]</c> caps, and which of its raw files to search. Data, never code; every use
 /// is recorded in provenance and the manifest note. <see cref="IncludeFiles"/> / <see cref="ExcludeFiles"/> are
 /// case-insensitive regexes on raw file names: choosing runs is a design decision (S43), so it is the question's to state.
@@ -190,7 +190,7 @@ public sealed record FileReplacement(string Path, string PrideSha1, string Sha25
 /// </summary>
 public sealed record SplitGroup(string Accession, string Group, string By, string Reason, IReadOnlyList<string> Keys)
 {
-    /// <remarks><c>tissue</c> (2026-11-15, the user: "split them the same way"): a deposit
+    /// <remarks><c>tissue</c> (2026-11-15, the maintainer: "split them the same way"): a deposit
     /// whose runs come from different tissues (a group may also be one sex: one TMT plex each, as in PXD067637 and its two
     /// sisters), searched apart so that protein inference and site localisation stay within a tissue. Only
     /// <c>species</c> changes what a group must state; the others are reasons, written to the manifest's

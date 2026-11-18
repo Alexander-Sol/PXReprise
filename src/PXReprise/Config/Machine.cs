@@ -117,7 +117,7 @@ public sealed record Machine(
         var limits = DepositLimits.Load(root.OptionalTable("deposit_limits"));
         // The probe search's wall clock (the profile's probe_search_minutes otherwise): larger files take longer.
         double? probeMinutes = root.OptionalNumber("probe_search_minutes");
-        // v0.4.26 (design/PLAN_worker.md; the user, 2026-10-19: "it would only run probes. and the full searches would only
+        // v0.4.26 (the maintainer, 2026-10-19: "it would only run probes. and the full searches would only
         // be run on this machine"): [worker] makes this machine a probe worker for the controller behind the share, and
         // [workers] makes it that controller. Never both.
         WorkerConfig? worker = null;

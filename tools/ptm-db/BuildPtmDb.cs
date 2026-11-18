@@ -16,7 +16,7 @@
 // Sites are written as mzLib's ProteinDbWriter writes GPTMD sites: <feature type="modified residue"
 // description="<IdWithMotif>">, inserted before the entry's top-level <sequence length=...> line.
 //
-// --uniprot-sites regular (D61, D62; the user, 2026-11-04: "let's stick with my principle"; agingPTM-v7 on): UniProt's
+// --uniprot-sites regular (D61, D62; the maintainer, 2026-11-04: "let's stick with my principle"; agingPTM-v7 on): UniProt's
 // own 'modified residue' features are kept only where a deposit NOT enriched for the site's class identifies the site
 // (catalog ptm_sites: target, best_q_value <= 0.01, any ambiguity; the same accession and position, and either mzLib's
 // name for the UniProt feature, "<description up to ';'> on <residue>", or the same Unimod id, so a GPTMD

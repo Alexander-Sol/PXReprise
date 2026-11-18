@@ -10,7 +10,7 @@ using PXReprise.Config;
 namespace PXReprise.Batch;
 
 /// <summary>
-/// The folder a controlling machine shares with a probe worker (v0.4.26, design/PLAN_worker.md; the user, 2026-10-19: "it
+/// The folder a controlling machine shares with a probe worker (v0.4.26; the maintainer, 2026-10-19: "it
 /// would only run probes. and the full searches would only be run on this machine using those that passed the probe").
 /// The controller writes <c>control\</c> and <c>accessions\</c>; the worker writes <c>deposits\</c> and <c>status\</c>.
 /// A package is a probed deposit's folder with <c>READY.json</c> written last, naming every file with its size and

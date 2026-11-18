@@ -1,4 +1,4 @@
-// The model reading with figures and documents (sdrf G38; the user, 2026-11-04: "include information in figures too").
+// The model reading with figures and documents (sdrf G38; the maintainer, 2026-11-04: "include information in figures too").
 //
 // It wraps mzLib's ModelEvidenceReader rather than changing it: the same system prompt with one paragraph added, the
 // same claim rules, and the same Interpret, so every text claim is checked exactly as before. What is new:

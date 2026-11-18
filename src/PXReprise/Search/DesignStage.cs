@@ -118,7 +118,7 @@ public static class DesignStage
     /// <see cref="TmtMarkerName"/>), after removing any stale design. Returns its provenance record.
     /// </summary>
     /// <remarks>
-    /// v0.4.46 (G69; the user, 2026-11-11): there is no default design. Until v0.4.45 a deposit no SDRF described was searched
+    /// v0.4.46 (G69; the maintainer, 2026-11-11): there is no default design. Until v0.4.45 a deposit no SDRF described was searched
     /// with each file its own plex, so a fraction or a repeat injection of one plex became a new plex, and its channels new
     /// samples (PXD034564, one TMT10 plex in 32 files, came out as 32 plexes and 320 samples). The user: "These are definitely
     /// not plexes ... These fractions also must correctly be collapsed ... I think this must be in SDRF." So the files' plexes,

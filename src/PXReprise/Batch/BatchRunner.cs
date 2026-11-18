@@ -707,7 +707,7 @@ public sealed class BatchRunner
 
     /// <summary>
     /// The next deposit ready to search: screened, probed and fully fetched. In queue order, except that a deposit of a
-    /// species no running search has goes first (the user: "just try to alternate species"), because two searches of one
+    /// species no running search has goes first (the maintainer: "just try to alternate species"), because two searches of one
     /// species cannot both extend its spectral library: the second to finish is refused registration, by design. Every
     /// <c>catch_up_every</c>-th start is a catch-up re-search instead, when one is due (D39). Null when nothing is left.
     /// </summary>
@@ -785,7 +785,7 @@ public sealed class BatchRunner
     }
 
     /// <summary>
-    /// STOP drains (v0.4.10; the user, 2026-10-12: "I don't know why we have to stop downloads"). No new search starts, but
+    /// STOP drains (v0.4.10; the maintainer, 2026-10-12: "I don't know why we have to stop downloads"). No new search starts, but
     /// downloading goes on while the searches under way finish: each next deposit is screened, probed and fetched whole as
     /// usual and left <c>fetched</c>. The next driver checks those files against PRIDE's checksums instead of downloading
     /// them again, and searches the deposits first, since they lead the queue. When the last search ends, the download in
@@ -1279,7 +1279,7 @@ public sealed class BatchRunner
             return null;
         // v0.4.39 (the maintainer, 2026-11-04): an isobaric profile searches no enriched PTM class as a
         // variable modification yet, so phospho is found only at the database's annotated sites and an enriched deposit's
-        // sites would reach the catalog forced onto them (results/tmtphospho-trial_2026-11-02: +39% PSMs and +61% phospho
+        // sites would reach the catalog forced onto them (+39% PSMs and +61% phospho
         // peptidoforms with phospho variable). Such a deposit waits for tmt-dda@3 (G66). A capability wait, not a decision.
         // The classes are the library routing's (the curated manifest enrichment over the screen's, plus the probe's).
         if (IsobaricEnrichedHold(acc, profile) is { } held)
@@ -1438,7 +1438,7 @@ public sealed class BatchRunner
     /// Never fails the batch: a record that cannot be written is logged.
     /// </summary>
     /// <summary>
-    /// v0.4.46 (G69; the user, 2026-11-11): an isobaric deposit's park when no SDRF states its files' plexes, fractions and
+    /// v0.4.46 (G69; the maintainer, 2026-11-11): an isobaric deposit's park when no SDRF states its files' plexes, fractions and
     /// technical replicates. A capability wait, not a person's decision: the SDRF is made for the deposit (D65),
     /// and the deposit gets one more look when the question's design for it changes (<see cref="DesignStamp"/>).
     /// </summary>

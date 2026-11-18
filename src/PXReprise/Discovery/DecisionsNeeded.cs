@@ -1,7 +1,7 @@
 namespace PXReprise.Discovery;
 
 /// <summary>
-/// D34 (the user: "you have to tell the person a call needs to be made. don't just walk away"): every park that needs a
+/// D34 (the maintainer: "you have to tell the person a call needs to be made. don't just walk away"): every park that needs a
 /// person's decision is written to the run's <c>decisions_needed.tsv</c>, one row per deposit and park, saying what must
 /// be decided, on what evidence, and the choices. The session that runs the batch reads it, tells the question's owner in
 /// a thread message, and shows it in the session brief until it is answered. The answer comes back as question data

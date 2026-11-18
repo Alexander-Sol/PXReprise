@@ -1,5 +1,5 @@
 // pxr-evidence compare: our independent SDRF draft against every deposited or community SDRF of the deposit, the differences
-// resolved where the evidence allows and the rest reported for a person (D65 (7), (8); the user, 2026-11-07: "we create an
+// resolved where the evidence allows and the rest reported for a person (D65 (7), (8); the maintainer, 2026-11-07: "we create an
 // independant sdrf and compare it to the community sdrf and then make an effort to resolve differences. unresolved differences
 // get reported so that a user can make a call. would be handy if the pride depositor's email addresses were handy").
 //

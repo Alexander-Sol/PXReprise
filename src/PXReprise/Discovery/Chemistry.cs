@@ -445,7 +445,7 @@ public static class ChemistryDetector
         // alkylation: in the text, NEM counts only near an alkylation, blocking, thiol or cysteine word.
         var fromText = Alkylants.Select(a => (a.Name, M: a.Text.Matches(text).FirstOrDefault(m => !a.Name.StartsWith("N", StringComparison.Ordinal)
                 || AlkylationContext.IsMatch(Window(text, m, 80))))).Where(x => x.M is not null).Select(x => (x.Name, M: x.M!)).ToList();
-        // aging 043 (the user's D-3, 2026-10-07): NEM named ANYWHERE with no other alkylant named IS the alkylant.
+        // aging 043 (the maintainer's D-3, 2026-10-07): NEM named ANYWHERE with no other alkylant named IS the alkylant.
         // 70 mM NEM in a denaturing lysis buffer caps every free cysteine (the ten Jarome deposits are 0.2-3.2% Cys). Searched
         // VARIABLE: cysteines disulfide-bonded at lysis escape it.
         Match? lysisNem = fromText.Count == 0 && Alkylants.First(a => a.Name == "Nethylmaleimide").Text.Match(text) is { Success: true } nem ? nem : null;

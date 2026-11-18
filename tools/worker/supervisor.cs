@@ -1,4 +1,4 @@
-// PXRworker supervisor (2026-10-19; the user: "it would good if that restart was autonomous"). A scheduled task runs it
+// PXRworker supervisor (2026-10-19; the maintainer: "it would good if that restart was autonomous"). A scheduled task runs it
 // every 5 minutes on the probe machine, as the user that holds the share's cmdkey credential. It starts the probe batch
 // when the batch should run and does not, and never when a person stopped it:
 //   - a live driver (driver.pid, checked against driver.last.json's start time): nothing to do, except to remember the

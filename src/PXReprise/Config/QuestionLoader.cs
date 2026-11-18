@@ -120,7 +120,7 @@ public static class QuestionLoader
             ex.RefuseUnknownKeys();
         }
 
-        // v0.4.43 (D33, design/PLAN_split-deposits.md; the user, 2026-11-08: "These dual species repos should be split and
+        // v0.4.43 (D33; the maintainer, 2026-11-08: "These dual species repos should be split and
         // that should be an option for the human"): [splits.PXD...] takes `reason` and `by`, and one table per group, each
         // with the keys an [exceptions] entry takes. Each group is its own search, keyed <accession>-<group>.
         var splits = new SortedDictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal);
@@ -180,7 +180,7 @@ public static class QuestionLoader
             gt.RefuseUnknownKeys();
         }
 
-        // v0.4.46 (aging PXR-A51, DATAREPO-74; the user, 2026-11-11, chose that the engine writes them, not a hand edit of
+        // v0.4.46 (aging PXR-A51, DATAREPO-74; the maintainer, 2026-11-11, chose that the engine writes them, not a hand edit of
         // the manifest): [restrictions.<key>] use = "reason", the uses a whole delivered dataset is unfit for that no fact the
         // engine records can show (an immunopeptidome searched as tryptic, too few PSMs for protein statistics). The engine
         // adds its own rule (Batch.Restrictions: any enrichment restricts occupancy) and writes both into the manifest.

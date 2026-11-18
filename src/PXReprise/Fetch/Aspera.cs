@@ -4,7 +4,7 @@ using UsefulProteomicsDatabases;
 namespace PXReprise.Fetch;
 
 /// <summary>
-/// The machine's IBM Aspera client, used by the fetch before HTTPS (2026-10-08, the user: "Yes try aspera"). EBI serves
+/// The machine's IBM Aspera client, used by the fetch before HTTPS (2026-10-08, the maintainer: "Yes try aspera"). EBI serves
 /// public PRIDE files over Aspera at about five times the HTTPS rate measured here (4 sessions about 10 MB/s, HTTPS
 /// about 2). EBI (KB0011565) requires ascp 4.4.4 or newer, encryption on (no -T) and its public RSA key.
 /// </summary>

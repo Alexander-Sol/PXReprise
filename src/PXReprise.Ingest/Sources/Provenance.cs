@@ -7,7 +7,7 @@ namespace PXReprise.Ingest.Sources;
 
 /// <summary><c>provenance.json</c> -> ProvenanceRecord, Metric and Finding rows.</summary>
 /// <remarks>
-/// The provenance schema version is not decoration. aging thread 006: in <c>aging-provenance/2</c> and
+/// The provenance schema version is not decoration. In <c>aging-provenance/2</c> and
 /// earlier, <c>id_rate.psms_1pct</c> holds the FDR engine's count, not the canonical target-PSM count that
 /// its name suggests; <c>/3</c> splits them into two named fields, each with its own definition. So the
 /// version is read first and the fields are mapped accordingly, and a version older than <c>/2</c> is

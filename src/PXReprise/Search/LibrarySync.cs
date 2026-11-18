@@ -11,7 +11,7 @@ namespace PXReprise.Search;
 /// A spectral library chain merged entry by entry: the newest version plus one search's own changes.
 /// </summary>
 /// <remarks>
-/// Two machines that both start from version N cannot both register N+1 (Alex and the user, 2026-11-11: libraries are
+/// Two machines that both start from version N cannot both register N+1 (Alex and the maintainer, 2026-11-11: libraries are
 /// synced through the cloud; Alex chose "merge at save"). The one that registers second keeps the newest version and adds
 /// what its search changed: every entry (by its <c>Name:</c> line, charge included) that the search's output holds and
 /// its parent did not, or holds with different bytes. An entry the newest version ALSO changed since that parent keeps the
@@ -81,7 +81,7 @@ public static class LibraryMerge
 }
 
 /// <summary>
-/// The cloud copy of the spectral library chains: add-only, one record per version (Alex and the user, 2026-11-11).
+/// The cloud copy of the spectral library chains: add-only, one record per version (Alex and the maintainer, 2026-11-11).
 /// </summary>
 /// <remarks>
 /// <para>Layout below the remote's root, per chain: <c>&lt;chain&gt;/&lt;sha256&gt;.msp</c> (a library, named by content)

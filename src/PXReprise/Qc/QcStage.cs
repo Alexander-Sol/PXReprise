@@ -144,7 +144,7 @@ public static class QcStage
     }
 
     /// <summary>
-    /// v0.4.45 (PXD027464; the user, 2026-11-11, "(b)"): passes the thin fractions of an isobaric deposit. A file that failed only
+    /// v0.4.45 (PXD027464; the maintainer, 2026-11-11, "(b)"): passes the thin fractions of an isobaric deposit. A file that failed only
     /// on <c>no_isobaric_reporters</c> but whose kit QC still read (<see cref="IsobaricReporters.MinFractionBesideItsDeposit"/>) passes
     /// when its kit is the deposit's (<see cref="IsobaricReporters.DepositKit"/> of the passing files, unchanged by it) and it shows
     /// every channel the passing files share (at least <see cref="IsobaricReporters.MinChannels"/>). PXD027464's F36 and F37 and

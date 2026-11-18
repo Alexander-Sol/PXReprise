@@ -20,7 +20,7 @@ namespace PXReprise.Search;
 /// 3,019 of 3,038 dropped, the 19 kept all protein C-termini), so the libraries agree with the search once a MetaMorpheus
 /// release runs with <c>RespectCleavageBlockingModifications</c>.</item>
 /// <item><b>a doubtful class</b>: it carries a GPTMD-added site of a class agingPTM-v5 removed (Hydroxylation on P or K,
-/// the misplaced Met/Trp oxidation fingerprint, results/gptmd-census_2026-10-25). UniProt-annotated hydroxylations keep
+/// the misplaced Met/Trp oxidation fingerprint). UniProt-annotated hydroxylations keep
 /// their UniProt names and stay.</item>
 /// </list>
 /// Every library this engine registers is filtered, so a library cleaned once stays clean. The first rule is left off for a

@@ -6,7 +6,7 @@ using Quantification.PtmQtl;
 namespace PXReprise.Runner;
 
 /// <summary>What the operator's lists say of one deposit: its capture class and capture runs (S3, S3b; ptmQtl's
-/// capture list v4, <c>results/ptm_enriched_v4</c>) and its cysteine class (S2d).</summary>
+/// capture list v4) and its cysteine class (S2d).</summary>
 /// <param name="CaptureClass"><c>ptm_capture</c>, <c>capture_runs</c>, <c>held</c>, <c>no_ptm_capture</c>, or null
 /// when the list does not name the deposit.</param>
 /// <param name="CaptureRuns">For <c>capture_runs</c>: the runs it names, by run id.</param>

@@ -35,7 +35,7 @@ public static class IsobaricReporters
     public const double MinFraction = 0.25;
 
     /// <summary>
-    /// v0.4.45 (PXD027464; the user, 2026-11-11, "(b)"): the least share of a file's MSn spectra with reporters at which QC under an
+    /// v0.4.45 (PXD027464; the maintainer, 2026-11-11, "(b)"): the least share of a file's MSn spectra with reporters at which QC under an
     /// isobaric profile still reads its kit. The late fractions of a fractionated plex hold few peptides: PXD027464's F36 and F37
     /// (TMT10, all ten channels) carry reporters in 24% and 23% of their spectra, PXD030407's IMAC_22 (TMTpro, the twelve channels of
     /// its passing files) in 8.6%. Such a file still fails alone, and its deposit passes it (QcStage.PassThinFractions) when it shows
