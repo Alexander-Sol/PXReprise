@@ -46,7 +46,7 @@ public sealed record Question(
     IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>? Restrictions = null)
 {
     /// <summary>
-    /// v0.4.46 (aging PXR-A51, DATAREPO-74): the uses a manifest <c>restrictions</c> entry may name, as datarepo 1.3.4+
+    /// v0.4.46: the uses a manifest <c>restrictions</c> entry may name, as datarepo 1.3.4+
     /// reads them (<c>DatasetEntry.RestrictionUses</c>). dataRepo refuses the whole manifest over any other key, so the
     /// question's <c>[restrictions]</c> is checked against this list when it is loaded, not at the next build.
     /// </summary>
@@ -80,7 +80,7 @@ public sealed record Question(
 }
 
 /// <summary>
-/// Two more kinds of discovery keyword (aging 031/032, PXR-A25 to A27).
+/// Two more kinds of discovery keyword (PXR-A25 to A27).
 /// <see cref="Disease"/>: searched and queued like <c>keywords</c>, but a deposit found ONLY by these must name a
 /// reference group (control, healthy, untreated, vehicle, young, ...), or it goes to the watch list as
 /// <c>no_reference_group_found</c>: without one it holds no phenotype comparison.
@@ -111,14 +111,14 @@ public sealed record DesignSettings(string Dir, IReadOnlyList<string> ConditionC
 }
 
 /// <summary>
-/// A question's exception for one deposit (<c>[exceptions.PXD...]</c>; PXReprise D28, the user's D-2): the deposit's own
+/// A question's exception for one deposit (<c>[exceptions.PXD...]</c>, the maintainer's D-2): the deposit's own
 /// value for any of the profile's <c>[deposit]</c> caps, and which of its raw files to search. Data, never code; every use
 /// is recorded in provenance and the manifest note. <see cref="IncludeFiles"/> / <see cref="ExcludeFiles"/> are
 /// case-insensitive regexes on raw file names: choosing runs is a design decision (S43), so it is the question's to state.
-/// <see cref="Alkylation"/> (v0.4.15, PXR-A99): <c>"none"</c> states that the deposit's cysteines were never alkylated, so
+/// <see cref="Alkylation"/> (v0.4.15): <c>"none"</c> states that the deposit's cysteines were never alkylated, so
 /// it is searched with no cysteine modification, whatever its text or PRIDE's list says (PXD015239: no reduction or
 /// alkylation step, 0.2-0.4% cysteine peptides). It is the only value: another alkylant is named in a curated SDRF.
-/// <see cref="Species"/> (v0.4.19, aging PXR-A109): the organism the deposit is searched as, a key of the profiles'
+/// <see cref="Species"/> (v0.4.19): the organism the deposit is searched as, a key of the profiles'
 /// <c>[databases]</c> (<c>"rat"</c>), over the one the queue read from PRIDE's record (PXD068498: rat, filed as mouse).
 /// <see cref="MinIdentificationRate"/> (v0.4.44): the deposit's own identification floor, under which its full search is
 /// held instead of delivered (<c>BatchRunner.MinIdentificationRate</c>); <c>0</c> delivers it whatever it found.
@@ -173,7 +173,7 @@ public sealed record DepositException(
 }
 
 /// <summary>
-/// v0.4.39 (aging 197, PXR-A158; the user, 2026-11-04): a deposit raw file the question replaces with a local copy, such as a
+/// v0.4.39 (the maintainer, 2026-11-04): a deposit raw file the question replaces with a local copy, such as a
 /// byte-level repair of a file damaged at PRIDE (PXD025315: six files with one range written twice). The fetch does not
 /// download the file: it checks that PRIDE still lists <paramref name="PrideSha1"/> for it (so the replacement is for the
 /// file PRIDE serves), copies <paramref name="Path"/> into the deposit, checks <paramref name="Sha256"/>, and records the
@@ -183,14 +183,14 @@ public sealed record DepositException(
 public sealed record FileReplacement(string Path, string PrideSha1, string Sha256, string Note);
 
 /// <summary>
-/// v0.4.43 (D33, design/PLAN_split-deposits.md): one group of a split deposit, <c>[splits.&lt;accession&gt;.&lt;group&gt;]</c>.
+/// v0.4.43 (D33): one group of a split deposit, <c>[splits.&lt;accession&gt;.&lt;group&gt;]</c>.
 /// <paramref name="By"/> is what the split separates (<see cref="Reasons"/>; written to the manifest as dataRepo's
 /// <c>split_reason</c>, their 093); <paramref name="Keys"/> are every group's search key, this one's included, in the
 /// question's order.
 /// </summary>
 public sealed record SplitGroup(string Accession, string Group, string By, string Reason, IReadOnlyList<string> Keys)
 {
-    /// <remarks><c>tissue</c> (2026-11-15, aging PXR-A182 and PXR-A188, the user: "split them the same way"): a deposit
+    /// <remarks><c>tissue</c> (2026-11-15, the maintainer: "split them the same way"): a deposit
     /// whose runs come from different tissues (a group may also be one sex: one TMT plex each, as in PXD067637 and its two
     /// sisters), searched apart so that protein inference and site localisation stay within a tissue. Only
     /// <c>species</c> changes what a group must state; the others are reasons, written to the manifest's
@@ -214,7 +214,7 @@ public sealed record BatchSettings(string RunRoot, string StateDir, string Queue
 public sealed record PublishSettings(string? Manifest, IReadOnlyList<string> Command, double EveryHours = 6, double TimeoutHours = 4);
 
 /// <summary>
-/// v0.4.46 (aging PXR-A179, their D171; their user: "it should be part of the code, not part of the project AI"): the
+/// v0.4.46 (their user: "it should be part of the code, not part of the project AI"): the
 /// question's <c>[gate]</c>, rules over a deposit's own text that every deposit passes before the census queues it
 /// (<see cref="Census.Gate"/>). The terms are the question's, never the engine's: a question is data.
 /// </summary>
@@ -223,7 +223,7 @@ public sealed record PublishSettings(string? Manifest, IReadOnlyList<string> Com
 /// <param name="OtherSense">A strong term used in another sense (an implant's longevity): watch.</param>
 /// <param name="WatchIfAny">Any match sends it to the watch list (a cancer model).</param>
 /// <param name="WatchWithoutStrong">A match with no strong term sends it to the watch list (a later disease).</param>
-/// <param name="ReferenceGroupRequired">A deposit found only by <c>disease_keywords</c> must name a reference group (PXR-A27).</param>
+/// <param name="ReferenceGroupRequired">A deposit found only by <c>disease_keywords</c> must name a reference group.</param>
 public sealed record GateTerms(
     IReadOnlyList<GateTerm> Strong,
     IReadOnlyList<GateTerm> Weak,

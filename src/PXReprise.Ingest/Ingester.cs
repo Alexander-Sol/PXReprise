@@ -167,7 +167,7 @@ public static class Ingester
     }
 
     /// <summary>The <c>run_enrichment</c> rules ingest would refuse <paramref name="entry"/> on, checked without
-    /// ingesting (PXReprise 009). The runs are read as ingest reads them (fetch manifest, QC report, minus the files
+    /// ingesting. The runs are read as ingest reads them (fetch manifest, QC report, minus the files
     /// the search left out); when they cannot be read, only the rules that need no runs are applied.</summary>
     /// <returns>The problems, in ingest's order, and whether the runs were read.</returns>
     public static (List<string> Problems, bool RunsRead) RunEnrichmentProblems(Manifest manifest, DatasetEntry entry)
@@ -432,7 +432,7 @@ public static class Ingester
             (assays, samples, characteristics, fromSdrf) = Isobaric.PlaceAssays(isobaric, datasetId, assays, samples, characteristics, DatasetEntry.Text(entry.Organism));
             findings.AddRange(IsobaricDesignFindings(isobaric, fromSdrf, sdrfPath is not null, entry.LabellingPlex, datasetId));
         }
-        // runs.reporter_level (1.5.0, DATAREPO-88 b) is a fact about reporter ions: a search that read none has none, whatever
+        // runs.reporter_level (1.5.0) is a fact about reporter ions: a search that read none has none, whatever
         // its QC report says about MS3 scans.
         if (isobaric is null && rules == IngestRules.Current)
             foreach (var run in runRows) run["reporter_level"] = null;
@@ -489,7 +489,7 @@ public static class Ingester
         {
             writer.AddSource(pgPath, "protein_group_quant");
             // Each searched run's SDRF sample, for a run with exactly one assay: a design sample of several files that
-            // is exactly one SDRF sample's files is stored against a pooled assay (PXR-R23, schema 0.0.16).
+            // is exactly one SDRF sample's files is stored against a pooled assay (schema 0.0.16).
             IReadOnlyDictionary<string, string>? sampleOfRun = rules == IngestRules.Current
                 ? assays.GroupBy(a => ((string)a["run_id"]!).Split(':', 2)[1], StringComparer.Ordinal)
                     .Where(g => g.Count() == 1)
@@ -498,7 +498,7 @@ public static class Ingester
             (proteinGroups, proteinGroupQuant, proteinGroupCount, sampleColumns) = Quant.ProteinGroupRows(pgPath, datasetId, runNames, log, rules, sampleOfRun);
             if (rules == IngestRules.Current && sampleColumns.BySample)
                 pooledRunRows = PlaceDesignSamples(sampleColumns, assays, datasetId);
-            // The design reaches rows only when it placed the columns, so only then is it an input (PXR-R9). Copied,
+            // The design reaches rows only when it placed the columns, so only then is it an input. Copied,
             // so a reader can see which files each sample holds.
             if (sampleColumns.BySample)
             {
@@ -509,7 +509,7 @@ public static class Ingester
         else if (isobaric is not null && File.Exists(Join(resultsDir, "AllProteinGroups.tsv")))
         {
             // An isobaric search writes no quantified-groups file: its groups are the ones AllProteinGroups.tsv writes,
-            // each with its q-value and label, which DEF-TMT-PROT's rows join to (QuantProject 066, rule 1).
+            // each with its q-value and label, which DEF-TMT-PROT's rows join to (rule 1).
             var allGroupsPath = Join(resultsDir, "AllProteinGroups.tsv");
             writer.AddSource(allGroupsPath, "protein_groups");
             (proteinGroups, proteinGroupCount) = Quant.GroupRows(allGroupsPath, datasetId, log, rules);
@@ -523,7 +523,7 @@ public static class Ingester
         // D55 (schema 0.0.17): which q-value this search's 1% rule reads, decided once for the whole search.
         var confidence = rules == IngestRules.Current ? Identifications.ChooseConfidence(psmRows) : null;
         // Sites are placed by finding each peptide in the searched proteins, because the producer's spans cannot
-        // be paired with its accessions (aging 043, DATAREPO-32). The databases are inputs to every ptm_sites
+        // be paired with its accessions. The databases are inputs to every ptm_sites
         // row, so they are in the content hash; they are not copied.
         var sequences = ProteinDb.Load(searchProvenance, manifest.WorkRoot, rules);
         foreach (var db in sequences.Files)
@@ -588,7 +588,7 @@ public static class Ingester
             return status switch { "contaminant" => true, "target" => false, _ => null };
         }
         var unresolvedLabels = new Dictionary<string, long>(StringComparer.Ordinal);
-        // DATAREPO-84: a target entry of another source than UniProt (aging's Ensembl-only isoforms) is labelled with it.
+        // A target entry of another source than UniProt (aging's Ensembl-only isoforms) is labelled with it.
         Func<string, (string Source, string? Taxon)?>? otherSource = rules == IngestRules.Current ? sequences.OtherSource : null;
         var proteins = Identifications.AddGroupProteins(
             Identifications.ProteinRows(
@@ -644,7 +644,7 @@ public static class Ingester
                 findings.AddRange(IsobaricTableFindings(Isobaric.ProteinFileName, report, datasetId, 0));
                 isobaricNote[Isobaric.ProteinFileName] = IsobaricTableNote(report);
             }
-            // DEF-TMT-RAW: kept as MetaMorpheus wrote it, with no rows (QuantProject 068, DATAREPO-D9).
+            // DEF-TMT-RAW: kept as MetaMorpheus wrote it, with no rows.
             var rawTable = Join(resultsDir, Isobaric.RawFileName);
             if (File.Exists(rawTable)) writer.AddSource(rawTable, "isobaric_raw_quant", Isobaric.RawFileName);
             isobaricNote["design"] = Isobaric.DesignFileName;
@@ -679,7 +679,7 @@ public static class Ingester
             metrics.AddRange(ResultsMetrics(results, datasetId, runNames, searchNamespace, rules));
         }
         // Here rather than with the other provenance metrics because the per-run rows need the deposited run
-        // names, which only exist once the runs are built (aging 014 section 3).
+        // names, which only exist once the runs are built.
         metrics.AddRange(Provenance.ContaminationMetricRows(searchProvenance, datasetId, runNames, searchNamespace));
         if (rules == IngestRules.Current)
         {
@@ -719,7 +719,7 @@ public static class Ingester
             ["enrichment_mixed"] = enrichmentMixed,
             ["instrument_vendor"] = Vendor(instruments),
             ["instruments"] = instruments.Cast<object?>().ToList(),
-            // An allow-list, so an empty declaration means unrestricted (aging 024 section 7).
+            // An allow-list, so an empty declaration means unrestricted.
             ["permitted_responses"] = entry.PermittedResponses.Cast<object?>().ToList(),
             ["axis_source"] = "provenance",
             ["submission_type"] = null,
@@ -737,7 +737,7 @@ public static class Ingester
         if (confidence is not null) datasetRow["confidence_rule"] = confidence.Rule;
 
         // --- exact duplicates the producer wrote ----------------------------------------------------------
-        // MetaMorpheus can write one row twice, identical in every column (aging 015). Collapsing is lossless and
+        // MetaMorpheus can write one row twice, identical in every column. Collapsing is lossless and
         // happens before anything counts the rows, so every number below describes what the bundle holds.
         var collapsible = new Dictionary<string, List<IReadOnlyDictionary<string, object?>>>(StringComparer.Ordinal)
         {
@@ -839,8 +839,8 @@ public static class Ingester
         var searchMs2 = Get(Map(Get(searchProvenance, "id_rate")), "ms2");
         var checks = Reconcile.Build(
             Identifications.ProducerCounts(psmColumns),
-            // No notch clause for peptidoforms: it is a PSM rule (aging 008), and applying it cost exactly 3 on
-            // two datasets, making one count_mismatch spurious (DATAREPO-27).
+            // No notch clause for peptidoforms: it is a PSM rule, and applying it cost exactly 3 on
+            // two datasets, making one count_mismatch spurious.
             Identifications.ProducerCounts(peptideColumns.Count > 0 ? peptideColumns : psmColumns, requireResolvedNotch: false),
             proteinGroupCount,
             runRows,
@@ -859,7 +859,7 @@ public static class Ingester
 
         // --- assemble -------------------------------------------------------------------------------------
         if (rules == IngestRules.Current)
-            // Schema 0.0.16 (PXR-R23): every assay so far is one run's; a pooled design sample says so itself.
+            // Schema 0.0.16: every assay so far is one run's; a pooled design sample says so itself.
             foreach (var assay in assays)
             {
                 assay.TryAdd("assay_kind", "run");
@@ -893,7 +893,7 @@ public static class Ingester
         var definitionRows = Definitions.Rows(used);
         if (rules == IngestRules.Current)
         {
-            // QuantProject 009: bundles written under the current rules carry the occupancy definition at v3.6.
+            // Bundles written under the current rules carry the occupancy definition at v3.6.
             var at = definitionRows.FindIndex(r => (string)r["definition_id"]! == Definitions.Occupancy.DefinitionId);
             if (at >= 0) definitionRows[at] = Definitions.OccupancyV36.Row();
         }
@@ -953,7 +953,7 @@ public static class Ingester
                     StringComparer.Ordinal),
             };
         if (rules == IngestRules.Current && sampleColumns is { BySample: true })
-            // PXR-R23: each pooled sample, its assay and the SDRF sample it is.
+            // Each pooled sample, its assay and the SDRF sample it is.
             ((OrderedDictionary<string, object?>)writer.Notes["protein_group_columns"]!)["pooled_samples"] = sampleColumns.Samples
                 .Where(s => s.PooledAssay is not null)
                 .ToDictionary(s => s.Label, s => (object?)new OrderedDictionary<string, object?>
@@ -997,7 +997,7 @@ public static class Ingester
     /// <para><c>confidence_rule_fewer_peptides</c>: the rule passes fewer target peptidoforms than the q-value rule
     /// <c>peptidoforms_1pct</c> held up to 1.4.5, with both counts. On 21 served deposits, mostly low-resolution, the PEP
     /// rule passes 0 to 0.88 of the q-value rule's rows (PXD057502: 0), and without this a reader takes them for small
-    /// studies (the user, 2026-11-11).</para>
+    /// studies (the maintainer, 2026-11-11).</para>
     /// </remarks>
     public static IEnumerable<Row> ConfidenceRuleFindings(Identifications.ConfidenceChoice choice, IReadOnlyList<Row> peptidoforms, string datasetId)
     {
@@ -1360,7 +1360,7 @@ public static class Ingester
     }
 
     /// <summary>How many (PSM, protein) pairs got no site because their position could not be found. An unplaced
-    /// site is a gap a reader can see; a misplaced one is a fact they will quote (aging 043).</summary>
+    /// site is a gap a reader can see; a misplaced one is a fact they will quote.</summary>
     private static List<Row> UnplacedSiteFindings(OrderedDictionary<string, long> unplaced, ProteinSequences sequences, string datasetId)
     {
         if (unplaced.Count == 0 && sequences.Missing.Count == 0) return [];
@@ -1473,7 +1473,7 @@ public static class Ingester
         return Finding(datasetId, code, "warning", $"{what}: {string.Join("; ", parts)}. sdrf_status is `{status}`.");
     }
 
-    /// <summary>What a design-labelled protein-group table makes of the assays (PXR-R23, schema 0.0.16).</summary>
+    /// <summary>What a design-labelled protein-group table makes of the assays (schema 0.0.16).</summary>
     /// <remarks>A sample of one file stays on its run's assay, which gets the sample's <c>design_label</c>: its values are
     /// that search's sample values. A sample of several files that is one SDRF sample's files becomes a pooled assay,
     /// <c>&lt;dataset_id&gt;:design:&lt;label&gt;</c> with no run, and the files it pools are its <c>assay_runs</c>.</remarks>
@@ -1508,13 +1508,13 @@ public static class Ingester
         return assayRuns;
     }
 
-    /// <summary>Which SDRF describes a dataset's samples, and why (G107, PXR-R22).</summary>
+    /// <summary>Which SDRF describes a dataset's samples, and why (G107).</summary>
     /// <param name="Path">The file read, or null when there is none.</param>
     /// <param name="ChosenBy"><c>operator_sdrf</c>, <c>experimental_design (question)</c>, <c>experimental_design
     /// (deposit)</c> or <c>metadata</c>.</param>
     /// <param name="CharacteristicsOnly">True when its factor values are left out.</param>
     /// <param name="Origin">The search provenance's <c>sdrf_origin</c>, the file its copy was made from; recorded,
-    /// never read and never hashed (PXR-R28).</param>
+    /// never read and never hashed.</param>
     private sealed record SdrfChoice(string? Path, string ChosenBy, bool CharacteristicsOnly, string? Origin = null)
     {
         public OrderedDictionary<string, object?> Note() => new()
@@ -1534,8 +1534,8 @@ public static class Ingester
     /// <list type="number">
     /// <item>the entry's <c>operator_sdrf</c>, when it names one (G107): the instance owner's curation, which wins for any
     /// design source; characteristics only, and checked against the search's design by <see cref="CheckOperatorSdrf"/>;</item>
-    /// <item>the SDRF the search's design came from, when its provenance says <c>question</c> or <c>deposit</c>
-    /// (PXR-R22), and only when its bytes are the ones the search recorded. A file edited after the search is not that
+    /// <item>the SDRF the search's design came from, when its provenance says <c>question</c> or <c>deposit</c>,
+    /// and only when its bytes are the ones the search recorded. A file edited after the search is not that
     /// search's record, so a mismatch refuses the ingest by name rather than reading what the search never saw. A
     /// question's SDRF gives characteristics only; its factor values are that question's grouping, and they reach the
     /// catalog through the study layer. A deposit's gives everything, as a deposited SDRF always has;</item>
@@ -1723,7 +1723,7 @@ public static class Ingester
         return [Finding(datasetId, "mixed_enrichment", "warning", message)];
     }
 
-    /// <summary>One finding per deposited file the search left out, so a query can find it (DATAREPO-51).</summary>
+    /// <summary>One finding per deposited file the search left out, so a query can find it.</summary>
     private static List<Row> ExcludedFileFindings(IReadOnlySet<string> excluded, string? reason,
         IReadOnlyDictionary<string, object?>? fetch, IReadOnlyDictionary<string, object?>? qc, string datasetId)
     {
@@ -1758,7 +1758,7 @@ public static class Ingester
         return rows;
     }
 
-    /// <summary>The design samples whose protein-group values have no run and were not stored (PXR-R9, G92).</summary>
+    /// <summary>The design samples whose protein-group values have no run and were not stored (G92).</summary>
     private static List<Row> SampleColumnFindings(SampleColumns columns, string datasetId)
     {
         if (columns.Withheld.Count == 0) return [];

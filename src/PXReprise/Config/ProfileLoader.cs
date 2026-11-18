@@ -37,7 +37,7 @@ public static class ProfileLoader
         // "<category>\t<IdWithMotif>" as MetaMorpheus's ListOfModsGptmd holds them; checked against the pinned
         // MetaMorpheus's Mods files when a search is prepared, not here.
         var extraMods = eng.StringList("gptmd_extra_mods");
-        // v0.4.38 (results/acyl-gptmd_2026-11-03): entries taken OUT of MetaMorpheus's default GPTMD list, written the same
+        // v0.4.38: entries taken OUT of MetaMorpheus's default GPTMD list, written the same
         // way. The default list is every Common Biological, Common Artifact and Metal entry of the pinned Mods.txt, so a
         // class the data refuse can only leave it here. An entry the list lacks is refused when the task is written.
         var dropMods = eng.StringList("gptmd_drop_mods");
@@ -50,7 +50,7 @@ public static class ProfileLoader
             if (extraMods.Contains(d))
                 throw new ConfigException(file, $"engine.gptmd_drop_mods and engine.gptmd_extra_mods both name '{d}'");
         }
-        // v0.4.31 (results/gptmd-entrapment_2026-10-25; the user, 2026-10-27): GPTMD's own filters, by class name, written
+        // v0.4.31 (the maintainer, 2026-10-27): GPTMD's own filters, by class name, written
         // into the GPTMD task's GptmdFilters. A name MetaMorpheus does not know would be dropped silently, so it is refused here.
         var gptmdFilters = eng.StringList("gptmd_filters");
         foreach (string f in gptmdFilters)
@@ -58,7 +58,7 @@ public static class ProfileLoader
                 throw new ConfigException(file, $"engine.gptmd_filters names '{f}'; MetaMorpheus 1.1.12 has {string.Join(", ", Profile.KnownGptmdFilters)}");
         if (gptmdFilters.Count > 0 && !tasks.Contains("Gptmd"))
             throw new ConfigException(file, "engine.gptmd_filters needs a Gptmd task");
-        // One library per organism: the first search writes it, every later one updates and consumes it (aging D33).
+        // One library per organism: the first search writes it, every later one updates and consumes it.
         bool library = eng.OptionalBool("spectral_library") ?? false;
         // Read so published profiles stay valid, but no longer used: a search's limits are the machine's (search_timeout_h,
         // search_stall_minutes), because how long it takes depends on the box and its load, not on the method.
@@ -66,7 +66,7 @@ public static class ProfileLoader
         string chemistry = eng.OptionalString("chemistry") ?? "fixed";
         if (!Profile.Chemistries.Contains(chemistry))
             throw new ConfigException(file, $"engine.chemistry must be one of {string.Join(", ", Profile.Chemistries)}, not '{chemistry}'");
-        // MetaMorpheus 1.1.12+ (#2816, #2870; sdrf PXR-E1/E2): each search writes experiment.sdrf.tsv, stamped with the
+        // MetaMorpheus 1.1.12+ (#2816, #2870): each search writes experiment.sdrf.tsv, stamped with the
         // deposit's accession. A key the pinned MetaMorpheus lacks fails the task-file edit, never silently.
         bool writeSdrf = eng.OptionalBool("write_sdrf") ?? false;
         // v0.4.40 (G66, D32 slice 4): the PTM classes a deposit enriches (LibraryRouting: the curated manifest enrichment over
@@ -80,7 +80,7 @@ public static class ProfileLoader
         string lowResTolerance = eng.OptionalString("low_res_product_tolerance") ?? Profile.DefaultLowResProductTolerance;
         if (!System.Text.RegularExpressions.Regex.IsMatch(lowResTolerance, @"^±\d+\.\d{4} (PPM|Absolute)$"))
             throw new ConfigException(file, $"engine.low_res_product_tolerance must be written as MetaMorpheus writes one, e.g. \"±0.5000 Absolute\", not '{lowResTolerance}'");
-        // PXR-A68 (aging 072): HCD read in an ion trap (a Fusion/Lumos/Eclipse "HCD-IT" method) is searched as HCD with
+        // HCD read in an ion trap (a Fusion/Lumos/Eclipse "HCD-IT" method) is searched as HCD with
         // low_res_product_tolerance. Off unless a profile turns it on, so an existing profile version never changes.
         bool ionTrapHcd = eng.OptionalBool("ion_trap_hcd") ?? false;
         if (ionTrapHcd && fragmentation != "per_file")
@@ -92,7 +92,7 @@ public static class ProfileLoader
         bool ionTrapHcdLowCid = eng.OptionalBool("ion_trap_hcd_lowcid") ?? false;
         if (ionTrapHcdLowCid && !ionTrapHcd)
             throw new ConfigException(file, "engine.ion_trap_hcd_lowcid needs engine.ion_trap_hcd = true: it says how ion-trap HCD is searched");
-        // G40: modifications no UniMod entry describes (NBF, aging 072 PXR-A69), in a MetaMorpheus modification file shipped
+        // G40: modifications no UniMod entry describes (NBF), in a MetaMorpheus modification file shipped
         // under lists/, read here with mzLib's own reader (the one MetaMorpheus uses), so a malformed entry fails at load.
         string? customMods = eng.OptionalString("custom_modifications");
         var customIds = customMods is null ? null : CustomModificationIds(file, customMods);
@@ -117,7 +117,7 @@ public static class ProfileLoader
             }
             thiolReagents = map;
         }
-        // v0.4.29 (ptmQtl PXR-P18, PXR-P19): a side reaction the chemistry reads -> a GPTMD modification, never variable (the
+        // v0.4.29: a side reaction the chemistry reads -> a GPTMD modification, never variable (the
         // user, 2026-10-25: variable only for a modification on most peptides, as oxidised methionine is). GPTMD may put it
         // where the search holds another modification on the residue (MetaMorpheus GptmdEngine.GetPossibleMods), so ring-
         // opened NEM sits beside NEM and propionamide beside fixed carbamidomethyl.

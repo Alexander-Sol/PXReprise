@@ -96,7 +96,7 @@ The definition's rules are enforced **here**, on the way in, not documented besi
 The id covers the delivered files by SHA-256, which table each one fills, the layer and its version,
 the schema version and `StudyWriter.StudyIngesterVersion`. It does **not** cover `instance`, `delivery`
 or `notes`: rewording a label must not re-identify rows that are byte-identical. That is the
-over-hashing that has already bitten twice (aging thread 021 §4), and `StudyWriter.StudyContentFields` /
+over-hashing that has already bitten twice, and `StudyWriter.StudyContentFields` /
 `StudyNonContentFields` classify every manifest field with its reason, with a test that fails on
 an unclassified one.
 
@@ -156,7 +156,7 @@ cross-dataset by construction.
 ### One thing still deliberately unchecked
 
 - **`feature_id` resolves against nothing yet.** DATAREPO-20(c) asked what a feature's cross-dataset
-  identity even *is*, and aging answered in their 024 §1: **the UniProt accession**, with the join
+  identity even *is*, and aging answered: **the UniProt accession**, with the join
   going through **membership in `protein_accessions`**, not through the id string. They measured it
   — a membership join pools 2,608 accessions across ≥2 datasets against 2,497 for any id-based one,
   and the 111 lost "are not a random tail, they are the paralogue families" (CALM1, VAMP2, RAB6A,
@@ -172,7 +172,7 @@ cross-dataset by construction.
 `curated_sample_characteristics` takes a study owner's curated tissue, cell type, cell line, disease
 and the rest, one row per (sample, characteristic), with `name` written the way an SDRF header is
 (`characteristics[organism part]`). It exists because aging curated 52 datasets from PRIDE records,
-deposit files and papers, and the only route into `samples` was an SDRF (aging 078, REQ-DATAREPO-6).
+deposit files and papers, and the only route into `samples` was an SDRF.
 
 - **A curated value never enters the core.** `samples` and `sample_characteristics` hold what an SDRF
   wrote; this table holds what the study owner read elsewhere. Being here is the mark that a value is
@@ -188,12 +188,12 @@ deposit files and papers, and the only route into `samples` was an SDRF (aging 0
 - `datarepo_sql` points at the table whenever a query reads `samples` and it holds rows
   (`study_tables_on_these_samples`).
 - **`name` takes any SDRF header verbatim**, `comment[...]` included, so protocol fields such as
-  `comment[alkylation reagent]` load as rows (aging DATAREPO-80).
+  `comment[alkylation reagent]` load as rows.
 
 ## Curated design (layer 0.6.0)
 
-Two tables carry how aging curated each deposit's design (aging 102, DATAREPO-79, amended by
-DATAREPO-82 in aging 108), keyed per **run** because fractions and technical replicates are runs of one
+Two tables carry how aging curated each deposit's design,
+keyed per **run** because fractions and technical replicates are runs of one
 sample:
 
 - **`curated_run_design`**, one row per run: `individual`, `injection`, `fraction`, `pool_size`,
@@ -221,7 +221,7 @@ and a 1.3.4 build refuses it, so run `datarepo study` again before the first 1.3
 
 ## Label-free and TMT effects with a method term (layer 0.7.0)
 
-From datarepo 1.5.0 (aging's DATAREPO-88 c, `aging:DEF-AGE-EFFECT-META v1.4`): **never pool values across
+From datarepo 1.5.0 (`aging:DEF-AGE-EFFECT-META v1.4`): **never pool values across
 `dataset_overview.quant_scale`; effects may be combined under `aging:DEF-AGE-EFFECT-META` v1.4, TMT read at MS3
 only, with one method term per dataset.**
 

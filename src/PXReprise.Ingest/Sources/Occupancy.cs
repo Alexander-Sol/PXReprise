@@ -83,7 +83,7 @@ public static class Occupancy
 
     /// <summary>Counts a second entry for a (site, run) that already has a row, by whether it could matter.</summary>
     /// <remarks>The first entry in file order is kept, which is safe only when the dropped one says the same
-    /// thing (aging 069, DATAREPO-53), so the two cases are counted apart, and so is whether the second came
+    /// thing, so the two cases are counted apart, and so is whether the second came
     /// from the same protein group (MetaMorpheus writing one group twice, aging's S34) or another group.</remarks>
     private static void Duplicate(OccupancyResult output, Row row, string groupId, string basis, bool same)
     {
@@ -204,7 +204,7 @@ public static class Occupancy
     /// <param name="groupIds">The bundle's protein group ids.</param>
     /// <param name="assayIds">The bundle's assay ids; a run with no label-free assay stores nothing.</param>
     /// <param name="columns">How the same table's quantity columns were placed. When they are design samples, a
-    /// label is placed the same way: one file is that run, several files are no run (PXR-R9).</param>
+    /// label is placed the same way: one file is that run, several files are no run.</param>
     public static OccupancyResult Rows(
         string path, string datasetId, RunNameMap runNames, ProteinSequences sequences,
         IReadOnlySet<string> siteIds, IReadOnlySet<string> groupIds, IReadOnlySet<string> assayIds, ReaderLog? log = null,
@@ -287,7 +287,7 @@ public static class Occupancy
                 continue;
             }
             if (segments.Count != accessions.Count) output.RealignedCells++;
-            // A pooled sample's cell is one value over its files (DEF-OCC-GROUPING sample_group; PXR-R23).
+            // A pooled sample's cell is one value over its files (DEF-OCC-GROUPING sample_group).
             var assayId = pooled ?? $"{datasetId}:{run}:label_free";
             if (!assayIds.Contains(assayId))
             {
@@ -361,7 +361,7 @@ public static class Occupancy
 
         foreach (var row in merged.Values)
         {
-            // DEF-OCC-COVERED-ZERO (QuantProject 009, v3.6): a COUNT numerator of 0 is a covered, unmodified site, a
+            // DEF-OCC-COVERED-ZERO (v3.6): a COUNT numerator of 0 is a covered, unmodified site, a
             // measured zero. Its intensity entry, if any, prints 0.0000(0/I) like a floor, so without this it would be
             // stored as a censored floor. Only output from an mzLib carrying #1411 and an opting-in MetaMorpheus has one.
             if (rules == IngestRules.Current && row.GetValueOrDefault("n_modified_psms") is long modified && modified == 0)

@@ -6,7 +6,7 @@ namespace PXReprise.Census;
 /// <summary>
 /// A deposit's experimental design, as far as can be read without downloading its spectra: groups and how many
 /// biological replicates each has. <see cref="Power"/> is the replicate count of the second-largest group, so a deposit
-/// scores only when at least two groups are well replicated (the user, 2026-10-05: favour sample groups with many
+/// scores only when at least two groups are well replicated (the maintainer, 2026-10-05: favour sample groups with many
 /// replicates, not small deposits).
 /// </summary>
 public sealed record DesignGuess(string Source, IReadOnlyDictionary<string, int> Replicates, int Fractions, string? Note = null)

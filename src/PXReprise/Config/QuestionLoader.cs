@@ -80,7 +80,7 @@ public static class QuestionLoader
         string? studyLayer = pub?.OptionalString("study_layer");
         string? manifest = pub?.OptionalString("manifest");
         var command = pub?.StringList("command") ?? Array.Empty<string>();
-        // D41 rule 6 (PXR-A72, PXR-A75): one build per 6 hours at most, not one per ingest; a build of aging's catalog
+        // D41 rule 6: one build per 6 hours at most, not one per ingest; a build of aging's catalog
         // passed an hour on 2026-10-11, so the old fixed 1-hour limit killed every one.
         double everyHours = pub?.OptionalNumber("every_h") ?? 6, publishTimeout = pub?.OptionalNumber("timeout_h") ?? 4;
         if (everyHours < 0) throw new ConfigException(file, "publish.every_h must be 0 (after each ingest) or more");
@@ -120,7 +120,7 @@ public static class QuestionLoader
             ex.RefuseUnknownKeys();
         }
 
-        // v0.4.43 (D33, design/PLAN_split-deposits.md; the user, 2026-11-08: "These dual species repos should be split and
+        // v0.4.43 (D33; the maintainer, 2026-11-08: "These dual species repos should be split and
         // that should be an option for the human"): [splits.PXD...] takes `reason` and `by`, and one table per group, each
         // with the keys an [exceptions] entry takes. Each group is its own search, keyed <accession>-<group>.
         var splits = new SortedDictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal);
@@ -165,7 +165,7 @@ public static class QuestionLoader
             sx.RefuseUnknownKeys();
         }
 
-        // v0.4.46 (aging PXR-A179, their D171): [gate], rules over a deposit's own text before the census queues it.
+        // v0.4.46: [gate], rules over a deposit's own text before the census queues it.
         GateTerms? gate = null;
         if (root.OptionalTable("gate") is { } gt)
         {
@@ -180,7 +180,7 @@ public static class QuestionLoader
             gt.RefuseUnknownKeys();
         }
 
-        // v0.4.46 (aging PXR-A51, DATAREPO-74; the user, 2026-11-11, chose that the engine writes them, not a hand edit of
+        // v0.4.46 (aging PXR-A51, DATAREPO-74; the maintainer, 2026-11-11, chose that the engine writes them, not a hand edit of
         // the manifest): [restrictions.<key>] use = "reason", the uses a whole delivered dataset is unfit for that no fact the
         // engine records can show (an immunopeptidome searched as tryptic, too few PSMs for protein statistics). The engine
         // adds its own rule (Batch.Restrictions: any enrichment restricts occupancy) and writes both into the manifest.
@@ -244,7 +244,7 @@ public static class QuestionLoader
         string? species = t.OptionalString("species");
         if (species is not null && !Regex.IsMatch(species, "^[a-z]+(_[a-z]+)*$"))
             throw new ConfigException(file, $"{where}.species must be a profile database key such as \"rat\" (got '{species}')");
-        // v0.4.39 (aging PXR-A158): [exceptions.PXD.replace_files."<raw file name>"] path, pride_sha1, sha256, note.
+        // v0.4.39: [exceptions.PXD.replace_files."<raw file name>"] path, pride_sha1, sha256, note.
         Dictionary<string, FileReplacement>? replace = null;
         if (t.OptionalTable("replace_files") is { } rt)
         {

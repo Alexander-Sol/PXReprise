@@ -7,7 +7,7 @@ namespace PXReprise.Ingest.Sources;
 
 /// <summary><c>provenance.json</c> -> ProvenanceRecord, Metric and Finding rows.</summary>
 /// <remarks>
-/// The provenance schema version is not decoration. aging thread 006: in <c>aging-provenance/2</c> and
+/// The provenance schema version is not decoration. In <c>aging-provenance/2</c> and
 /// earlier, <c>id_rate.psms_1pct</c> holds the FDR engine's count, not the canonical target-PSM count that
 /// its name suggests; <c>/3</c> splits them into two named fields, each with its own definition. So the
 /// version is read first and the fields are mapped accordingly, and a version older than <c>/2</c> is
@@ -22,7 +22,7 @@ public static class Provenance
     /// <c>id_rate.psms_1pct</c> holds the FDR engine's count, layout 3 the one that splits it into two named
     /// fields. A schema name is the producer's, and one layout can travel under several names:
     /// <c>pxreprise-provenance/1</c> is PXReprise's neutral name for the document PXReprise already emits as
-    /// <c>aging-provenance/3</c> (PXReprise 001, PXR-D2), so it reads with layout 3. A schema not listed here is
+    /// <c>aging-provenance/3</c>, so it reads with layout 3. A schema not listed here is
     /// refused, never read under a guessed layout, because a count read under the wrong field meaning
     /// is a wrong number with a right-looking definition id.
     /// </remarks>
@@ -108,8 +108,8 @@ public static class Provenance
     }
 
     /// <summary>The namespace this record's numbers are defined in: its <c>definitions</c> field (D37).</summary>
-    /// <remarks>A producer states what its numbers mean in each stage's record, never in the manifest
-    /// (PXR-D5). A record that declares nothing is <c>aging</c>'s, which is what every record written
+    /// <remarks>A producer states what its numbers mean in each stage's record, never in the manifest.
+    /// A record that declares nothing is <c>aging</c>'s, which is what every record written
     /// before PXReprise's switch is.</remarks>
     /// <exception cref="UnsupportedProvenanceException">A namespace this ingester has not been taught. Refused
     /// rather than read as <c>aging</c>, because a number filed under the wrong owner's id is a wrong citation
@@ -199,7 +199,7 @@ public static class Provenance
         }
         else
         {
-            // aging 006: in /2 the field named psms_1pct holds the FDR engine's count.
+            // In /2 the field named psms_1pct holds the FDR engine's count.
             Add("psms_fdr_engine_1pct", Get(idRate, "psms_1pct"), Definitions.Cite(Definitions.PsmFdrEngine, ns),
                 "provenance.json id_rate.psms_1pct (aging-provenance/2 naming)");
         }

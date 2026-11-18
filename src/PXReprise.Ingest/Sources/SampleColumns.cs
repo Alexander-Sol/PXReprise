@@ -3,7 +3,7 @@ using PXReprise.Bundle;
 
 namespace PXReprise.Ingest.Sources;
 
-/// <summary>Where each sample column of a protein-group table belongs: a run, or a design's sample (PXR-R9).</summary>
+/// <summary>Where each sample column of a protein-group table belongs: a run, or a design's sample.</summary>
 /// <remarks>
 /// <para>MetaMorpheus names the protein-group columns (<c>Intensity_</c>, <c>SpectralCount_</c>, <c>CountOccupancy_</c>,
 /// <c>IntensityOccupancy_</c>) by FILE only when the search defined no condition and no fraction. Otherwise every
@@ -23,7 +23,7 @@ namespace PXReprise.Ingest.Sources;
 /// is refused by name.</item>
 /// </list>
 /// <para>The labels are built from the design's <c>Condition</c> and <c>Biorep</c> as MetaMorpheus builds them, never
-/// from an SDRF's <c>source name</c>, which MetaMorpheus 1.1.12 writes with a space (<c>all 1</c>; PXR-F3).</para>
+/// from an SDRF's <c>source name</c>, which MetaMorpheus 1.1.12 writes with a space (<c>all 1</c>).</para>
 /// </remarks>
 public sealed class SampleColumns
 {
@@ -133,7 +133,7 @@ public sealed class SampleColumns
     /// <summary>Reads the design as MetaMorpheus does: by position (FileName, Condition, Biorep, Fraction, Techrep),
     /// header skipped, the label <c>{Condition}_{Biorep}</c> with Biorep as the integer written.</summary>
     /// <remarks>With <paramref name="sampleOfRun"/>, a sample of several files gets a pooled assay when its files are all
-    /// searched runs, all of one SDRF sample, and that SDRF sample has no other run (PXR-R23): one SDRF sample is then
+    /// searched runs, all of one SDRF sample, and that SDRF sample has no other run: one SDRF sample is then
     /// exactly one design sample, so the value has a sample to belong to. Anything else is left out, saying which rule
     /// failed; it is never split onto runs, and never rebuilt from per-file columns.</remarks>
     private static Dictionary<string, Sample> ReadDesign(
@@ -182,7 +182,7 @@ public sealed class SampleColumns
         return samples;
     }
 
-    /// <summary>A design sample of several files as a pooled assay, or why it cannot be one (PXR-R23).</summary>
+    /// <summary>A design sample of several files as a pooled assay, or why it cannot be one.</summary>
     private static (Sample? Sample, string WhyNot) Pool(
         string label, List<DesignRow> rows, RunNameMap probe, IReadOnlyDictionary<string, string> sampleOfRun, string datasetId)
     {

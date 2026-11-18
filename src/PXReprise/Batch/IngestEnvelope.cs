@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 namespace PXReprise.Batch;
 
 /// <summary>
-/// One deposit's result from <c>datarepo ingest --json</c> (datarepo 1.0.0, dataRepo 010): the envelope's
+/// One deposit's result from <c>datarepo ingest --json</c> (datarepo 1.0.0): the envelope's
 /// <c>datasets[]</c> entry for the accession. <see cref="Rc"/> is what <c>ingest_rc</c> records, and only 0 is a
 /// delivery.
 /// </summary>

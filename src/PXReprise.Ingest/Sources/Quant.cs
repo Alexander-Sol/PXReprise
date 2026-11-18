@@ -7,7 +7,7 @@ namespace PXReprise.Ingest.Sources;
 /// <para>FlashLFQ writes one column per run (<c>Intensity_&lt;run&gt;</c>, <c>SpectralCount_&lt;run&gt;</c>);
 /// the schema stores quantities long, one row per (assay, feature, definition), because that shape survives
 /// TMT channels and DIA without a schema change (D5). Melting is the whole job here. With an experimental design
-/// the protein-group columns are per SAMPLE instead, and <see cref="SampleColumns"/> places them (PXR-R9).</para>
+/// the protein-group columns are per SAMPLE instead, and <see cref="SampleColumns"/> places them.</para>
 /// <para>Two producer-side rules are enforced while melting. <b>Missing is missing</b>: a <c>NotDetected</c>
 /// cell or a zero intensity produces no row, never a zero, because a zero would read downstream as a measured
 /// absence. And <b>every number carries a definition</b>, which lets intensity and spectral count share one
@@ -89,7 +89,7 @@ public static class Quant
     /// <remarks>The peak table is per charge state and per peak, finer than the peptide table the quantities
     /// come from, so it is used only to attach peak-level quality the peptide table lacks: the PIP q-value
     /// and whether the MBR transfer passes the producer's threshold (QuantProject DEF-QC-MBR).
-    /// <para>This can be a search's largest table (1.49 GB on PXD025315, PXR-R48) and three of its columns are read, so it
+    /// <para>This can be a search's largest table (1.49 GB on PXD025315) and three of its columns are read, so it
     /// is never held whole. A run name that matched is remembered, since <see cref="RunNameMap.Resolve"/> changes nothing
     /// on a match; one that did not goes back to it on every row, because it counts them.</para></remarks>
     public static Dictionary<(string Run, string Sequence), (double? PipQValue, bool? MbrKept)> PeakQuality(
@@ -129,9 +129,9 @@ public static class Quant
     /// <param name="ambiguous">Under <see cref="IngestRules.Current"/>, the rows left out because their <c>Sequence</c>
     /// names several full sequences, by that cell, with their number of values.</param>
     /// <remarks>A <c>|</c>-joined <c>Sequence</c> is a peptide whose modification site MetaMorpheus did not settle
-    /// (MetaMorpheus #2917; QuantProject's naming ruling, their 055). 0.32.0 stored it under its first full sequence,
+    /// (MetaMorpheus #2917; QuantProject's naming ruling). 0.32.0 stored it under its first full sequence,
     /// which places the value on a site the search never decided. Under <see cref="IngestRules.Current"/> it is left out
-    /// and counted instead (QuantProject DATAREPO-D7). No search ingested to date writes one: 0 of 5,605,461 peptide rows
+    /// and counted instead. No search ingested to date writes one: 0 of 5,605,461 peptide rows
     /// in aging's 172 searches (2026-10-20).</remarks>
     public static List<Row> PeptideQuantRows(
         string path, string datasetId, RunNameMap runNames, Func<string, string?> toProforma,
@@ -231,11 +231,11 @@ public static class Quant
 
     /// <summary>Reads <c>AllQuantifiedProteinGroups.tsv</c> into ProteinGroup rows and their QuantValues.</summary>
     /// <remarks>With an experimental design MetaMorpheus labels these columns by sample, not by run; where each
-    /// one goes is <see cref="SampleColumns"/>'s decision (PXR-R9).</remarks>
+    /// one goes is <see cref="SampleColumns"/>'s decision.</remarks>
     /// <returns>The groups, their quantities (intensity and spectral count as separate rows told apart by
     /// definition), the producer-style group count at 1% FDR, for reconciling, and how the columns were placed.</returns>
     /// <param name="sampleOfRun">Each searched run's SDRF sample, so a design sample of several files that is one SDRF
-    /// sample's files is stored against its pooled assay (PXR-R23); null leaves such values out.</param>
+    /// sample's files is stored against its pooled assay; null leaves such values out.</param>
     /// <exception cref="IngestException">A column holding a value can be placed on no run (see
     /// <see cref="SampleColumns.ForTable"/>).</exception>
     public static (List<Row> Groups, List<Row> Quants, long ProducerCount, SampleColumns Columns) ProteinGroupRows(
@@ -293,7 +293,7 @@ public static class Quant
                     }
                     else if (placement.SampleOf(reported) is { PooledAssay: { } pooled })
                     {
-                        // A sample of several files, one SDRF sample's: its value, against its pooled assay (PXR-R23).
+                        // A sample of several files, one SDRF sample's: its value, against its pooled assay.
                         assayId = pooled;
                     }
                     else

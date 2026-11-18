@@ -9,7 +9,7 @@ using UsefulProteomicsDatabases;
 
 namespace PXReprise.Catalog;
 
-/// <summary>One PRIDE record kept beside the bundles (1.5.0 item 12; U20, U21; ptmQtl's DATAREPO-P35, our 061, their 062).</summary>
+/// <summary>One PRIDE record kept beside the bundles (1.5.0 item 12; U20, U21).</summary>
 /// <param name="Accession">The bare ProteomeXchange accession: a split deposit's searches share one record.</param>
 /// <param name="RecordId">The directory it is kept in, named by when it was fetched.</param>
 /// <param name="Path">That directory.</param>
@@ -26,7 +26,7 @@ public sealed record PrideRecordRef(string Accession, string RecordId, string Pa
 public sealed record PrideFetchResult(string Accession, string Outcome, bool? Found, string Detail);
 
 /// <summary>Each deposit's PRIDE record, fetched by the operator into the store and read by <c>build</c> into
-/// <c>deposit_records</c>, <c>deposit_contacts</c> and <c>deposit_references</c> (ptmQtl's lab rule; our 061, their 062).</summary>
+/// <c>deposit_records</c>, <c>deposit_contacts</c> and <c>deposit_references</c> (ptmQtl's lab rule).</summary>
 /// <remarks>
 /// <para><b>Beside the bundle, never in it.</b> PRIDE edits a record after deposit (a paper is added when it is published),
 /// and in a bundle that would move the bundle id while no search row changed. So a record lives at

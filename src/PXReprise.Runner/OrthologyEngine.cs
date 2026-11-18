@@ -54,7 +54,7 @@ public static class OrthologyEngine
     /// caller's, for a gene id the snapshot does not hold, and never comes from the macro.</summary>
     public static readonly IReadOnlyList<string> PairStatuses = ["has_ortholog", "no_edge_in_shared_tree", "tree_lacks_target_species", "not_in_any_tree"];
 
-    /// <summary>logs' published snapshots (logs 027, 030, 031), copied as logs gave them. A new snapshot is a new
+    /// <summary>logs' published snapshots, copied as logs gave them. A new snapshot is a new
     /// release with a new tag, never an edit to one listed here, so adding one is one line and a datarepo release.</summary>
     public static readonly IReadOnlyList<SnapshotRelease> Releases =
     [

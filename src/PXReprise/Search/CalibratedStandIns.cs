@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 namespace PXReprise.Search;
 
 /// <summary>
-/// v0.4.45 (the user, 2026-11-11: "once a file is calibrated, we don't need to calibrate it again. and we don't need all
+/// v0.4.45 (the maintainer, 2026-11-11: "once a file is calibrated, we don't need to calibrate it again. and we don't need all
 /// files calibrated in the same session. they can split. no problem"). Windows Update restarted MOZZLE at 08:45 UTC during
 /// PXD028799's search, after MetaMorpheus had calibrated 34 of its 48 raws and D59 had deleted those 34; v0.4.44 then had
 /// to fetch all 34 again and calibrate every file afresh.

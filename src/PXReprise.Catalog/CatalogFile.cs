@@ -2,7 +2,7 @@ using DuckDB.NET.Data;
 
 namespace PXReprise.Catalog;
 
-/// <summary>Whether a DuckDB file is as long as its own header says (aging 107).</summary>
+/// <summary>Whether a DuckDB file is as long as its own header says.</summary>
 /// <remarks>DuckDB 1.5 writes three 4 KiB headers and then fixed-size blocks, and its header counts every block, free
 /// ones included. So a whole file is exactly <c>12288 + total_blocks * block_size</c> bytes (measured 2026-10-19 on a
 /// fresh file and on aging's 62 GiB catalog). A shorter file has lost its tail. DuckDB still opens it and answers from

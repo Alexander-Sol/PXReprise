@@ -44,14 +44,14 @@ public sealed class BatchRunner
     private int _started;
 
     // v0.4.21: the machine file's [deposit_limits] and probe_search_minutes are read again while the driver runs, so a gate
-    // can be raised a step at a time without a drain (the user, 2026-10-17: "incrementally increase the limits"). The
+    // can be raised a step at a time without a drain (the maintainer, 2026-10-17: "incrementally increase the limits"). The
     // rest of the machine file is read once, at start.
     private readonly object _limitsGate = new();
     private DepositLimits? _limits;
     private double? _probeMinutes;
     private DateTime _limitsStamp, _limitsChecked;
 
-    // v0.4.26 (design/PLAN_worker.md): the share with a probe worker. On the controller ([workers]) fresh deposits are
+    // v0.4.26: the share with a probe worker. On the controller ([workers]) fresh deposits are
     // probed there and only searched here; on the worker ([worker]) the driver only probes what the controller assigns.
     private readonly WorkerShare? _share;
     private bool? _workerWasQuiet;
@@ -180,7 +180,7 @@ public sealed class BatchRunner
     /// evidence the library must not ignore. Per deposit, not per run: an entry does not say which run a library
     /// spectrum came from, so a mixed deposit's whole-proteome runs route that class too.
     /// </summary>
-    /// <summary>v0.4.39 (aging PXR-A157): why an enriched deposit must not be searched under this isobaric profile, or null.
+    /// <summary>v0.4.39: why an enriched deposit must not be searched under this isobaric profile, or null.
     /// v0.4.40 (G66): a profile with <c>engine.enriched_variable</c> (tmt-dda@3) searches the enriched classes as variable,
     /// so it holds nothing.</summary>
     internal string? IsobaricEnrichedHold(string acc, Profile profile) =>
@@ -269,7 +269,7 @@ public sealed class BatchRunner
     /// <c>fetch_failed</c> is never undone by hand-editing state.json. The previous status, detail, time, user and reason
     /// are kept in the entry's <c>requeued</c> list and in batch.log. Refused while a driver runs (it owns state.json)
     /// and for a deposit whose search finished.
-    /// v0.4.44 (PXD034029, aging D161, 2026-11-10): a deposit in <paramref name="queueFile"/> that never started (no
+    /// v0.4.44 (PXD034029, 2026-11-10): a deposit in <paramref name="queueFile"/> that never started (no
     /// state entry) is taken too, so a person can put it first. PXD034029 was queue entry 1 for ten hours and never
     /// started: a deposit the probe worker passed goes ahead of every one still to be probed here, and the worker keeps
     /// refilling its window. A person's request goes ahead of the worker's passes.
@@ -326,8 +326,8 @@ public sealed class BatchRunner
     }
 
     /// <summary>
-    /// <c>batch research</c>: searches a deposit again whose search finished, e.g. under a profile that reads its chemistry
-    /// (PXR-A29). The deposit's folder is moved aside whole (<c>PXD….superseded-&lt;utc&gt;</c>), never deleted, and its
+    /// <c>batch research</c>: searches a deposit again whose search finished, e.g. under a profile that reads its chemistry.
+    /// The deposit's folder is moved aside whole (<c>PXD….superseded-&lt;utc&gt;</c>), never deleted, and its
     /// state entry is archived in its <c>researched</c> list; the next <c>batch run</c> downloads and searches it again like
     /// a new deposit, under <paramref name="profile"/> when given (one of the question's profiles), else as routing chooses.
     /// The delivery already in the repository is untouched until the new search is ingested; the manifest entry is then
@@ -572,7 +572,7 @@ public sealed class BatchRunner
     /// <summary>One walk of <paramref name="queue"/>. True when it ran out; false when STOP, the disk floor or cancellation ended it.</summary>
     private async Task<bool> WalkAsync(IReadOnlyList<QueueEntry> queue, CancellationToken ct)
     {
-        // Up to search_slots searches run at once (the user, 2026-10-07: "start a second search immediately following any
+        // Up to search_slots searches run at once (the maintainer, 2026-10-07: "start a second search immediately following any
         // complete download"). The next deposit is screened, probed and fetched while they run (network-bound), and starts
         // as soon as it is downloaded and a slot is free. With one slot this is the old rhythm: search one, fetch the next.
         int slots = Math.Max(1, _m.SearchSlots);
@@ -707,7 +707,7 @@ public sealed class BatchRunner
 
     /// <summary>
     /// The next deposit ready to search: screened, probed and fully fetched. In queue order, except that a deposit of a
-    /// species no running search has goes first (the user: "just try to alternate species"), because two searches of one
+    /// species no running search has goes first (the maintainer: "just try to alternate species"), because two searches of one
     /// species cannot both extend its spectral library: the second to finish is refused registration, by design. Every
     /// <c>catch_up_every</c>-th start is a catch-up re-search instead, when one is due (D39). Null when nothing is left.
     /// </summary>
@@ -744,7 +744,7 @@ public sealed class BatchRunner
                     continue;
                 }
                 consumed.Add(e.Accession);
-                // v0.4.29 (the user, 2026-10-20: "keep the worker stocked with probe sets that are five or 10 spots down the
+                // v0.4.29 (the maintainer, 2026-10-20: "keep the worker stocked with probe sets that are five or 10 spots down the
                 // line"): the worker's assignments are made by TendWorker, beyond the next `gap` deposits. Whatever this walk
                 // reaches unassigned is probed here; an assigned deposit waits for its package, unless taken back.
                 if (_m.Workers is not null && WorkerPassProfile(e.Accession) is null && RouteToWorker(e.Accession) == WorkerRoute.Pending)
@@ -785,7 +785,7 @@ public sealed class BatchRunner
     }
 
     /// <summary>
-    /// STOP drains (v0.4.10; the user, 2026-10-12: "I don't know why we have to stop downloads"). No new search starts, but
+    /// STOP drains (v0.4.10; the maintainer, 2026-10-12: "I don't know why we have to stop downloads"). No new search starts, but
     /// downloading goes on while the searches under way finish: each next deposit is screened, probed and fetched whole as
     /// usual and left <c>fetched</c>. The next driver checks those files against PRIDE's checksums instead of downloading
     /// them again, and searches the deposits first, since they lead the queue. When the last search ends, the download in
@@ -915,7 +915,7 @@ public sealed class BatchRunner
     }
 
     /// <summary>
-    /// v0.4.29 (the user, 2026-10-20: "when it finishes a probe, then move that repo up the queue on the local box"): a
+    /// v0.4.29 (the maintainer, 2026-10-20: "when it finishes a probe, then move that repo up the queue on the local box"): a
     /// deposit the probe worker passed goes ahead of every deposit still to be probed here, in queue order (another species
     /// first, as in <see cref="PickNext"/>). It needs no probe here, so this machine's search slots get it soonest. Read
     /// from the state, not the queue, so a catch-up re-search the worker passed is found too. Null when there is none.
@@ -992,7 +992,7 @@ public sealed class BatchRunner
         // Screen the LIVE PRIDE record before any download: acquisition, labelling and enrichment are read from every text
         // field (a labelling time course once reached the queue because discovery read only the protocols).
         // The search index is safe here: the screen never reads its organisms, organism parts or diseases, the fields
-        // PRIDE's index has carried SDRF headers in (pride 001/002), and the organism comes from the queue, which the
+        // PRIDE's index has carried SDRF headers in, and the organism comes from the queue, which the
         // census fills from the project record (0.3.2).
         PrideProjectSearchResultLike? rec;
         try
@@ -1045,7 +1045,7 @@ public sealed class BatchRunner
             Experiment(acc, xr, "skipped_organism", $"{profile.Key} has no database for '{e.Organism}'");
             return null;
         }
-        // v0.4.19 (PXD018399, aging 112): a project record that names an organism outside the question beside the one
+        // v0.4.19 (PXD018399): a project record that names an organism outside the question beside the one
         // queued holds runs of another species (34 killifish runs beside 20 mouse were searched as mouse), or a host and
         // its pathogen. A person says which runs to search or what they all are; an exception that selects files or
         // names the species is that answer.
@@ -1059,7 +1059,7 @@ public sealed class BatchRunner
             }
             catch (Exception ex) when (Envelope.IsUnavailable(ex) || FetchStage.IsTransient(ex)) { Log($"{acc} organisms: PRIDE unavailable ({ex.Message}); retry next pass"); return null; }
             var outside = named.Where(n => !_q.Organisms.Contains(n)).ToList();
-            // v0.4.43 (aging 222/223, PXR-A177): a record naming two of the question's OWN species was searched whole as the
+            // v0.4.43: a record naming two of the question's OWN species was searched whole as the
             // one the census queued first. PXD076192 (4 mouse, 2 human raws) and three more would have searched their mouse
             // runs against the human database, and a TMT profile has no probe search to notice. Species, not names: aging
             // lists "Mus musculus (mouse)" and "Mus musculus".
@@ -1241,7 +1241,7 @@ public sealed class BatchRunner
         var excl = QcExclusion(report, profile.Qc);
         bool ok = allPass || excl is { Count: > 0 };
         // MS2 read in the ion trap: a question that names a low-res profile (no Orbitrap-HCD gate, per-file fragmentation)
-        // searches it there instead of skipping it (the user, 2026-10-07: "Do whatever you can"). The screen never routes to
+        // searches it there instead of skipping it (the maintainer, 2026-10-07: "Do whatever you can"). The screen never routes to
         // that profile directly; only the spectra can.
         if (!ok && OnlyLowRes(report, profile.Qc) && LowResProfile(acq, profile) is { } low)
         {
@@ -1277,9 +1277,9 @@ public sealed class BatchRunner
         }
         if (profile.ProbeSearch && !await ProbeSearchAsync(e, profile, acq, chemistry, report, xr, ct).ConfigureAwait(false))
             return null;
-        // v0.4.39 (aging 195, PXR-A157; the user, 2026-11-04): an isobaric profile searches no enriched PTM class as a
+        // v0.4.39 (the maintainer, 2026-11-04): an isobaric profile searches no enriched PTM class as a
         // variable modification yet, so phospho is found only at the database's annotated sites and an enriched deposit's
-        // sites would reach the catalog forced onto them (results/tmtphospho-trial_2026-11-02: +39% PSMs and +61% phospho
+        // sites would reach the catalog forced onto them (+39% PSMs and +61% phospho
         // peptidoforms with phospho variable). Such a deposit waits for tmt-dda@3 (G66). A capability wait, not a decision.
         // The classes are the library routing's (the curated manifest enrichment over the screen's, plus the probe's).
         if (IsobaricEnrichedHold(acc, profile) is { } held)
@@ -1301,8 +1301,8 @@ public sealed class BatchRunner
     }
 
     /// <summary>
-    /// The same raw files already searched under another accession: refused before any download (PXR-A9). The deposit
-    /// being searched counts too: it is fetched in full, and the next one is screened alongside it (PXR-A21). True when
+    /// The same raw files already searched under another accession: refused before any download. The deposit
+    /// being searched counts too: it is fetched in full, and the next one is screened alongside it. True when
     /// the deposit is excluded as a duplicate. <paramref name="xr"/> is null for a probe worker's pass (v0.4.26), whose
     /// experiment record was written there.
     /// </summary>
@@ -1438,8 +1438,8 @@ public sealed class BatchRunner
     /// Never fails the batch: a record that cannot be written is logged.
     /// </summary>
     /// <summary>
-    /// v0.4.46 (G69; the user, 2026-11-11): an isobaric deposit's park when no SDRF states its files' plexes, fractions and
-    /// technical replicates. A capability wait, not a person's decision: the SDRF is made for the deposit (D65; sdrf PXR-F15),
+    /// v0.4.46 (G69; the maintainer, 2026-11-11): an isobaric deposit's park when no SDRF states its files' plexes, fractions and
+    /// technical replicates. A capability wait, not a person's decision: the SDRF is made for the deposit (D65),
     /// and the deposit gets one more look when the question's design for it changes (<see cref="DesignStamp"/>).
     /// </summary>
     internal const string IsobaricDesignStatus = "waiting_isobaric_design";
@@ -1511,7 +1511,7 @@ public sealed class BatchRunner
     }
 
     /// <summary>
-    /// v0.4.45 (the user, 2026-11-11): moves the finished calibrations of <paramref name="acc"/>'s interrupted searches into its
+    /// v0.4.45 (the maintainer, 2026-11-11): moves the finished calibrations of <paramref name="acc"/>'s interrupted searches into its
     /// spectra folder as calibrated stand-ins (CalibratedStandIns.Harvest). A failure costs only the stand-ins: the raws are fetched.
     /// </summary>
     internal void HarvestCalibrations(string acc)
@@ -1797,7 +1797,7 @@ public sealed class BatchRunner
     // ------------------------------------------------------------------ delivery
 
     /// <summary>
-    /// v0.4.44 (the user, 2026-11-10: "some qc ... when something looks off, we should automatically dig in"): the share of a
+    /// v0.4.44 (the maintainer, 2026-11-10: "some qc ... when something looks off, we should automatically dig in"): the share of a
     /// full search's MS2 spectra its 1% PSMs must reach to be delivered (aging DEF-PSM-1PCT v1 over all MS2, the search's
     /// <c>id_rate</c>). Of 234 delivered searches, 8 were under it: our two iodoTMT deposits searched as amine TMT (PXD002479
     /// 0.07%, PXD022888 0.42%), small samples (PXD016932 0.48%, a secretome) and deposits aging later excluded. The median
@@ -1840,7 +1840,7 @@ public sealed class BatchRunner
     private async Task DeliverOneAsync(QueueEntry e, Profile profile, CancellationToken ct)
     {
         if (_q.Publish?.Manifest is not { } manifest) return;
-        // v0.4.43 (dataRepo 093): a split search waits, searched, until the store can serve a split (their roll-up by
+        // v0.4.43: a split search waits, searched, until the store can serve a split (their roll-up by
         // accession, PXR-R32): served before it, its site page links PRIDE to "PXD027754-rat" and every count reads it as
         // two deposits. Nothing is written to the manifest, so each driver start finds it undelivered and asks again here.
         if (SearchKey.IsSplit(e.Accession) && !_m.DeliverSplitDeposits)
@@ -1881,7 +1881,7 @@ public sealed class BatchRunner
         int rc;
         if (_ingestJson)
         {
-            // datarepo 1.0+: one JSON envelope on stdout, the human report on stderr (dataRepo 010/014, our 011).
+            // datarepo 1.0+: one JSON envelope on stdout, the human report on stderr.
             var argv = new[] { _m.DataRepo, "ingest", manifest, e.Accession, "--json" };
             var (exit, stdout, stderr) = await RunProcessFullAsync(argv, TimeSpan.FromHours(3), ct).ConfigureAwait(false);
             string full = KeepOutput(OutputDir, e.Accession, "ingest", argv, exit, stdout, stderr, DateTime.UtcNow);
@@ -1955,7 +1955,7 @@ public sealed class BatchRunner
     private bool Publishes => _q.Publish is { Manifest: not null, Command.Count: > 0 } && _m.DataRepo is not null;
 
     /// <summary>
-    /// v0.4.46 (aging PXR-A51): at each start, every manifest entry's <c>restrictions</c> is brought to the rule and the
+    /// v0.4.46: at each start, every manifest entry's <c>restrictions</c> is brought to the rule and the
     /// question's <c>[restrictions]</c> (<see cref="Restrictions"/>). The driver reads the question only at start, so a start
     /// is when a changed declaration can take effect; the first start of v0.4.46 writes them for every delivered entry. A
     /// failure is logged and the batch goes on: a restriction is the catalog's annotation, not a delivery.
@@ -2001,7 +2001,7 @@ public sealed class BatchRunner
             DateTime started = DateTime.UtcNow;
             RecordPublish(("last_started_utc", started.ToString("o")), ("waiting", Names(waiting)));
             Log($"PUBLISH start: {waiting.Count} deposit(s) delivered since the last successful publish ({Brief(waiting)}); limit {pub.TimeoutHours:0.#} h, free {FreeGb():0} GB");
-            // G38 (promised to dataRepo, our 032): the whole output goes to a file; batch.log and state keep only the tail.
+            // G38 (promised to dataRepo): the whole output goes to a file; batch.log and state keep only the tail.
             var argv = PublishArgv(pub.Command, pub.Manifest!, _m.DataRepo!);
             var (rc, stdout, stderr) = await RunProcessFullAsync(argv, TimeSpan.FromHours(pub.TimeoutHours), ct).ConfigureAwait(false);
             DateTime finished = DateTime.UtcNow;
@@ -2072,8 +2072,8 @@ public sealed class BatchRunner
 
     /// <summary>
     /// G38: writes a step's whole stdout and stderr, never cut, to <c>&lt;dir&gt;/&lt;accession&gt;_&lt;step&gt;_&lt;utc&gt;.log</c>
-    /// and returns the path. batch.log and state.json keep only the tail, which loses a .NET exception's type and message
-    /// (PXR-R14). A file that cannot be written is reported in the returned text, never thrown: the step itself succeeded.
+    /// and returns the path. batch.log and state.json keep only the tail, which loses a .NET exception's type and message.
+    /// A file that cannot be written is reported in the returned text, never thrown: the step itself succeeded.
     /// </summary>
     internal static string KeepOutput(string dir, string accession, string step, IReadOnlyList<string> argv, int rc,
         string stdout, string stderr, DateTime utc)
@@ -2145,7 +2145,7 @@ public sealed class BatchRunner
     /// <summary>
     /// Files to exclude, [] when every file passed, or null when the deposit must be skipped. Deliberately narrow: only the
     /// profile's excludable reasons (a blank or failed injection), at most its share of the deposit (one file is always
-    /// allowed), and at least one file must pass. An acquisition failure (ion-trap MS2) still drops the deposit (aging D52).
+    /// allowed), and at least one file must pass. An acquisition failure (ion-trap MS2) still drops the deposit.
     /// </summary>
     /// <summary>
     /// G4 (aging S64): the deposit's text never said it was labelled, but its spectra carry isobaric reporter ions.
@@ -2205,7 +2205,7 @@ public sealed class BatchRunner
         if (_q.Designs?.For(acc) is { } c && File.Exists(c)) curated = new Readers.SdrfDocument(c);
         // G40: a profile that ships a modification for a thiol reagent (NBF-Cl) searches such a deposit instead of parking it.
         var chem = ChemistryDetector.Detect(project, curated, deposited, rawFiles, profile.ThiolReagents);
-        // v0.4.15 (PXR-A99): the question states the cysteines were never alkylated; it outranks every source read above.
+        // v0.4.15: the question states the cysteines were never alkylated; it outranks every source read above.
         if (_q.ExceptionFor(acc) is { Alkylation: DepositException.NoAlkylation } ex) chem = chem.Unalkylated(ex.Reason);
         // v0.4.45: a label the probe's own spectra decided (LabelFreeBySpectra) outranks PRIDE's words. It is kept in the state,
         // so a restart before the search, or a retry, does not read TMT again and route the deposit back to the TMT profile.
@@ -2650,7 +2650,7 @@ public sealed class BatchRunner
         .Where(kv => kv.Value?["status"]?.GetValue<string>() == AssignedStatus).Select(kv => kv.Key).ToList();
 
     /// <summary>
-    /// v0.4.29 (the user, 2026-10-20: "let's have a bigger gap between the sets the worker is probing and the sets this box
+    /// v0.4.29 (the maintainer, 2026-10-20: "let's have a bigger gap between the sets the worker is probing and the sets this box
     /// is using. keep the worker stocked with probe sets that are five or 10 spots down the line"). The deposits this
     /// machine would probe next, in the order it takes them (<see cref="UpcomingProbes"/>): the first <c>gap</c> are left
     /// for this machine, and the worker's window is filled from the ones after them. Every new assignment is made at least
@@ -3076,7 +3076,7 @@ public sealed class BatchRunner
     }
 
     /// <summary>
-    /// The worker's probe files go as soon as they are handed off (the user, 2026-10-19: "make sure the other box deletes
+    /// The worker's probe files go as soon as they are handed off (the maintainer, 2026-10-19: "make sure the other box deletes
     /// probe files"): PRIDE is the source, a pass carries them to the controller, and a park needs none.
     /// </summary>
     private void DeleteProbeFiles(string acc, string why)

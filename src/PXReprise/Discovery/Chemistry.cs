@@ -73,7 +73,7 @@ public sealed record DepositChemistry(
     public IReadOnlyList<ChemistryArtifact> ArtifactsRead => Artifacts ?? Array.Empty<ChemistryArtifact>();
 
     /// <summary>
-    /// The question says the cysteines were never alkylated (v0.4.15, PXR-A99): no cysteine modification, whatever was
+    /// The question says the cysteines were never alkylated (v0.4.15): no cysteine modification, whatever was
     /// read. A wait on an unmodelled thiol reagent goes with it; any other wait (a protease, a label) stays. So does a gel's
     /// propionamide (free cysteines meet the gel's acrylamide); ring-opened NEM goes, with the NEM.
     /// </summary>
@@ -157,7 +157,7 @@ public static class ChemistryDetector
         var cm = CanonicalModification.AtResidue(0, key.Item2, $"UNIMOD:{id}", unimodId: id);
         var ours = MzLibModificationLookup.ProteinOnly.TryResolve(cm)?.MzLibModification;
         var unimod = UnimodModificationLookup.Instance.TryResolve(cm)?.MzLibModification;
-        // bridge 002 (PXR-B6, mzLib issue #1418): a lookup that cannot narrow its candidates returns the first one on the
+        // bridge 002 (mzLib issue #1418): a lookup that cannot narrow its candidates returns the first one on the
         // residue, whatever its mass, without a warning. Two resolutions of one UNIMOD id must agree on mass, or the mod is
         // unknown and the deposit waits (waiting_unknown_modification) instead of being searched with the wrong chemistry.
         if (ours is not null && unimod is not null && ours.MonoisotopicMass is double a && unimod.MonoisotopicMass is double b && Math.Abs(a - b) > MassAgreement)
@@ -240,7 +240,7 @@ public static class ChemistryDetector
             new(@"\biodoacetic acid\b", Opt)),
         ("Pyridylethyl", "UNIMOD:31", new(@"pyridylethyl|UNIMOD:31\b", Opt), new(@"pyridylethyl", Opt),
             new(@"\b4-vinylpyridine\b|\bvinylpyridine\b", Opt)),
-        // aging 089 (PXR-A94, their S87): PXD057499 "alkylated with iodoethanol" (S-hydroxyethyl cysteine), searched with
+        // aging 089 (their S87): PXD057499 "alkylated with iodoethanol" (S-hydroxyethyl cysteine), searched with
         // carbamidomethyl fixed, 0.5% cysteine peptides.
         ("Ethanolyl", "UNIMOD:278", new(@"ethanolyl|UNIMOD:278\b", Opt), new(@"ethanolyl|hydroxyethyl", Opt),
             new(@"\b(2-)?iodoethanol\b", Opt)),
@@ -270,7 +270,7 @@ public static class ChemistryDetector
 
     private static readonly Regex AlkylationContext = new(@"alkylat|block|thiol|cystein|\bCys\b|derivati[sz]", Opt);
 
-    // ------------------------------------------------------------------ side reactions (ptmQtl PXR-P18, PXR-P19)
+    // ------------------------------------------------------------------ side reactions
 
     /// <summary>NEM's succinimide ring opens with water (+18.011 Da; UNIMOD:320 Nethylmaleimide+water, +143.058 Da on C).
     /// Searched with closed NEM only, the McDonagh three and the ten Jarome deposits left +86.037 Da that GPTMD called
@@ -445,7 +445,7 @@ public static class ChemistryDetector
         // alkylation: in the text, NEM counts only near an alkylation, blocking, thiol or cysteine word.
         var fromText = Alkylants.Select(a => (a.Name, M: a.Text.Matches(text).FirstOrDefault(m => !a.Name.StartsWith("N", StringComparison.Ordinal)
                 || AlkylationContext.IsMatch(Window(text, m, 80))))).Where(x => x.M is not null).Select(x => (x.Name, M: x.M!)).ToList();
-        // aging 043 (PXR-A37, the user's D-3, 2026-10-07): NEM named ANYWHERE with no other alkylant named IS the alkylant.
+        // aging 043 (the maintainer's D-3, 2026-10-07): NEM named ANYWHERE with no other alkylant named IS the alkylant.
         // 70 mM NEM in a denaturing lysis buffer caps every free cysteine (the ten Jarome deposits are 0.2-3.2% Cys). Searched
         // VARIABLE: cysteines disulfide-bonded at lysis escape it.
         Match? lysisNem = fromText.Count == 0 && Alkylants.First(a => a.Name == "Nethylmaleimide").Text.Match(text) is { Success: true } nem ? nem : null;
@@ -485,7 +485,7 @@ public static class ChemistryDetector
             if (thiolReagents?.TryGetValue(unmodelled.Name, out string? custom) == true)
             {
                 // G40: the profile ships a modification for this reagent. Variable, never fixed: the PXD058611 probe found
-                // 14-24% of identified cysteines unmodified (results/nbf-probe_2026-10-11).
+                // 14-24% of identified cysteines unmodified.
                 mods = new[] { new CysMod(CustomModName(custom), "", false, custom) };
                 alkylation = new(unmodelled.Name, ChemistrySource.ProtocolText,
                     $"a thiol reagent the profile models as variable {custom.Replace('\t', ' ')}: {Snip(text, unmodelled.M)}");
@@ -544,7 +544,7 @@ public static class ChemistryDetector
                 $"iodoTMT tags cysteines, not lysines and N-termini (TMT read from {label.Source}: {label.Evidence}): {Snip(iodoText, iodo)}");
 
         // Every protease name as the pinned mzLib spells it (ProteaseDictionary). A per-file map is searched through
-        // MetaMorpheus's file-specific parameters (the user, 2026-10-05: calibration carries the protease into X-calib.toml).
+        // MetaMorpheus's file-specific parameters (the maintainer, 2026-10-05: calibration carries the protease into X-calib.toml).
         // A row with two proteases at once, or a protease mzLib does not know, waits.
         if (perFile is not null)
         {
@@ -560,7 +560,7 @@ public static class ChemistryDetector
         if (protease.Value == NonSpecific || perFile?.Values.Contains(NonSpecific) == true) park ??= NonspecificCleavagePark;
         if (mods.Any(m => m.MetaMorpheusId is null)) park ??= "waiting_unknown_modification";
 
-        // v0.4.29 (ptmQtl PXR-P18, PXR-P19): side reactions the chemistry makes likely on SOME peptides, for GPTMD to place.
+        // v0.4.29: side reactions the chemistry makes likely on SOME peptides, for GPTMD to place.
         var artifacts = new List<ChemistryArtifact>();
         if (mods.Any(m => m.Unimod == "UNIMOD:108"))
             artifacts.Add(new(RingOpenedNem, $"NEM on C ({alkylation.Value}, {alkylation.Source}); its ring opens with water"));

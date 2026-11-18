@@ -97,7 +97,7 @@ public sealed record Machine(
         string? dotnetRoot = root.OptionalString("dotnet_root");
         // A download whose file has not grown for this long is abandoned and retried (0 = off).
         double fetchStall = root.OptionalNumber("fetch_stall_minutes") ?? 5;
-        // Searches run at once (the user, 2026-10-07: a downloaded deposit starts its search at once, never waiting on the
+        // Searches run at once (the maintainer, 2026-10-07: a downloaded deposit starts its search at once, never waiting on the
         // previous one). Each search still gets max_threads; one search leaves most of a large machine idle.
         int slots = checked((int)(root.OptionalInteger("search_slots") ?? 1));
         // D39: every Nth search started is a catch-up re-search of a deposit searched under a profile the question no
@@ -108,16 +108,16 @@ public sealed record Machine(
         string? ascp = root.OptionalString("aspera_ascp"), asperaKey = root.OptionalString("aspera_key");
         // How many of a file's attempts go to Aspera before HTTPS; a damaged Aspera copy ends them early. 0 = HTTPS only.
         int asperaAttempts = checked((int)(root.OptionalInteger("aspera_attempts") ?? 3));
-        // The HTTPS host for raw files (pride 014): "globus", EBI's Globus collection over plain HTTPS, which came back
+        // The HTTPS host for raw files: "globus", EBI's Globus collection over plain HTTPS, which came back
         // clean where ftp.pride.ebi.ac.uk did not; or "ftp", mzLib's own choice.
         string prideHttps = (root.OptionalString("pride_https") ?? "globus").ToLowerInvariant();
-        // v0.4.21 (the user, 2026-10-17: "incrementally increase the limits"): how big a deposit this box downloads and
+        // v0.4.21 (the maintainer, 2026-10-17: "incrementally increase the limits"): how big a deposit this box downloads and
         // searches whole is the box's, like search_timeout_h, not the method's. Each key here replaces the profiles' own
         // [deposit] value; a question's [exceptions] still wins for its deposit.
         var limits = DepositLimits.Load(root.OptionalTable("deposit_limits"));
         // The probe search's wall clock (the profile's probe_search_minutes otherwise): larger files take longer.
         double? probeMinutes = root.OptionalNumber("probe_search_minutes");
-        // v0.4.26 (design/PLAN_worker.md; the user, 2026-10-19: "it would only run probes. and the full searches would only
+        // v0.4.26 (the maintainer, 2026-10-19: "it would only run probes. and the full searches would only
         // be run on this machine"): [worker] makes this machine a probe worker for the controller behind the share, and
         // [workers] makes it that controller. Never both.
         WorkerConfig? worker = null;
@@ -136,13 +136,13 @@ public sealed record Machine(
                 ws.OptionalNumber("quiet_hours") ?? 2, ws.OptionalNumber("assignment_hours") ?? 24, checked((int)(ws.OptionalInteger("gap") ?? 5)));
             ws.RefuseUnknownKeys();
         }
-        // v0.4.35 (the user, 2026-11-02): a raw file is deleted as soon as MetaMorpheus has calibrated it (CalibratedRaws).
+        // v0.4.35 (the maintainer, 2026-11-02): a raw file is deleted as soon as MetaMorpheus has calibrated it (CalibratedRaws).
         bool deleteCalibrated = root.OptionalBool("delete_raw_after_calibration") ?? true;
-        // v0.4.43 (dataRepo 093, PXR-R32): a split deposit's searches are searched, and their delivery waits until the store
+        // v0.4.43: a split deposit's searches are searched, and their delivery waits until the store
         // can serve them: until dataRepo's roll-up by accession, a served split gets a wrong PRIDE link and counts twice.
         bool deliverSplits = root.OptionalBool("deliver_split_deposits") ?? false;
-        // v0.4.46 (the user, 2026-11-11: "make the output sdrf read-only by default"): the SDRF a search writes is the record of the
-        // facts its quantities came from; a correction is a new search, never an edit (dataRepo PXR-R58).
+        // v0.4.46 (the maintainer, 2026-11-11: "make the output sdrf read-only by default"): the SDRF a search writes is the record of the
+        // facts its quantities came from; a correction is a new search, never an edit.
         bool sdrfReadOnly = root.OptionalBool("output_sdrf_read_only") ?? true;
         // 2026-11-11 (Alex and the user): the spectral library chains are shared through the cloud, so every machine searches
         // with the same library. A folder (a share) or s3://bucket/prefix; credentials from AWS_PROFILE. Unset: no sync.

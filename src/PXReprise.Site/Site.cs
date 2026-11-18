@@ -42,7 +42,7 @@ public sealed class SiteResult
     public required string CatalogId { get; init; }
     public List<string> Files { get; set; } = [];
 
-    /// <summary>The pages of deposits served in parts (<c>datasets/&lt;accession&gt;.html</c>, PXR-R32), among
+    /// <summary>The pages of deposits served in parts (<c>datasets/&lt;accession&gt;.html</c>), among
     /// <see cref="Files"/>.</summary>
     public IReadOnlyList<string> DepositPages { get; init; } = [];
     public Dictionary<string, string> Skipped { get; } = [];
@@ -205,7 +205,7 @@ public static partial class SiteGenerator
         return string.Join(" ", parts);
     }
 
-    /// <summary>What a split search is (PXR-R32), from catalog fields only (D17): its deposit, the reason the manifest
+    /// <summary>What a split search is, from catalog fields only (D17): its deposit, the reason the manifest
     /// gives, and the deposit's other searches the catalog serves.</summary>
     private static string SplitSentence(Dict ds)
     {
@@ -220,12 +220,12 @@ public static partial class SiteGenerator
 
     /// <summary><c>, for questions about &lt;purpose&gt;</c> when the instance stated one, else nothing.</summary>
     /// <remarks>The question an instance serves is the operator's (<c>--purpose</c>), not dataRepo's: the
-    /// generator used to say "how organelle proteomes change with age" on every site it wrote (PXR-D2).</remarks>
+    /// generator used to say "how organelle proteomes change with age" on every site it wrote.</remarks>
     private static string ForQuestions(SiteFacts facts) =>
         facts.Purpose is { Length: > 0 } p ? $", for questions about {p}" : "";
 
     /// <summary>The deposit's PRIDE page. Built from the ACCESSION (<see cref="DepositOf"/>), never a split search's key:
-    /// <c>projects/PXD027754-rat</c> is no PRIDE project (PXR-R32).</summary>
+    /// <c>projects/PXD027754-rat</c> is no PRIDE project.</summary>
     private static string? PrideUrl(string accession) =>
         accession.StartsWith("PXD", StringComparison.Ordinal)
             ? $"https://www.ebi.ac.uk/pride/archive/projects/{PyText.Quote(accession)}" : null;
@@ -594,7 +594,7 @@ public static partial class SiteGenerator
         return $"{head}<br><span class=\"note\">{E(string.Join(", ", Strings(ds["finding_codes"])))}</span>";
     }
 
-    /// <summary>Datasets by organism and enrichment (aging 070 57d), so "which datasets are whole-proteome
+    /// <summary>Datasets by organism and enrichment, so "which datasets are whole-proteome
     /// mouse" is one glance rather than 34 page opens.</summary>
     private static string CorpusTable(IReadOnlyList<Dict> datasets)
     {
@@ -648,7 +648,7 @@ public static partial class SiteGenerator
             $"<div class=\"tile-note\">{E(m["note"])}</div></div>"));
         var aboutBlock = !string.IsNullOrEmpty(about) ? $"<section class=\"about\">\n{AboutHtml(about)}\n</section>" : "";
         var purposeSentence = facts.Purpose is { Length: > 0 } p ? $" The question they serve is {E(p)}." : "";
-        // PXR-R32: said only when something is split, so a catalog with no split says what it always said.
+        // Said only when something is split, so a catalog with no split says what it always said.
         var splitSentence = facts.SplitDeposits.Count == 0 ? ""
             : $" {PyText.Thousands((long)facts.SplitDeposits.Count)} of them {(facts.SplitDeposits.Count == 1 ? "was" : "were")} searched in parts (split, e.g. one "
               + $"search per species), so the table below has {Plural((long)facts.Datasets.Count, "row")}, one per search; each "
@@ -700,7 +700,7 @@ public static partial class SiteGenerator
     {
         var datasetId = Id(ds);
         var pride = PrideUrl(DepositOf(ds));
-        // PXR-R32: a split search names its deposit and the deposit's other parts, so no reader takes it for the whole.
+        // A split search names its deposit and the deposit's other parts, so no reader takes it for the whole.
         var partOf = "";
         if (IsSplitSearch(ds))
         {
@@ -771,7 +771,7 @@ public static partial class SiteGenerator
                 + " <span class=\"note\">(the bundle disagrees with the producer's own count here)</span>";
         else if (PyText.Truthy(bundle["reconciliation_ok"]))
         {
-            // From catalog format 15 (1.4.1, DATAREPO-86): a difference inside the bound the producer's own file format
+            // From catalog format 15 (1.4.1): a difference inside the bound the producer's own file format
             // leaves (q-values printed at the threshold, notches that never resolved) is explained, not failed.
             var explained = Strings(bundle.GetValueOrDefault("reconciliation_explained")).ToList();
             reconciliation = explained.Count == 0
@@ -783,7 +783,7 @@ public static partial class SiteGenerator
         else
             reconciliation = "not recorded";
 
-        // The public pair when the producer records one (aging 069 55e): the private repo is where the commit
+        // The public pair when the producer records one: the private repo is where the commit
         // lives, and a reader cannot open it.
         var commitValue = PyText.Truthy(ds.GetValueOrDefault("pipeline_public_commit"))
             ? ds["pipeline_public_commit"] : ds.GetValueOrDefault("pipeline_commit");
@@ -869,7 +869,7 @@ public static partial class SiteGenerator
             DatasetJsonLd(ds, meta, baseUrl, dataUrl, keywords), meta);
     }
 
-    /// <summary>The page of a deposit served in parts, at <c>datasets/&lt;accession&gt;.html</c> (PXR-R32): the address the
+    /// <summary>The page of a deposit served in parts, at <c>datasets/&lt;accession&gt;.html</c>: the address the
     /// deposit had while it was searched whole, now listing its parts. Each part's numbers stay on its own page and are
     /// never summed here: a protein found in two parts would be counted twice.</summary>
     private static string DepositHtml(Dict deposit, Dict meta, string title, string? baseUrl)

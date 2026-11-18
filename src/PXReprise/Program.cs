@@ -118,7 +118,7 @@ public static class Program
             case "rank":
             {
                 // rank <census dir> [--only file] [--out dir] [--large-gb 150] [--max-files 60]: orders a census's queueable
-                // deposits biggest first within the limits (the user, 2026-10-05), from PRIDE file listings; no spectra.
+                // deposits biggest first within the limits (the maintainer, 2026-10-05), from PRIDE file listings; no spectra.
                 // The design read from a deposited SDRF or guessed from file names is written alongside, for information.
                 string censusDir = Positional(args, 1)[0];
                 args.AllowOnly("only", "out", "large-gb", "max-files");
@@ -195,7 +195,7 @@ public static class Program
 
             case "gate":
             {
-                // v0.4.46 (aging PXR-A179, part A5): the question's gate over a list of accessions (one a line, or a queue.json),
+                // v0.4.46 (part A5): the question's gate over a list of accessions (one a line, or a queue.json),
                 // writing the census's gate.tsv rows and changing nothing.
                 string file = Positional(args, 1)[0];
                 args.AllowOnly("list", "out");
@@ -303,7 +303,7 @@ public static class Program
                     args.Required("spectra"), args.Required("out"), args.Required("qc"), List(args.Option("extra-db")),
                     List(args.Option("exclude")), args.Option("run-date"), args.Option("accession"),
                     CuratedDesign: args.Option("design"), DesignConditionColumns: args.Option("condition-columns") is null ? null : List(args.Option("condition-columns")),
-                    // v0.4.45 (aging PXR-A181): a profile that reads each deposit's chemistry takes it from --design's SDRF here.
+                    // v0.4.45: a profile that reads each deposit's chemistry takes it from --design's SDRF here.
                     Chemistry: Search.SearchStage.ChemistryOutsideTheBatch(profile, args.Required("spectra"), args.Option("design")),
                     LibraryRouteClasses: enriched.Count > 0 ? enriched : null);
                 return await Search.SearchStage.RunAsync(request, ct).ConfigureAwait(false);
@@ -366,7 +366,7 @@ public static class Program
                     }
                     case "restrictions":
                     {
-                        // v0.4.46 (aging PXR-A51): what the driver's start writes into the manifest's `restrictions`, shown
+                        // v0.4.46: what the driver's start writes into the manifest's `restrictions`, shown
                         // without writing; --write writes it, refused on the live manifest while a driver runs (it is the
                         // manifest's writer, and syncs at its own start anyway). --manifest points at a copy, e.g. to check it
                         // with `datarepo manifest` first.
@@ -437,7 +437,7 @@ public static class Program
                 //   target databases, with the modifications of every MetaMorpheus the machine names and the shipped lists.
                 // 2026-11-11, with the machine's spectral_library_remote (the chains shared through the cloud):
                 //   pxreprise library pull <chain> --machine m.toml   fetch the cloud's newer versions and make the newest current
-                //   pxreprise library seed <chain> --machine m.toml   start the cloud's copy of a chain from this machine (PXR-D4)
+                //   pxreprise library seed <chain> --machine m.toml   start the cloud's copy of a chain from this machine
                 var rest = args.Words.Skip(1).ToList();
                 if (!(rest is ["list"] || rest is ["repair", _] || rest is ["pull", _] || rest is ["seed", _]))
                     throw new UsageException("usage: pxreprise library list --machine m.toml, library repair <organism> --machine m.toml --reason \"...\" [--databases a.xml,b.xml], library pull <chain> --machine m.toml, or library seed <chain> --machine m.toml");
@@ -467,7 +467,7 @@ public static class Program
 
             case "worker":
             {
-                // v0.4.26, a probe worker's share (design/PLAN_worker.md):
+                // v0.4.26, a probe worker's share:
                 //   pxreprise worker sums <dir>             write <dir>\SHA256SUMS (a software folder or database set)
                 //   pxreprise worker check <dir> [--sums F] check <dir>'s files against SHA256SUMS (exit 1 on a mismatch)
                 //   pxreprise worker release <share> --reason "..." [--metamorpheus NAME] [--dotnet NAME] [--database-set NAME]

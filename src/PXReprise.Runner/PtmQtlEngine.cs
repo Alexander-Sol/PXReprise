@@ -6,7 +6,7 @@ using Quantification.PtmQtl;
 
 namespace PXReprise.Runner;
 
-/// <summary>The <c>ptmqtl.*</c> engines (ptmQtl 025; our 026, 031): site pairs per search, pooled pairs per species,
+/// <summary>The <c>ptmqtl.*</c> engines: site pairs per search, pooled pairs per species,
 /// and site-trait fits per search and trait.</summary>
 /// <remarks>
 /// <para>The method is ptmQtl's (<c>ptmQtl:DEF-PTM-PAIR v2</c>, <c>ptmQtl:DEF-SITE-TRAIT v1</c>), applied by
@@ -15,7 +15,7 @@ namespace PXReprise.Runner;
 /// <para><b>Inputs by role.</b></para>
 /// <list type="bullet">
 /// <item><c>enrichment</c>: the operator's list of PTM-enriched deposits (S3), a TSV with columns <c>dataset</c> and
-/// <c>enriched_ptm</c>. It is hashed into every artefact (our ptmQtl 026, P23), so a changed list gives new artefacts.</item>
+/// <c>enriched_ptm</c>. It is hashed into every artefact (P23), so a changed list gives new artefacts.</item>
 /// <item><c>traits</c> (<c>site_traits</c> only): a TSV with columns <c>dataset</c>, <c>run</c>, <c>replicate</c>,
 /// <c>trait_id</c> and <c>value</c>, one trait per file.</item>
 /// <item>The bundle, by its id: a bundle id is a hash of everything it holds.</item>
@@ -23,7 +23,7 @@ namespace PXReprise.Runner;
 /// <para><b>Artefacts.</b> <c>site_pairs</c> writes <c>ptm_pairs</c> and <see cref="PairSitesFile"/>, each pair's two
 /// sites in full, from which <c>pool_pairs</c> rebuilds mzLib's pairs without re-reading a bundle (P22).
 /// <c>site_traits</c> writes <c>trait_effects</c> and <see cref="FitsFile"/>, the fields <c>trait_effects</c> has no
-/// column for yet (our ptmQtl 031, P24).</para>
+/// column for yet (P24).</para>
 /// <para><b>S6, the search-version gate.</b> Each artefact records whether its search predates mzLib 1.0.592: such a
 /// search wrote no occupancy for protein N-termini after initiator-Met removal (mzLib #1337). Nothing is filled in.</para>
 /// </remarks>

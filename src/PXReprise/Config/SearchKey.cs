@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace PXReprise.Config;
 
 /// <summary>
-/// v0.4.43 (D33, design/PLAN_split-deposits.md; the user, 2026-11-08: "These dual species repos should be split and that
+/// v0.4.43 (D33; the maintainer, 2026-11-08: "These dual species repos should be split and that
 /// should be an option for the human"): the key a search is run, recorded and delivered under. A deposit searched once is
 /// keyed by its accession (<c>PXD027754</c>); a split deposit's searches by accession and group (<c>PXD027754-rat</c>,
 /// <c>PXD027754-mouse</c>; dataRepo R8/R18, agreed 2026-10-11). Everything PRIDE is asked (records, file lists, checksums,

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace PXReprise.Search;
 
 /// <summary>
-/// The contaminant database a search uses, reduced when a profile excludes entries (aging D54, S58). MetaMorpheus ships a
+/// The contaminant database a search uses, reduced when a profile excludes entries (S58). MetaMorpheus ships a
 /// panel that also carries a human spike-in protein standard; in rodent searches those entries captured native proteins'
 /// peptides and labelled them contaminant. The reduced copy is content-addressed: the same panel plus the same list always
 /// gives the same file, byte for byte what aging's contam_panel.py builds.

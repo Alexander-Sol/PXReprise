@@ -3,7 +3,7 @@ using PXReprise.Config;
 namespace PXReprise.Search;
 
 /// <summary>
-/// G40: a modification no UniMod entry describes (NBF, aging 072 PXR-A69) reaches MetaMorpheus through the profile's own
+/// G40: a modification no UniMod entry describes (NBF) reaches MetaMorpheus through the profile's own
 /// modification file. MetaMorpheus reads every file in its settings folder's <c>Mods</c> directory at start
 /// (GlobalVariables.LoadModifications, 1.1.12), so the file is installed there, under its own name, before a search that
 /// uses it. A file of that name with other contents is refused, never replaced: searches already ran against it, and a

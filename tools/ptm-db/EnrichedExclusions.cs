@@ -1,6 +1,6 @@
 #:package YamlDotNet@16.3.0
 #:property PublishAot=false
-// The declared enriched-for exclusions for BuildPtmDb.cs --exclude-enriched (D29; the user, 2026-10-07: "we will be
+// The declared enriched-for exclusions for BuildPtmDb.cs --exclude-enriched (D29; the maintainer, 2026-10-07: "we will be
 // inundated with false positives"): a site of a PTM class is never counted from a deposit that enriches that class.
 // agingPTM-v2 used a one-off list seeded from aging's enrichment targets of 2026-10-07 (16 deposits). Since then the
 // batch records each deposit's enrichment itself (D30): the manifest's `enrichment` (per deposit, the screen's call and

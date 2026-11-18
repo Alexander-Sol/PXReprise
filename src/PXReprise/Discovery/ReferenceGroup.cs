@@ -4,7 +4,7 @@ using UsefulProteomicsDatabases;
 namespace PXReprise.Discovery;
 
 /// <summary>
-/// Whether a PRIDE record names a reference group beside its disease group (aging 032, PXR-A27, aging D71): control,
+/// Whether a PRIDE record names a reference group beside its disease group: control,
 /// healthy, untreated, vehicle, sham, wild type, placebo, mock, age-matched, cognitively normal, young, and the like.
 /// A guess from text for the screen, with the words it read as evidence; curation decides the real design later.
 /// "Control" counts only as a group: not quality control, a loading control, or control of the FDR.

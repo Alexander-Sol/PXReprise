@@ -1,7 +1,7 @@
 namespace PXReprise.Discovery;
 
 /// <summary>
-/// D34 (the user: "you have to tell the person a call needs to be made. don't just walk away"): every park that needs a
+/// D34 (the maintainer: "you have to tell the person a call needs to be made. don't just walk away"): every park that needs a
 /// person's decision is written to the run's <c>decisions_needed.tsv</c>, one row per deposit and park, saying what must
 /// be decided, on what evidence, and the choices. The session that runs the batch reads it, tells the question's owner in
 /// a thread message, and shows it in the session brief until it is answered. The answer comes back as question data
@@ -36,7 +36,7 @@ public static class DecisionsNeeded
             "record each run's species in a curated SDRF; approve and search that species; or exclude the deposit"),
         // v0.4.43: also a record naming two of the question's own species (human and mouse), searched whole as one before.
         ["waiting_other_organism"] = new("The deposit's PRIDE record names another organism beside the one it is queued as, outside the question or a second of the question's own (human and mouse): runs of another species, a host and its pathogen, a xenograft, or a mislabel.",
-            // v0.4.43 (the user, 2026-11-08: "These dual species repos should be split and that should be an option for the human").
+            // v0.4.43 (the maintainer, 2026-11-08: "These dual species repos should be split and that should be an option for the human").
             "split it into one search per species ([splits.<accession>] by = \"species\", one group per species with its include_files and species; each is delivered as <accession>-<group>); say which runs to search ([exceptions] include_files / exclude_files) or what all its runs are ([exceptions] species); or exclude the deposit"),
         // v0.4.43: a raw file is in one group of a split only, checked against PRIDE's file list.
         [Batch.BatchRunner.SplitOverlapStatus] = new("The question splits this deposit, and two of its groups take the same raw file. Which group is the file in?",
@@ -55,7 +55,7 @@ public static class DecisionsNeeded
         // v0.4.41: PXD005035, 2026-11-07, 280 GB waiting on one raw file. An exception does not reopen this status (Settled), hence the retry.
         ["skipped_acquisition_full"] = new("QC refused some of the raw files of a whole downloaded deposit, so nothing was searched. Its raw files are still on disk, waiting.",
             "leave those files out ([exceptions] exclude_files), then batch retry at the next driver start; or exclude the deposit, and free its disk"),
-        // v0.4.39 (the user, 2026-11-04): the disk-floor stop is the machine's call, not the question's, and it stops the whole
+        // v0.4.39 (the maintainer, 2026-11-04): the disk-floor stop is the machine's call, not the question's, and it stops the whole
         // batch. Unannounced, it left the batch idle for about 13 hours (PXD005035, 2026-11-03/04) until someone asked.
         ["fetch_paused_disk"] = new("The deposit's download needs more free disk than the machine has above its floor (min_free_gb), so the batch starts no new deposit until space is freed. This is the machine operator's call, not the question's.",
             "free disk space (the next driver start takes the deposit up again); lower the machine's min_free_gb; or set the deposit aside ([exceptions] select fewer files, or exclude it)"),

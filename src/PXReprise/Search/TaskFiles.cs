@@ -90,7 +90,7 @@ public static class TaskFiles
                 text = Replace(text, "^SearchType = \".*\"$", $"SearchType = \"{st}\"", "SearchType", exactlyOne: true);
             }
             // The two library switches, on the SEARCH task only. Never both true: MetaMorpheus acts on them
-            // independently and would write two libraries (aging D33).
+            // independently and would write two libraries.
             if (s.SpectralLibraryMode is { } mode)
             {
                 if (mode is not ("write" or "update"))
@@ -125,7 +125,7 @@ public static class TaskFiles
             text = EditModList(text, "ListOfModsVariable", remove: e => e.EndsWith(" on C", StringComparison.Ordinal), add: s.VariableCysMods ?? Array.Empty<string>());
         }
 
-        // v0.4.34 (TMT trial, results/tmt-trial_2026-10-29): an isobaric kit is fixed on K and the peptide N-terminus in
+        // v0.4.34 (TMT trial): an isobaric kit is fixed on K and the peptide N-terminus in
         // EVERY task (every peptide carries it), and the search quantifies its reporters instead of running FlashLFQ.
         // MultiplexModId names the kit: null in MetaMorpheus's defaults, so absent from CMD -g's file, and without it the
         // search fails with "Could not find isobaric mass tag with the name ". It is inserted after the switch, as
@@ -148,7 +148,7 @@ public static class TaskFiles
             }
         }
 
-        // v0.4.40 (G66, D32 slice 4; results/tmtphospho-trial_2026-11-02): the classes the deposit enriches are variable in
+        // v0.4.40 (G66, D32 slice 4): the classes the deposit enriches are variable in
         // EVERY task, with MaxModsForPeptide raised, so calibration finds the enriched peptides it is fitted on and the
         // search places each site on any residue, not only where the database annotates one (the trial: +39% PSMs).
         if (s.EnrichedVariableMods is { Count: > 0 } enriched)
@@ -179,7 +179,7 @@ public static class TaskFiles
     /// <summary>
     /// Appends <c>category&lt;TAB&gt;name</c> entries to <c>ListOfModsGptmd</c>. The TOML stores the list as one string
     /// with the TAB as a literal backslash-t and entries separated by two of them. A name the pinned MetaMorpheus does
-    /// not define is refused: MetaMorpheus would drop it silently, which is how the GG remnant went unsearched (aging D40).
+    /// not define is refused: MetaMorpheus would drop it silently, which is how the GG remnant went unsearched.
     /// </summary>
     public static (string Text, List<string> Added) AddGptmdMods(string text, IReadOnlyList<string> extra,
         IReadOnlySet<(string Category, string Name)> knownMods)

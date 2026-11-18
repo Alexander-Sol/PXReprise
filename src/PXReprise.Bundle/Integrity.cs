@@ -19,7 +19,7 @@ public sealed record Collapse(string Table, IReadOnlyList<string> Key, string Id
 /// back and could not tell a missing measurement from a broken link. A dangling reference is an
 /// ingester bug, not a property of the data, so it stops the write rather than becoming a Finding.
 /// <para>One escape, and only one: rows identical in every column for one identifier are one thing
-/// written twice (MetaMorpheus wrote one protein group three times in PXD027318, aging 015), so
+/// written twice (MetaMorpheus wrote one protein group three times in PXD027318), so
 /// <see cref="CollapseExactDuplicates"/> drops the copies and records them. Rows that share an
 /// identifier and differ anywhere are still refused.</para>
 /// <para>Ported from <c>integrity.py</c>; the tables of references and keys are the same.</para>
@@ -117,7 +117,7 @@ public static class Integrity
     /// <c>feature_id</c> is nullable and part of the key anyway, because a dataset-level refusal such as
     /// <c>no_age_metadata</c> is one row with no feature. <c>age_effect_meta</c> starts with <c>organism</c>
     /// (aging DEF-AGE-EFFECT-META v1.2 section 6.4, G40): never pool across it.
-    /// <para>From layer 0.7.0 (DATAREPO-88 c) <c>age_effect_meta</c> is keyed by <c>method_scope</c> where it was keyed by
+    /// <para>From layer 0.7.0 <c>age_effect_meta</c> is keyed by <c>method_scope</c> where it was keyed by
     /// <c>quant_method</c>, and <c>age_effect_method_terms</c> by (<c>dataset_id</c>, <c>response</c>): one term per isobaric
     /// dataset and response (aging DEF-AGE-EFFECT-META v1.4). The keys follow the layer version in force.</para>
     /// </remarks>
@@ -127,9 +127,9 @@ public static class Integrity
             ["aging"] = new Dictionary<string, string[]>(StringComparer.Ordinal)
             {
                 ["sample_ages"] = ["sample_id"],
-                // One curated value per characteristic per sample (aging 078, REQ-DATAREPO-6).
+                // One curated value per characteristic per sample.
                 ["curated_sample_characteristics"] = ["sample_id", "name"],
-                // One design row per run, one level per factor per run (aging 102, DATAREPO-79).
+                // One design row per run, one level per factor per run.
                 ["curated_run_design"] = ["run_id"],
                 ["curated_design_factors"] = ["run_id", "factor"],
                 ["age_effects"] = ["dataset_id", "feature_id", "response", "estimator", "quant_basis", "model_form", "stratum"],

@@ -111,7 +111,7 @@ internal static class RunCommand
             return 0;
         }
         var go = engine == GoEngine.Engine;
-        // go's published definition id (go D40); GoEngine.Run refuses a call without one.
+        // go's published definition id; GoEngine.Run refuses a call without one.
         var result = go ? GoEngine.Run(store, bundles, inputs, GoEngine.DefinitionId) : LogsEngine.Run(store, bundles, inputs);
         foreach (var reference in result.Written)
         {

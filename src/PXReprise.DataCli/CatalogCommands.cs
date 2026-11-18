@@ -212,7 +212,7 @@ internal static class CatalogCommands
         return 0;
     }
 
-    /// <summary><c>build</c> then <c>site</c>, for an operator with no script of their own (PXReprise PXR-D4).</summary>
+    /// <summary><c>build</c> then <c>site</c>, for an operator with no script of their own.</summary>
     /// <remarks>With no accessions named, it takes every <c>include</c> dataset that HAS a bundle and names each
     /// that has none, where a bare <c>build</c> refuses on the first. It does not run an engine, pick up a study
     /// delivery nobody asked for, or push the site anywhere: publishing to a host stays the operator's step.</remarks>

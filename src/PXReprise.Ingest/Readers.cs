@@ -40,7 +40,7 @@ public sealed class ReaderLog
 /// <c>\r\n</c>; quotes are ordinary characters; the first row is the header even when it is empty; later empty rows
 /// are dropped.</para>
 /// <para>A table has no size limit here. Decoding a whole file into one string stops at .NET's longest string, 1,073,741,791
-/// characters, and reading it into one array at 2 GiB: PXD025315's peak table is 1.49 GB (PXR-R48). A table of many
+/// characters, and reading it into one array at 2 GiB: PXD025315's peak table is 1.49 GB. A table of many
 /// columns costs only the cells asked for, since a row is split by position and a cell becomes a string when read.</para>
 /// </remarks>
 public sealed class TsvReader : IDisposable
@@ -189,17 +189,17 @@ public sealed class OccupancyRecords
 /// |---|---|---|
 /// | <c>AllPSMs.psmtsv</c>, <c>AllPeptides.psmtsv</c> | mzLib (pyMzLib <c>read_records</c>) | covered, typed |
 /// | <c>AllPeptides.psmtsv</c>'s six <c>Matched Ion *</c> columns | in-house TSV, <c>Sources/PeptidoformIons</c> | mzLib's projection leaves the composite matched-ion fields out; the cells are stored verbatim (schema 0.0.17) |
-/// | <c>AllQuantifiedPeaks.tsv</c> | in-house TSV | pyMzLib's reader wants an <c>MBR Score</c> column MetaMorpheus 1.1.11 does not write (DATAREPO-13) |
-/// | <c>AllQuantifiedPeptides.tsv</c>, <c>AllQuantifiedProteinGroups.tsv</c> | in-house TSV | no pyMzLib reader (aging 006; asked as pyMzLib 005) |
+/// | <c>AllQuantifiedPeaks.tsv</c> | in-house TSV | pyMzLib's reader wants an <c>MBR Score</c> column MetaMorpheus 1.1.11 does not write |
+/// | <c>AllQuantifiedPeptides.tsv</c>, <c>AllQuantifiedProteinGroups.tsv</c> | in-house TSV | no pyMzLib reader (asked as pyMzLib 005) |
 /// | <c>*.sdrf.tsv</c> | mzLib <c>SdrfDocument</c> (pyMzLib <c>sdrf.read</c>) | covered since 0.1.1 |
 /// | <c>results.txt</c>, <c>*.toml</c>, <c>Mods/*.txt</c>, <c>*.json</c> | in-house | not file formats pyMzLib owns |
-/// | the searched protein database (<c>.xml</c>, <c>.fasta</c>) | in-house, <c>Sources/ProteinDb</c> | pyMzLib has no protein-database reader; only <c>(accession, sequence)</c> is read, to place PTM sites (DATAREPO-32) |
+/// | the searched protein database (<c>.xml</c>, <c>.fasta</c>) | in-house, <c>Sources/ProteinDb</c> | pyMzLib has no protein-database reader; only <c>(accession, sequence)</c> is read, to place PTM sites |
 /// | go's <c>*_go_annotation.tsv</c>, <c>*_go_category_*.tsv</c> | in-house, <c>Sources/Go</c> | go's writers (<c>GoAnnotationTsv</c>, <c>GoCategoryTsv</c>) are released in mzLib 1.0.593, but mzLib has no reader for them; the module is a contract check more than a parser (G86) |
 /// </para>
 /// <para>
 /// <c>*.sdrf.tsv</c> is the one that has already gone the other way. dataRepo read it as plain TSV because
 /// pyMzLib's <i>generic</i> projection joined header and cells with <c>;</c>, which SDRF values contain
-/// themselves, so the columns could not be recovered (DATAREPO-13). pyMzLib 0.1.1 answered that with a
+/// themselves, so the columns could not be recovered. pyMzLib 0.1.1 answered that with a
 /// dedicated <c>pymzlib.sdrf</c> module, which on the real PXD036557 file agreed with the in-house read cell
 /// for cell, including all 144 cells that contain a <c>;</c>. The generic records projection is still lossy on
 /// an SDRF, so it must not be used for one.
@@ -484,7 +484,7 @@ public static class Readers
     /// <summary>Reads a whole tab-separated file as a header and a list of rows, with no interpretation.</summary>
     /// <remarks>For a table small enough to hold; <see cref="TsvReader"/> states the rules, and reads one that is not.
     /// Python's <c>csv</c> also refused a field over 131,072 characters, which a protein group with enough members
-    /// reaches (the largest in aging's corpus is 60,129); under <see cref="IngestRules.Current"/> there is no such limit.</remarks>
+    /// reaches (the largest in aging's corpus is 60); under <see cref="IngestRules.Current"/> there is no such limit.</remarks>
     public static (List<string> Header, List<List<string>> Rows) ReadTsv(string path, ReaderLog? log = null, string? note = null,
         IngestRules rules = IngestRules.Current)
     {
@@ -525,7 +525,7 @@ public static class Readers
     /// <summary>Pulls the counted totals out of MetaMorpheus's free-text <c>results.txt</c>.</summary>
     /// <remarks>
     /// These are the numbers the ingest reconciles against: <c>All target PSMs with q-value &lt;= 0.01</c> is
-    /// aging's canonical <c>DEF-PSM-1PCT v1</c> (aging 006), and it differs on purpose from the FDR engine's
+    /// aging's canonical <c>DEF-PSM-1PCT v1</c>, and it differs on purpose from the FDR engine's
     /// own log line that older provenance records as <c>psms_1pct</c>.
     /// </remarks>
     /// <returns><c>{scope: {name: count}}</c> where scope is <c>""</c> for dataset-wide totals or the run name.</returns>

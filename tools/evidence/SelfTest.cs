@@ -153,7 +153,7 @@ internal static class SelfTest
         Check(Deposit.Name("draft.sdrf.tsv", ".independent") == "draft.independent.sdrf.tsv" && Deposit.Name("model.json", ".independent") == "model.independent.json"
               && Deposit.Name("evidence.model.tsv", ".independent") == "evidence.model.independent.tsv" && Deposit.Name("model.json", "") == "model.json",
             "independent outputs get their own names, so a reading paid for with the SDRF in view is never reused or overwritten");
-        // D65 step 3 (the user, 2026-11-07: "make an effort to resolve differences. unresolved differences get reported"): how a
+        // D65 step 3 (the maintainer, 2026-11-07: "make an effort to resolve differences. unresolved differences get reported"): how a
         // difference between our independent draft and a community SDRF is sorted before anything is asked.
         Check(SdrfComparison.Classify("lung", "lungs") == DiffKind.Wording && SdrfComparison.Classify("Alzheimer's disease", "alzheimer disease") == DiffKind.Wording
               && SdrfComparison.Classify("WT", "wild type") == DiffKind.Wording && SdrfComparison.Classify("label free sample", "label free") == DiffKind.Wording,

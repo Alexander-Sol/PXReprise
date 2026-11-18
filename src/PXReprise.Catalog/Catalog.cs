@@ -128,8 +128,8 @@ public sealed record DatasetAnnotation(
 /// <param name="RunId">The run's id as <c>runs.run_id</c> spells it, <c>&lt;dataset_id&gt;:&lt;run base name&gt;</c>.</param>
 public sealed record RunExclusion(string DatasetId, string BundleId, string RunId, string RunName, string Reason);
 
-/// <summary>One USE the build's manifest says a whole dataset is unfit for: a row of <c>dataset_restrictions</c>
-/// (aging DATAREPO-74).</summary>
+/// <summary>One USE the build's manifest says a whole dataset is unfit for: a row of <c>dataset_restrictions</c>.
+/// </summary>
 /// <param name="Use">One of <see cref="PXReprise.Ingest.DatasetEntry.RestrictionUses"/>.</param>
 public sealed record DatasetRestriction(string DatasetId, string BundleId, string Use, string Reason);
 
@@ -172,7 +172,7 @@ public sealed record CatalogResult
     public int Indexes { get; init; }
     public bool Skipped { get; init; }
 
-    /// <summary>Catalogs staged beside the output by builds no longer running, removed by this one (DATAREPO-83 a).</summary>
+    /// <summary>Catalogs staged beside the output by builds no longer running, removed by this one.</summary>
     public IReadOnlyList<StagedCatalog> StagedRemoved { get; init; } = [];
 
     /// <summary>Staged catalogs left in place because nothing says whether their build is still running.</summary>
@@ -226,7 +226,7 @@ public static partial class CatalogBuilder
     /// columns and <c>catalog_study_bundles</c>; "4" adds <c>search_modifications_placed</c>; "5" adds
     /// <c>dataset_overview.enrichment_mixed</c> (G63); "6" loads engine artefacts (<c>gene_resolutions</c>,
     /// G64) and <c>catalog_engine_artefacts</c>; "7" makes the contaminant label per dataset
-    /// (<c>protein_datasets.is_contaminant</c>, <c>protein_index.n_datasets_contaminant</c>; aging 070 57f);
+    /// (<c>protein_datasets.is_contaminant</c>, <c>protein_index.n_datasets_contaminant</c>);
     /// "8" adds <c>samples.&lt;column&gt;_name</c> beside each term-only sample column (G74); "9" loads go's
     /// engine artefacts into <c>protein_localizations</c>, <c>organelle_term_categories</c> and
     /// <c>annotation_sources</c>, with a go coverage check and <c>catalog_tables.kind</c>
@@ -235,11 +235,11 @@ public static partial class CatalogBuilder
     /// <c>run_exclusions</c> from the same manifest's <c>excluded_runs</c> (G85). G85 did not bump it: "10" was
     /// unreleased when G85 joined it (1.1.0 carries both), so no published catalog says "10" without the table, and
     /// the exclusions themselves are hashed into the id, which moves whenever they do. The discovery census
-    /// (<c>dataset_candidates</c> from the manifest's <c>candidates</c> TSV, aging 088 AGING-P11) joined "10" on the
+    /// (<c>dataset_candidates</c> from the manifest's <c>candidates</c> TSV) joined "10" on the
     /// same reasoning: still unreleased, the census file's sha256 is hashed into the id when there is one, and a
     /// manifest naming none builds the catalog -- and the id -- it built before. "11" adds
-    /// <c>dataset_restrictions</c> and <c>dataset_overview.restrictions</c> from the manifest's <c>restrictions</c>
-    /// (aging DATAREPO-74), and the aging layer's design tables (0.6.0, DATAREPO-79). "12" adds the folder layout (views
+    /// <c>dataset_restrictions</c> and <c>dataset_overview.restrictions</c> from the manifest's <c>restrictions</c>,
+    /// and the aging layer's design tables (0.6.0). "12" adds the folder layout (views
     /// over the store's Parquet, versioned files, <c>latest.json</c>; D48 step 1) and <c>catalog_meta.release_id</c>,
     /// <c>layout</c> and <c>data_root</c>. "13" leaves PSMs in the bundles (no <c>psms</c> or <c>psms_1pct</c>; D48 step
     /// 2): <c>dataset_overview</c>'s two PSM counts are the ones each bundle recorded at ingest. Inside a
@@ -251,9 +251,9 @@ public static partial class CatalogBuilder
     /// <c>ptm_pairs</c> and <c>trait_effects</c>, with a catalog column <c>artefact_id</c> on both and NULL
     /// <c>dataset_id</c> / <c>bundle_id</c> on pooled rows (<c>CatalogPtmQtl.cs</c>). The engines were built as "11"
     /// on their own branch and never released under it. "15" (1.4.1) judges each bundle's reconciliation at build
-    /// against the bound its producer's file format leaves (aging DATAREPO-86, <c>CatalogReconciliation.cs</c>):
+    /// against the bound its producer's file format leaves (<c>CatalogReconciliation.cs</c>):
     /// <c>catalog_reconciliation</c>, <c>catalog_bundles.reconciliation_explained</c>, and
-    /// <c>reconciliation_failed</c> naming only unexplained checks. "16" (1.4.5) serves split deposits (PXR-R32):
+    /// <c>reconciliation_failed</c> naming only unexplained checks. "16" (1.4.5) serves split deposits:
     /// <c>dataset_overview.accession</c>, <c>split_group</c> and <c>split_reason</c> (the manifest's, also in
     /// <c>dataset_annotations</c>), the <c>deposits</c> table, <c>protein_index</c>'s and <c>peptide_index</c>'s
     /// <c>n_datasets*</c> counting deposits, the census matched by accession, and a <c>split</c> check refusing a deposit
@@ -288,30 +288,30 @@ public static partial class CatalogBuilder
     public static readonly IReadOnlyList<string> AnnotationFields = ["status", "reason", "notes", "flags", "provenance_schema", "sdrf", "operator_sdrf", "split_reason"];
 
     /// <summary>The derived table of deposits: one row per ProteomeXchange accession, naming the searches the catalog
-    /// serves for it (PXR-R32). A split deposit is searched in parts, each its own dataset keyed
+    /// serves for it. A split deposit is searched in parts, each its own dataset keyed
     /// <c>&lt;accession&gt;-&lt;group&gt;</c> (G95); every other deposit is one dataset under its bare accession.</summary>
     public const string DepositsTable = "deposits";
 
     /// <summary>The PRIDE record tables, read at build from the records the operator fetched beside the bundles
-    /// (<see cref="PrideRecords"/>; 1.5.0 item 12, ptmQtl's DATAREPO-P35). Keyed by the bare accession.</summary>
+    /// (<see cref="PrideRecords"/>; 1.5.0 item 12). Keyed by the bare accession.</summary>
     public const string DepositRecordsTable = "deposit_records";
     public const string DepositContactsTable = "deposit_contacts";
     public const string DepositReferencesTable = "deposit_references";
 
-    /// <summary>The view of runs whose raw file is in the catalog more than once, by sha256 (ptmQtl 062).</summary>
+    /// <summary>The view of runs whose raw file is in the catalog more than once, by sha256.</summary>
     public const string SharedRawFilesView = "shared_raw_files";
 
-    /// <summary>The view of every isobaric search's design, one row per (run, channel) (DATAREPO-88 a).</summary>
+    /// <summary>The view of every isobaric search's design, one row per (run, channel).</summary>
     public const string IsobaricChannelsView = "isobaric_channels";
 
     /// <summary>The PRIDE tables, which a Python 0.32.0 parity build does not write.</summary>
     private static readonly IReadOnlySet<string> PrideTables =
         new HashSet<string>([DepositRecordsTable, DepositContactsTable, DepositReferencesTable], StringComparer.Ordinal);
 
-    /// <summary>Views over the runs (ptmQtl 062), created after the bundles are loaded; none in a Python 0.32.0 parity build.</summary>
+    /// <summary>Views over the runs, created after the bundles are loaded; none in a Python 0.32.0 parity build.</summary>
     /// <remarks>One row per run whose raw file (<c>runs.sha256</c>) is in the catalog under another run too. A raw file's
     /// name is not its identity: one pair of deposits shares three renamed files, and PXD006815 holds one run under two
-    /// animals' names (our 061). Pooling across deposits counts the same raw data once only if it can see this, and a
+    /// animals' names. Pooling across deposits counts the same raw data once only if it can see this, and a
     /// view is computed at every read, so no one has to remember to run a query.</remarks>
     public static IReadOnlyList<KeyValuePair<string, string>> RunViews => AnnotationsActive ? RunViewBodies : [];
 
@@ -345,7 +345,7 @@ public static partial class CatalogBuilder
     /// every non-content field but <c>raw</c> (a test), with <see cref="RestrictionFields"/>.</summary>
     public static readonly IReadOnlyList<string> RunExclusionFields = ["excluded_runs"];
 
-    /// <summary>The derived table of uses the build's manifest says a whole dataset is unfit for (DATAREPO-74).</summary>
+    /// <summary>The derived table of uses the build's manifest says a whole dataset is unfit for.</summary>
     public const string RestrictionsTable = "dataset_restrictions";
 
     /// <summary>The <see cref="DatasetEntry.NonContentFields"/> a reader sees in <c>dataset_restrictions</c> and in
@@ -431,7 +431,7 @@ public static partial class CatalogBuilder
     /// <c>sources.quant.accepted_group_count</c> apply when a bundle reconciles itself.
     /// <para><b>It is an acceptance rule, not a reproduction of MetaMorpheus's own count.</b> aging published
     /// it as a recipe for rebuilding <c>aging:DEF-PSM-1PCT</c> from <c>AllPSMs.psmtsv</c>; it is exact on
-    /// PXD036557 and six short of 183,029 on PXD032202 (aging thread 016). The canonical number stays the
+    /// PXD036557 and six short of 183,029 on PXD032202. The canonical number stays the
     /// producer's <c>results.txt</c> summary line, which is what <c>metrics</c> holds and what the
     /// reconciliation compares against; these views are how the catalog selects <i>rows</i>, and on a dataset
     /// where the predicate is imperfect they will differ from the canonical count by a small margin and the
@@ -480,14 +480,14 @@ public static partial class CatalogBuilder
     /// <summary>Views that restate a table at a coarser grain than it is stored at, so a caller never has to.</summary>
     /// <remarks>
     /// <c>ptm_sites</c> is keyed on the search engine's own name for a modification, which is the grain the
-    /// engine measured at and the only grain at which every site can be represented (aging 019 section 3). One
+    /// engine measured at and the only grain at which every site can be represented. One
     /// chemistry can reach a dataset under two names -- <c>Phosphorylation on S</c> from the search's
     /// variable-mod list and <c>Phosphoserine on S</c> from a UniProt annotation are the same thing -- so the
     /// stored table splits a handful of sites that a UNIMOD-keyed table merged: 2 in PXD027318 and 3 in
     /// PXD032202, out of 20,044 and 13,527. This view puts them back together.
     /// <para>The split is finer, not wrong, and this view is the proof: grouping the stored table this way
     /// reproduces the UNIMOD-keyed table exactly. Storing the merged row instead would have been storing
-    /// coarser than the measurement, which is the half of the grain rule (thread 018 section 3) that is easiest
+    /// coarser than the measurement, which is the half of the grain rule that is easiest
     /// to break without noticing.</para>
     /// <para>A site whose chemistry has no UNIMOD term groups on its name instead, so two different unmapped
     /// chemistries on one residue stay two rows. <c>_site_key_name</c> forbids ':' in a name, which is what
@@ -522,7 +522,7 @@ public static partial class CatalogBuilder
         ("proteins", "gene"),
         ("ptm_sites", "protein_accession"),
         ("ptm_sites", "modification"),
-        // The queryable identity of a site whose chemistry has no UNIMOD term (aging 019 section 3).
+        // The queryable identity of a site whose chemistry has no UNIMOD term.
         ("ptm_sites", "modification_name"),
         ("quant_values", "feature_id"),
         ("quant_values", "assay_id"),
@@ -1018,7 +1018,7 @@ public static partial class CatalogBuilder
     /// refusing.</param>
     /// <param name="release">The release this catalog is for. Every dataset must then be pinned, and
     /// <paramref name="latest"/> is refused: a release that can silently pick up a later re-ingest is not a
-    /// release (aging thread 011). Pinning is enforced here rather than merely defaulted, because the failure it
+    /// release. Pinning is enforced here rather than merely defaulted, because the failure it
     /// prevents is invisible -- the catalog builds fine and says the wrong thing.</param>
     /// <exception cref="CatalogException">A dataset has no bundle, a pin matches none or several, or a dataset
     /// has several bundles with no pin and no <paramref name="latest"/>.</exception>
@@ -1186,7 +1186,7 @@ public static partial class CatalogBuilder
         CatalogIdOf(bundles, studyBundles, artefacts, packageVersion, Annotations(bundles, manifest), RunExclusions(bundles, manifest),
             Restrictions(bundles, manifest), Census(manifest), prideRecords: prideRecords);
 
-    /// <summary>Each bundle's dataset restrictions from <paramref name="manifest"/> (DATAREPO-74), in dataset then use
+    /// <summary>Each bundle's dataset restrictions from <paramref name="manifest"/>, in dataset then use
     /// order. A dataset the manifest does not list, or lists without restrictions, has none.</summary>
     /// <remarks>From the manifest the catalog is BUILT with, for <see cref="Annotations"/>'s reason.</remarks>
     public static List<DatasetRestriction> Restrictions(IReadOnlyList<BundleRef> bundles, Manifest? manifest) =>
@@ -1278,7 +1278,7 @@ public static partial class CatalogBuilder
         if (AnnotationsActive)
             foreach (var x in exclusions.OrderBy(x => x.DatasetId, SourcesPy.CodePointOrder).ThenBy(x => x.RunName, SourcesPy.CodePointOrder))
                 text.Append($"run-exclusion/{x.DatasetId}\t{PyFormat.Json(new List<object?> { x.RunName, x.Reason }, ensureAscii: true)}\n");
-        // And which uses a dataset is unfit for (DATAREPO-74), on the same rule: none without, so a catalog that
+        // And which uses a dataset is unfit for, on the same rule: none without, so a catalog that
         // restricts nothing keeps the id it had.
         if (AnnotationsActive)
             foreach (var x in restrictions.OrderBy(x => x.DatasetId, SourcesPy.CodePointOrder).ThenBy(x => x.Use, SourcesPy.CodePointOrder))
@@ -1383,7 +1383,7 @@ public static partial class CatalogBuilder
         return (chosen, checks);
     }
 
-    /// <summary>The registered orthology snapshot a catalog cites (DATAREPO-75, logs 031): at most one.</summary>
+    /// <summary>The registered orthology snapshot a catalog cites: at most one.</summary>
     /// <remarks>
     /// <para>A snapshot belongs to no bundle and fills no table: it is read in place, from the artefact's
     /// <c>snapshot/</c> directory, through its own <c>views.sql</c>. Loading it puts one row in
@@ -1407,7 +1407,7 @@ public static partial class CatalogBuilder
         checks.Add(new CatalogCheck($"{Runner.OrthologyEngine} (snapshots registered)", "engine-coverage", true, current.Count, 1, detail));
     }
 
-    /// <summary>logs 031: the registered snapshot's gene sets are the ones the loaded gene resolutions used.</summary>
+    /// <summary>The registered snapshot's gene sets are the ones the loaded gene resolutions used.</summary>
     /// <remarks>Each <c>gene_resolutions</c> row carries the <c>gene_set_sha256</c> it was resolved against, and the
     /// snapshot's manifest names one gene set per species. A row whose gene set is not one of the snapshot's means
     /// the two were built from different Ensembl gene sets, and a gene id joined across them could mean another gene,
@@ -1524,7 +1524,7 @@ public static partial class CatalogBuilder
             bundles.Count - uncovered.Count, bundles.Count, detail));
     }
 
-    /// <summary>go GO-D9 (go 024): one catalog serves one go.obo and one category map, by sha256, so a category
+    /// <summary>go GO-D9: one catalog serves one go.obo and one category map, by sha256, so a category
     /// compared across its datasets was assigned under one ontology and one map.</summary>
     /// <remarks>A go.obo or map change re-annotates every dataset together (re-annotation needs no re-search). The
     /// UniProt annotation database is per dataset by GO-D5 and is not part of this rule.</remarks>
@@ -1702,7 +1702,7 @@ public static partial class CatalogBuilder
                     + $"{r.SchemaVersion}, and this build writes {SchemaContract.Version}. Re-run it.");
 
         var datasets = seen.Keys.Order(SourcesPy.CodePointOrder).ToList();
-        // PXR-R31: refused before anything is staged, since nothing loaded can change it. Python 0.32.0 had no splits.
+        // Refused before anything is staged, since nothing loaded can change it. Python 0.32.0 had no splits.
         var splitCheck = AnnotationsActive ? SplitCheck(bundles) : null;
         if (splitCheck is { Ok: false })
             throw new CatalogException(
@@ -1735,7 +1735,7 @@ public static partial class CatalogBuilder
         var full = views ? System.IO.Path.Combine(folder!, CatalogPointer.FileOf(cid)) : System.IO.Path.GetFullPath(@out);
         var shown = views ? BundleWriter.PathText(full) : @out;
         var staging = StagedCatalogs.PathFor(full, cid);
-        // DATAREPO-83 a: a killed build cannot remove what it staged, so every build removes what dead builds left.
+        // A killed build cannot remove what it staged, so every build removes what dead builds left.
         // In a folder every catalog id stages its own file, so the sweep covers them all.
         var (stagedRemoved, stagedKept) = StagedCatalogs.Sweep(full, staging, views ? ".catalog-" : null);
         if (!overwrite && ReadCatalogId(full) == cid)
@@ -1828,7 +1828,7 @@ public static partial class CatalogBuilder
                     rid, layout, dataRoot, derivedRoot, reconciliationTerms);
             }
             Lap("catalog tables");
-            // aging 107: a file shorter than its own header says is never moved into place.
+            // A file shorter than its own header says is never moved into place.
             using (var written = Open(staging, readOnly: true))
                 if (CatalogFile.Shortfall(written, staging) is { } shortBy)
                     throw new CatalogException($"the new catalog was not written whole, so it was not moved into place: {shortBy}");
@@ -1848,7 +1848,7 @@ public static partial class CatalogBuilder
         catch (Exception e) when (e is IOException or UnauthorizedAccessException)
         {
             StagedCatalogs.Release(staging);
-            // PXR-R14: 1.3.0 let this escape unhandled and left the new catalog behind, 30 GB at a time.
+            // 1.3.0 let this escape unhandled and left the new catalog behind, 30 GB at a time.
             var holders = FileHolders.Of(full, staging);
             var heldBy = holders.Count > 0
                 ? $"Held by {string.Join(", ", holders)}. "
@@ -2013,7 +2013,7 @@ public static partial class CatalogBuilder
     }
 
     /// <summary><c>dataset_overview.split_reason</c> from <c>dataset_annotations</c>, and <c>deposits</c>: one row per
-    /// ProteomeXchange accession, naming the searches served for it (PXR-R32).</summary>
+    /// ProteomeXchange accession, naming the searches served for it.</summary>
     /// <remarks>Needs <c>dataset_annotations</c> and the overview's <c>accession</c> and <c>split_group</c>. The reason
     /// is read only for a split search: a bare key's entry cannot carry one (<see cref="Manifest.Load"/> refuses it).</remarks>
     private static void CreateDeposits(DuckDBConnection con)
@@ -2049,10 +2049,10 @@ public static partial class CatalogBuilder
     }
 
     /// <summary>Whether a deposit is served both whole and in parts: its bare accession beside one of its own
-    /// <c>&lt;accession&gt;-&lt;group&gt;</c> keys (PXR-R31). FAILS then, which stops the build.</summary>
+    /// <c>&lt;accession&gt;-&lt;group&gt;</c> keys. FAILS then, which stops the build.</summary>
     /// <remarks>Every number for the deposit would be counted twice -- once in the whole search and once in its parts --
     /// and nothing else in the build notices: every table reconciles per key. A producer retiring the whole search writes
-    /// <c>status: superseded</c> on its entry in the same manifest write that adds the parts (our PXReprise 093).
+    /// <c>status: superseded</c> on its entry in the same manifest write that adds the parts.
     /// Observed and expected are the split deposits served, so a passing row says how many there are.</remarks>
     internal static CatalogCheck SplitCheck(IReadOnlyList<BundleRef> bundles)
     {
@@ -2083,7 +2083,7 @@ public static partial class CatalogBuilder
             Exec(con, $"INSERT INTO \"{RunExclusionsTable}\" VALUES (?, ?, ?, ?, ?)", x.DatasetId, x.BundleId, x.RunId, x.RunName, x.Reason);
     }
 
-    /// <summary><c>dataset_restrictions</c> (DATAREPO-74), written even when empty, and the same uses on each
+    /// <summary><c>dataset_restrictions</c>, written even when empty, and the same uses on each
     /// <c>dataset_overview</c> row, so a reader of a dataset's numbers meets them without knowing the table exists
     /// (D19: a tool has to be chosen; a column in the answer cannot be skipped).</summary>
     /// <remarks>Needs <c>dataset_annotations</c>: a dataset the manifest does not list gets NULL, not an empty list,
@@ -2112,7 +2112,7 @@ public static partial class CatalogBuilder
     /// reader of this table wants first: the catalog's <c>dataset_id</c> and <c>bundle_id</c> for the accession when the
     /// catalog holds it, NULL when it does not. Where the rows came from is <c>catalog_meta.notes.candidates</c> (the
     /// file and its sha256) and <c>catalog_tables.kind</c> <c>manifest</c>.
-    /// <para>The census screens DEPOSITS, so it is matched by accession (PXR-R32): a deposit served in parts has one row
+    /// <para>The census screens DEPOSITS, so it is matched by accession: a deposit served in parts has one row
     /// per served part, each naming its dataset, and one served whole has the one row it always had.</para></remarks>
     private static long LoadCandidates(DuckDBConnection con, CandidateCensus census, IReadOnlyList<BundleRef> bundles)
     {
@@ -2146,7 +2146,7 @@ public static partial class CatalogBuilder
     /// screen, and a catalog dataset the census does not include is the producer's to reconcile, not a reason to
     /// withhold a catalog. Each is named, so neither is silent: a reader asking "why is PXDn not here?" of a census
     /// that says it is included is told by this row, and a dataset served without a verdict is told by the other.
-    /// <para>The census screens DEPOSITS, so both compare by accession (PXR-R32): an included deposit served in parts is
+    /// <para>The census screens DEPOSITS, so both compare by accession: an included deposit served in parts is
     /// held, and each part takes its deposit's verdict.</para></remarks>
     private static CatalogCheck[] CensusChecks(CandidateCensus census, IReadOnlyList<BundleRef> bundles)
     {
@@ -2542,7 +2542,7 @@ public static partial class CatalogBuilder
     // are the same either way.
 
     /// <summary>What <c>protein_groups.unique_peptides</c> / <c>shared_peptides</c> count in a dataset, from the release of
-    /// MetaMorpheus that searched it (AGING-R1, QuantProject 064): <c>database</c> before 1.1.13 (a peptide no other protein
+    /// MetaMorpheus that searched it: <c>database</c> before 1.1.13 (a peptide no other protein
     /// in the searched databases has), <c>protein_group</c> from 1.1.13 (MetaMorpheus #2899/#2916: no other protein GROUP
     /// has it; DEF-PROT-UNIQUE). NULL for another engine, or a version that is not three dot-separated numbers: unknown,
     /// never a guess. Compared part by part as integers (a list or text comparison put 1.1.9 after 1.1.13).
@@ -2559,17 +2559,17 @@ public static partial class CatalogBuilder
                 ELSE 'database' END AS unique_peptides_scope,
             ";
 
-    /// <summary>The deposit a dataset was searched from, and the group a split search names (PXR-R32): the SQL of
+    /// <summary>The deposit a dataset was searched from, and the group a split search names: the SQL of
     /// <see cref="Usi.DepositAccession"/>, which an accession satisfies because it holds no <c>-</c>. Python 0.32.0's
     /// overview had neither column, so a parity build writes none.</summary>
     internal static string SplitKeyColumns => SchemaContract.IsPython0320 ? "" : @"split_part(d.dataset_id, '-', 1) AS accession,
             CASE WHEN contains(d.dataset_id, '-') THEN substr(d.dataset_id, strpos(d.dataset_id, '-') + 1) END AS split_group,
             ";
 
-    /// <summary>The scale a dataset's quantities are on (DATAREPO-88 b, catalog format 17), beside its <c>quant_method</c>:
+    /// <summary>The scale a dataset's quantities are on (catalog format 17), beside its <c>quant_method</c>:
     /// <c>label_free_apex</c>; for an isobaric search <c>reporter_ms2</c> or <c>reporter_ms3</c> when every run's
     /// <c>reporter_level</c> says one, <c>reporter_level_mixed</c> when they differ, <c>reporter_level_not_recorded</c>
-    /// when any run's is unknown; NULL for any other method. Never a guess: aging's pooling admits MS3 only (aging 135).
+    /// when any run's is unknown; NULL for any other method. Never a guess: aging's pooling admits MS3 only.
     /// Python 0.32.0's overview had no such column.</summary>
     internal static string QuantScaleColumn => SchemaContract.IsPython0320 ? "" : @"CASE d.quant_method
                 WHEN 'label_free' THEN 'label_free_apex'
@@ -2655,7 +2655,7 @@ public static partial class CatalogBuilder
     // `n_datasets_1pct` counts where it has evidence that passed. An agent asking "which datasets have
     // this protein" almost always means the second one, so both are here with names that say which is which.
     //
-    // Both count DEPOSITS (PXR-R32): `split_part` is `Usi.DepositAccession`, so the searches of one split deposit count
+    // Both count DEPOSITS: `split_part` is `Usi.DepositAccession`, so the searches of one split deposit count
     // once while `dataset_ids` keeps each. A count of keys would read one deposit's two halves as two studies.
     private const string ProteinIndexSelect = @"        SELECT
             p.protein_accession,
@@ -2675,7 +2675,7 @@ public static partial class CatalogBuilder
         GROUP BY p.protein_accession
 ";
 
-    // What the search actually PLACED, as against what it declared (aging 024 section 6).
+    // What the search actually PLACED, as against what it declared.
     //
     // Derived from the peptidoforms, not from `ptm_sites`, and the choice is the whole point. `ptm_sites`
     // is per RESOLVED PROTEIN POSITION, so it drops every placement without one. A placed view built on it
@@ -2914,7 +2914,7 @@ public static partial class CatalogBuilder
             }
             if (layerTables.Contains("curated_design_factors") && layerTables.Contains("curated_run_design"))
             {
-                // A3 (ptmQtl, our aging 106): a design factor describes a sample, so every run of one sample (its
+                // A3 (ptmQtl): a design factor describes a sample, so every run of one sample (its
                 // fractions, its injections) carries the same factor rows. Only the catalog knows which runs share
                 // a sample, so this is checked here and not by `datarepo study`.
                 var (split, example) = CountAndExample(con, @"
@@ -2988,7 +2988,7 @@ public static partial class CatalogBuilder
             reconciliation_failed VARCHAR[]{(judged ? ", reconciliation_explained VARCHAR[]" : "")}
         )
         ");
-        // From 1.4.1 (DATAREPO-86) a check is judged at build against the bound its producer's file format leaves, and
+        // From 1.4.1 a check is judged at build against the bound its producer's file format leaves, and
         // `reconciliation_failed` names only the unexplained ones; `catalog_reconciliation` holds every check. A Python
         // 0.32.0 parity catalog keeps 0.32.0's rule: each check's recorded `ok`.
         var judgedRows = new List<ReconciliationRow>();
@@ -3371,8 +3371,8 @@ public static partial class CatalogBuilder
         }
     }
 
-    /// <summary>How long a build keeps trying to put the new catalog in place of the old one (PXR-R14). Ten minutes is
-    /// aging's figure (DATAREPO-81 a): cheap beside a 44-minute build lost. Settable for tests only.</summary>
+    /// <summary>How long a build keeps trying to put the new catalog in place of the old one. Ten minutes is
+    /// aging's figure: cheap beside a 44-minute build lost. Settable for tests only.</summary>
     internal static TimeSpan ReplaceBudget { get; set; } = TimeSpan.FromMinutes(10);
 
     /// <summary>Moves <paramref name="source"/> over <paramref name="destination"/>. When a reader holds the
@@ -3382,7 +3382,7 @@ public static partial class CatalogBuilder
     /// <para>On Windows a file another process holds open cannot be replaced, even when the holder allows deletion.
     /// DuckDB allows deletion, so a reader of the old catalog (a datarepo MCP server, a script) blocks the replace
     /// but not a delete. A reader then keeps the catalog it opened, as it does on Linux and macOS. That is Python
-    /// 0.32.0's order (unlink, then rename), which the C# port lost (aging DATAREPO-78, PXReprise PXR-R14).</para>
+    /// 0.32.0's order (unlink, then rename), which the C# port lost.</para>
     /// <para>A holder that refuses deletion, such as antivirus or the indexer reading the file just closed, or a copy
     /// in progress, usually lets go within minutes, so it gets the retries.</para>
     /// </remarks>

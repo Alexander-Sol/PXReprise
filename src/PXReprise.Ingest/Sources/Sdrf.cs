@@ -177,7 +177,7 @@ public static class Sdrf
             string sampleId = $"{datasetId}:{sourceName}";
             string? dataFile = Clean(Get("comment[data file]")) ?? Clean(Get("assay name"));
             // An SDRF MetaMorpheus writes names the file it SEARCHED, which after Calibrate is `X-calib.mzML`,
-            // not the deposited `X.raw` (sdrf D40, aging 069 DATAREPO-54). Runs are keyed on the deposited
+            // not the deposited `X.raw`. Runs are keyed on the deposited
             // name, so without the same stripping the USI path does, that run would silently get no sample,
             // instrument or fraction.
             string? runName = dataFile is null ? null : Usi.StripPipelineSuffix(PyText.PathStem(dataFile));

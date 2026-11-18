@@ -8,11 +8,11 @@ namespace PXReprise.Ingest.Sources;
 /// <summary>Sequence-level peptide specificity (G76, D40), from mzLib's <see cref="PeptideUniquenessClassifier"/>.</summary>
 /// <remarks>
 /// <para>Until G76, <c>peptidoforms.is_unique</c> was parsimony-unique (one accession in MetaMorpheus's
-/// parsimony list), so a peptide in P02751 and three of its isoforms read <c>true</c> (aging 075). Now both
+/// parsimony list), so a peptide in P02751 and three of its isoforms read <c>true</c>. Now both
 /// columns come from the SEARCHED sequences: a peptide belongs to a protein when the protein's sequence
 /// contains it anywhere, whatever the protease; I and L are one residue; decoys are ignored; contaminants
 /// count, because they are real sequences in the search space. That is mzLib's rule, not ours.</para>
-/// <para>D40 maps mzLib's four classes onto the two columns (the user, 2026-10-04):</para>
+/// <para>D40 maps mzLib's four classes onto the two columns (the maintainer, 2026-10-04):</para>
 /// <list type="table">
 /// <item><term>Unique</term><description>is_unique true, is_isoform_specific true</description></item>
 /// <item><term>SharedWithinGene</term><description>true, false: it supports the gene, not one isoform</description></item>

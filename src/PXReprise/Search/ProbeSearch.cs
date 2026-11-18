@@ -26,7 +26,7 @@ public static class ProbeSearch
     {
         "Common Biological\tPhosphorylation on S", "Common Biological\tPhosphorylation on T", "Common Biological\tPhosphorylation on Y",
         "Trypsin Digested\tGG (Ubiquitination Site) on K",
-        // PXR-A88 (aging 082): an acetyl-lysine capture whose text and file names say nothing (PXD061654) shows only here.
+        // An acetyl-lysine capture whose text and file names say nothing (PXD061654) shows only here.
         "Common Biological\tAcetylation on K",
     };
 

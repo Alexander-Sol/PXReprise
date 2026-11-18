@@ -6,7 +6,7 @@ namespace PXReprise.Search;
 /// What a profile's <c>[engine] metamorpheus</c> names (v0.4.26). A release (<c>"1.1.12"</c>) is checked against the
 /// banner of <c>CMD -g</c>, as before. A commit pin (<c>"master@3a6a76632"</c>: a label, <c>@</c>, then 7 to 40 hex
 /// digits of the commit) runs a build of one exact commit that is no release, such as the command-line zip MetaMorpheus's
-/// CI builds on every push to master (the user, 2026-10-19: "we are being held back too far by the slow release cycles").
+/// CI builds on every push to master (the maintainer, 2026-10-19: "we are being held back too far by the slow release cycles").
 /// Such a build's banner says "Not a release version.", so the commit in its <c>--help</c> text (<c>CMD 1.0.0+&lt;sha&gt;</c>)
 /// is checked instead. The value itself names the build wherever a release did: the machine's <c>[metamorpheus]</c> key,
 /// the settings folder, the spectral library registry and provenance.

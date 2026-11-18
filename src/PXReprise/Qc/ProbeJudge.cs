@@ -12,7 +12,7 @@ public sealed record ProbeVerdict(IReadOnlyList<ProbeFinding> Parks, string? Mea
 /// Judges a deposit's probe runs against what the text said (D34: the spectra win where they can measure). Thresholds,
 /// each with its source:
 /// <list type="bullet">
-/// <item>species (the user, 2026-10-07, from the G31 calibration: pure rat runs are only 62-88% rat because reviewed rat is
+/// <item>species (the maintainer, 2026-10-07, from the G31 calibration: pure rat runs are only 62-88% rat because reviewed rat is
 /// thin, so a share threshold mistakes a thin database for a second species): once a run has at least
 /// <see cref="MinSpeciesPsms"/> species-specific PSMs (500 since v0.4.15, the user's choice; was 50: PXD022196's weak gel
 /// band WT_band_08 had 55 human PSMs of skin proteins the panel lacks, KPRP, DSP, DSC1, DSG1, S100A8, against 49 mouse,

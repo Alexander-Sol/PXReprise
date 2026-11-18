@@ -13,7 +13,7 @@ public enum PrideHttps
 }
 
 /// <summary>
-/// The Globus HTTPS route (pride 014, PXR-W4). EBI's helpdesk answered our damaged-download report (ticket #893983) with
+/// The Globus HTTPS route. EBI's helpdesk answered our damaged-download report (ticket #893983) with
 /// "try Globus". In pride's trial on 2026-10-12, the same five PXD058855 files fetched side by side came back damaged
 /// 2 of 5 times from <c>ftp.pride.ebi.ac.uk</c> and 0 of 5 from the Globus host (0 of 15 over all its runs). mzLib
 /// 1.0.594 uses an explicit <c>https://</c> location exactly as given (since #1093), so the route is a copy of the file

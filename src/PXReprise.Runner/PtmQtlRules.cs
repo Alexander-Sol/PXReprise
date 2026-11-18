@@ -6,7 +6,7 @@ using Quantification.PtmQtl;
 namespace PXReprise.Runner;
 
 /// <summary>What the operator's lists say of one deposit: its capture class and capture runs (S3, S3b; ptmQtl's
-/// capture list v4, <c>results/ptm_enriched_v4</c>) and its cysteine class (S2d).</summary>
+/// capture list v4) and its cysteine class (S2d).</summary>
 /// <param name="CaptureClass"><c>ptm_capture</c>, <c>capture_runs</c>, <c>held</c>, <c>no_ptm_capture</c>, or null
 /// when the list does not name the deposit.</param>
 /// <param name="CaptureRuns">For <c>capture_runs</c>: the runs it names, by run id.</param>
@@ -93,7 +93,7 @@ public static class PtmQtlRules
         return (letters.ToString(), placements);
     }
 
-    // ---------------------------------------------------------------- S7 "Name": several names (ptmQtl D57)
+    // ---------------------------------------------------------------- S7 "Name": several names
 
     public const string SameByUnimod = "unimod";
     public const string SameByFormula = "formula";
@@ -120,7 +120,7 @@ public static class PtmQtlRules
         return string.Join(";", parts);
     }
 
-    /// <summary>S7 (ptmQtl D57, their user, 2026-10-19): whether a peptidoform's several MetaMorpheus names are the same
+    /// <summary>S7 (their user, 2026-10-19): whether a peptidoform's several MetaMorpheus names are the same
     /// modifications at the same positions, as ptmQtl's runner decides it (<c>tools/PtmQtlRunner</c>, 19a8340).</summary>
     /// <returns><see cref="SameByUnimod"/> when every name has a Unimod form and they agree; else
     /// <see cref="SameByFormula"/> when every name's modifications resolve to one formula at each position (isomers pass,
@@ -148,13 +148,13 @@ public static class PtmQtlRules
     /// <summary>A blocking modification ptmQtl adds: an acyl amide on the lysine epsilon-amine that mzLib's list misses.</summary>
     public const string BlockingByPtmQtl = "ptmQtl: acyl amide mzLib's list misses";
 
-    /// <summary>The lysine acyl amides ptmQtl adds to mzLib's list (S2c v3, their D59; <c>measure.py</c>'s BEYOND),
+    /// <summary>The lysine acyl amides ptmQtl adds to mzLib's list (S2c v3; <c>measure.py</c>'s BEYOND),
     /// asked of cleavageRules as CLEAVAGERULES-P3.</summary>
     public static readonly Regex AcylAmidesMzLibMisses = new("isonicotinyl|lipoyl|methacryl|myristoyl|palmitoyl", RegexOptions.CultureInvariant);
 
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string?> BlockingSources = new(StringComparer.Ordinal);
 
-    /// <summary>S2c v3 (ptmQtl D59, 2026-10-20): whose list makes a MetaMorpheus name (<c>Category:IdWithMotif</c>) a
+    /// <summary>S2c v3 (2026-10-20): whose list makes a MetaMorpheus name (<c>Category:IdWithMotif</c>) a
     /// blocking modification, or null when it is not one, as ptmQtl's runner's <c>blocking</c> mode classifies it.</summary>
     /// <remarks>The name is resolved by <c>MzLibModificationLookup</c>, then <c>GlobalModificationLookup</c>, and
     /// classified by mzLib's <c>BlocksCleavage</c>. A name neither lookup resolves is not blocking: it is never guessed.
@@ -179,7 +179,7 @@ public static class PtmQtlRules
         ["trypsin"] = "KR", ["trypsin|P"] = "KR", ["StcE-trypsin"] = "KR", ["Lys-C|P"] = "K", ["Arg-C"] = "R",
     };
 
-    /// <summary>What S2c does for one search (ptmQtl D60, DEFINITIONS S2c).</summary>
+    /// <summary>What S2c does for one search (DEFINITIONS S2c).</summary>
     /// <param name="Refusal">Set when S2c is not defined for the search: the deposit is refused, never guessed.</param>
     /// <param name="Lifted">True when the search respected blocking modifications in every task: only the acyl amides
     /// mzLib's list misses still apply, until mzLib lists them.</param>

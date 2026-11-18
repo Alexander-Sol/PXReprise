@@ -7,7 +7,7 @@ using UsefulProteomicsDatabases;
 
 namespace PXReprise.Census;
 
-/// <summary>The gate's outcomes, decided in this order (aging PXR-A179, part A3).</summary>
+/// <summary>The gate's outcomes, decided in this order (part A3).</summary>
 public static class GateOutcome
 {
     /// <summary>No strong and no weak term anywhere in the deposit's own text.</summary>
@@ -23,7 +23,7 @@ public static class GateTextSource
 {
     /// <summary>PRIDE's project record (<c>/projects/{accession}</c>).</summary>
     public const string Project = "pride_project";
-    /// <summary>ProteomeXchange's GetDataset XML, when PRIDE's record cannot be had (aging PXR-A179, part A1).</summary>
+    /// <summary>ProteomeXchange's GetDataset XML, when PRIDE's record cannot be had (part A1).</summary>
     public const string ProteomeXchange = "proteomexchange";
     /// <summary>PRIDE's search index, when neither record can be had.</summary>
     public const string SearchIndex = "pride_search_index";
@@ -56,7 +56,7 @@ public sealed record GateText(string Source, IReadOnlyList<(string Field, string
     /// <summary>
     /// ProteomeXchange's GetDataset XML: the DatasetSummary title, the Description, any cvParam whose name says "protocol",
     /// "tissue" or "disease", the KeywordList values, and the titles of the PublicationList's references. The ContactList is
-    /// never read. As aging's screen read it (aging results/selection_screen_2026-11-09/screen.cs).
+    /// never read. As aging's screen read it.
     /// </summary>
     public static GateText FromProteomeXchange(string xml)
     {
@@ -121,7 +121,7 @@ public static class Gate
     /// <see cref="GateOutcome.Watch"/> when a term in another sense, a <c>watch_if_any</c> term, or (with no strong term) a
     /// <c>watch_without_strong</c> term matches, or only weak terms do, or the reference-group rule fails;
     /// <see cref="GateOutcome.Queue"/> otherwise. <paramref name="noReferenceGroup"/>: the deposit was found only by the
-    /// question's <c>disease_keywords</c> and its text names no reference group (PXR-A27).
+    /// question's <c>disease_keywords</c> and its text names no reference group.
     /// </summary>
     public static GateDecision Evaluate(GateTerms g, GateText text, bool noReferenceGroup)
     {
@@ -158,7 +158,7 @@ public static class Gate
     }
 
     /// <summary>
-    /// v0.4.46 (aging PXR-A180; the user, 2026-11-11): a hand decision in the question's decisions file is a person's reading of
+    /// v0.4.46 (the maintainer, 2026-11-11): a hand decision in the question's decisions file is a person's reading of
     /// the deposit, which is what the watch list asks for. An include is queued without the gate, so a word in passing (a cancer
     /// named as an age-related disease) cannot park a deposit someone approved; an exclude is not queued. Null with no decision.
     /// </summary>

@@ -17,7 +17,7 @@ public sealed record LibraryPlan(string Organism, string Mode, string? LibraryIn
 }
 
 /// <summary>
-/// Spectral libraries, one chain per organism, built up across searches (aging D33). The first search of an organism
+/// Spectral libraries, one chain per organism, built up across searches. The first search of an organism
 /// writes one; every later search updates the current one and consumes it; every version is kept so the chain can be
 /// rolled back. Search task only. The registry format is aging's (<c>aging-spectral-library-registry/1</c>), so the
 /// engine continues the chains the aging batch started.
@@ -60,7 +60,7 @@ public static class SpectralLibrary
     /// </summary>
     /// <param name="label">v0.4.34: an isobaric kit's modification id (e.g. "TMT10"). Its peptides weigh more and fragment
     /// differently, so its spectra get a chain of their own (<c>mouse_tmt10</c>), which starts blank and never reads or
-    /// extends the label-free one (the user, 2026-10-29: "tmt will have to start with a blank spectrum library ... tmt
+    /// extends the label-free one (the maintainer, 2026-10-29: "tmt will have to start with a blank spectrum library ... tmt
     /// modified peptides are all shifted"). Null is label-free: the organism's own chain.</param>
     /// <param name="cloud">The machine's <c>spectral_library_remote</c> (2026-11-11): newer versions other machines
     /// registered are fetched first, so the search reads the newest library.</param>
@@ -253,7 +253,7 @@ public static class SpectralLibrary
     /// Brings <paramref name="chain"/> in the local registry up to the cloud: adds every version record it lacks, fetches the
     /// newest version's library, and makes it current. A local version whose library differs from the cloud's version of the
     /// same number is refused: the two chains diverged (a machine that searched before it synced), and which one is kept is a
-    /// person's decision (PXReprise thread diabetes 004, PXR-D4).
+    /// person's decision (PXReprise thread diabetes 004).
     /// </summary>
     public static JsonObject Pull(string root, string chain, LibraryCloud cloud)
     {
@@ -310,7 +310,7 @@ public static class SpectralLibrary
     }
 
     /// <summary>
-    /// Starts the cloud copy of <paramref name="chain"/> from this machine's registry (PXR-D4): every version's record,
+    /// Starts the cloud copy of <paramref name="chain"/> from this machine's registry: every version's record,
     /// and the current version's library. Refused when the cloud already holds the chain.
     /// </summary>
     public static JsonObject Seed(string root, string chain, LibraryCloud cloud)

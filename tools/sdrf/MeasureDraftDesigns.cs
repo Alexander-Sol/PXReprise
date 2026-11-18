@@ -4,7 +4,7 @@
 // 2026-11-06 run's draft.sdrf.tsv, or the 2026-11-07 independent draft where there is one) read by mzLib 1.0.598's
 // SdrfSearchDesign against exactly the files the deposit's fetch manifest lists, with no options (the default the engine
 // would use: the document's own factor columns, joined when there are several, #1587). TMT deposits are read with the kit their
-// search's provenance names. Measurement for steps 3 and 4 of design/PLAN_sdrf-every-deposit.md (the user, 2026-11-12: "build
+// search's provenance names. Measurement for steps 3 and 4 of design/PLAN_sdrf-every-deposit.md (the maintainer, 2026-11-12: "build
 // steps 3 and 4 before the next pin"). Reads only; writes one TSV and a Markdown summary.
 //
 //   dotnet run tools/sdrf/MeasureDraftDesigns.cs -- --state F:/aging_data/batch/state.json --runs F:/aging_data/run_2026-09-21

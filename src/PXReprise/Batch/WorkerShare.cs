@@ -10,7 +10,7 @@ using PXReprise.Config;
 namespace PXReprise.Batch;
 
 /// <summary>
-/// The folder a controlling machine shares with a probe worker (v0.4.26, design/PLAN_worker.md; the user, 2026-10-19: "it
+/// The folder a controlling machine shares with a probe worker (v0.4.26; the maintainer, 2026-10-19: "it
 /// would only run probes. and the full searches would only be run on this machine using those that passed the probe").
 /// The controller writes <c>control\</c> and <c>accessions\</c>; the worker writes <c>deposits\</c> and <c>status\</c>.
 /// A package is a probed deposit's folder with <c>READY.json</c> written last, naming every file with its size and
@@ -162,7 +162,7 @@ public sealed class WorkerShare(string root)
         {
             if (value is not null && !Directory.Exists(Path.Combine(Software, value)))
                 throw new UsageException($"{name} = {value}: there is no {Path.Combine(Software, value)}");
-            // v0.4.40 (PXRworker 037, PXR-M13): the worker refuses to run a folder it cannot check, so a release must not
+            // v0.4.40: the worker refuses to run a folder it cannot check, so a release must not
             // name one. metamorpheus-1.1.13 reached the share on 10-28 without its sums and generation 7 stopped there.
             if (value is not null && !File.Exists(Path.Combine(Software, value, Sha256Sums.FileName)))
                 throw new UsageException($"{name} = {value}: {Path.Combine(Software, value, Sha256Sums.FileName)} does not exist (run `pxreprise worker sums` on the folder first)");

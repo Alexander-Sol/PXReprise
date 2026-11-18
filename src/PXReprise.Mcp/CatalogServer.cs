@@ -134,7 +134,7 @@ public sealed partial class CatalogServer : IDisposable
             + "one MetaMorpheus release. Across releases use `q_value`, which does not depend on PEP",
     };
 
-    /// <summary>Core tables whose rows ARE samples (aging 078).</summary>
+    /// <summary>Core tables whose rows ARE samples.</summary>
     public static readonly IReadOnlySet<string> SampleTables = new HashSet<string>(StringComparer.Ordinal) { "samples", "sample_characteristics" };
 
     /// <summary>The search kinds, in the order an omitted <c>kind</c> searches them.</summary>
@@ -188,7 +188,7 @@ public sealed partial class CatalogServer : IDisposable
 
     /// <summary>Set when the file at the catalog's path is no longer the one this server opened.</summary>
     /// <remarks>aging's server answered from <c>62d419643e71320c</c> for hours after they published
-    /// <c>1e2f13be6f121fd7</c> over the same path (070, 57k). The server keeps what it opened, on purpose: an answer
+    /// <c>1e2f13be6f121fd7</c> over the same path (57k). The server keeps what it opened, on purpose: an answer
     /// must not change catalogs halfway through a conversation. What it must not do is keep quiet about it.</remarks>
     public string? CatalogFileChanged
     {
@@ -281,7 +281,7 @@ public sealed partial class CatalogServer : IDisposable
     };
 
     /// <summary>What frozen data this server holds. <b>Identical on every answer, and inferred from nothing.</b></summary>
-    /// <remarks><b>Compact by default; the bundle list is in <c>describe()</c> only</b> (aging 070, DATAREPO-58).
+    /// <remarks><b>Compact by default; the bundle list is in <c>describe()</c> only</b>.
     /// Nothing is lost by carrying it once: <c>catalog_id</c> is the hash of exactly that list. It used to narrow per
     /// answer -- 'the bundles named in the rows returned' -- and labelling that guess as provenance made it
     /// forgeable: <c>SELECT max(dataset_id) AS dataset_id, count(*) FROM ptm_sites</c> returned the catalog-wide
@@ -375,7 +375,7 @@ public sealed partial class CatalogServer : IDisposable
     {
         var tables = TablesInCatalog();
         var populated = tables.Where(kv => RowsOrZero(kv.Value) > 0).ToList();
-        // PXR-R32: a catalog serving a deposit in parts says which deposit each part is of, so an agent never counts two
+        // A catalog serving a deposit in parts says which deposit each part is of, so an agent never counts two
         // parts as two studies. Only then: a catalog with no split answers exactly as it did.
         var split = Box.HasTable(CatalogBuilder.DepositsTable)
             && Box.Dicts($"SELECT count(*) AS n FROM {CatalogBuilder.DepositsTable} WHERE n_datasets > 1 OR len(split_groups) > 0")
@@ -423,7 +423,7 @@ public sealed partial class CatalogServer : IDisposable
             + "thing does not exist -- a producer may simply not have delivered it yet. Say so "
             + "rather than answering from the empty table.";
         output["open_findings"] = findings;
-        // The rules an agent in aging's evaluation reached only by querying, or not at all (aging 070, pep 002).
+        // The rules an agent in aging's evaluation reached only by querying, or not at all (pep 002).
         output["read_first"] = ReadFirst.ToList();
         output["next"] = new List<string>
         {

@@ -25,7 +25,7 @@ public static class Identifications
     public const string DecoyPrefix = "DECOY_";
 
     /// <summary>MetaMorpheus accepts a match on BOTH its q-value and its notch q-value, which is why a count
-    /// filtered on <c>q_value</c> alone does not reproduce its own results.txt (DATAREPO-14).</summary>
+    /// filtered on <c>q_value</c> alone does not reproduce its own results.txt.</summary>
     public const double ProducerThreshold = 0.01;
 
     /// <summary>A search that cannot settle on one notch reports its candidates separated by this.</summary>
@@ -88,7 +88,7 @@ public static class Identifications
 
     /// <summary>Every start residue in a <c>[a to b]|[c to d]</c> field.</summary>
     /// <remarks><b>Not aligned with the accession column.</b> MetaMorpheus de-duplicates the spans and repeats
-    /// one per occurrence, so the list can be shorter or longer than the accessions (aging 043).</remarks>
+    /// one per occurrence, so the list can be shorter or longer than the accessions.</remarks>
     private static List<long> ResidueStarts(object? value) =>
         Range.Matches(value is null ? "" : PyFormat.Str(value)).Select(m => long.Parse(m.Groups[1].Value)).ToList();
 
@@ -219,7 +219,7 @@ public static class Identifications
             };
             if (reservedIonColumns)
             {
-                // Never filled: mzLib's projection leaves the composite matched-ion fields out (DATAREPO-13).
+                // Never filled: mzLib's projection leaves the composite matched-ion fields out.
                 row["matched_ion_series"] = null;
                 row["matched_ion_count"] = null;
             }
@@ -235,7 +235,7 @@ public static class Identifications
     private static string SourceDb(string accession, bool contaminant, (string Source, string? Taxon)? otherSource = null)
     {
         if (accession.ToUpperInvariant().StartsWith(DecoyPrefix, StringComparison.Ordinal)) return "decoy";
-        // A target entry from another source says so (aging's Ensembl-only isoforms, DATAREPO-84): "uniprot" would be
+        // A target entry from another source says so (aging's Ensembl-only isoforms): "uniprot" would be
         // false there. Every entry of every database searched to date is Swiss-Prot or TrEMBL (measured 2026-10-20).
         return contaminant ? "contaminants" : otherSource?.Source ?? "uniprot";
     }
@@ -261,7 +261,7 @@ public static class Identifications
     /// <c>NCBITaxon:9606</c>, bovine albumin included.</para>
     /// </remarks>
     /// <param name="otherSource">Under <see cref="IngestRules.Current"/>: a target accession's non-UniProt source and
-    /// taxon, from its own database entry (DATAREPO-84); null, or returning null, for UniProt's.</param>
+    /// taxon, from its own database entry; null, or returning null, for UniProt's.</param>
     public static List<Row> ProteinRows(
         IEnumerable<IReadOnlyDictionary<string, List<object?>>> columnsList, string datasetId, string? organism,
         Func<string, bool?>? contaminantOf = null, Dictionary<string, long>? unresolved = null,
@@ -422,7 +422,7 @@ public static class Identifications
                 continue;
             }
             // Kept as a set, not a pick: two engine names that resolve to one UNIMOD accession make one
-            // peptidoform id from two producer strings, and that must stay visible (ptmQtl 002, DATAREPO-P3).
+            // peptidoform id from two producer strings, and that must stay visible.
             var engines = (List<object?>)row["engine_full_sequences"]!;
             if (!engines.Contains(engine))
                 row["engine_full_sequences"] = engines.Append(engine).Cast<string>().Order(StringComparer.Ordinal).Cast<object?>().ToList();
@@ -441,7 +441,7 @@ public static class Identifications
     /// <remarks>
     /// <para>A site is emitted when the match is not a decoy and is at or below <paramref name="qThreshold"/>, and
     /// the peptide's position in the protein is known from the searched database's sequence, never by pairing
-    /// the producer's spans with its accessions (<see cref="Placements"/>, DATAREPO-32).</para>
+    /// the producer's spans with its accessions (<see cref="Placements"/>).</para>
     /// <para>No UNIMOD requirement (the key ends in the engine's own name), no ambiguity-level filter
     /// (<c>best_ambiguity_level</c> keeps it answerable), no target-only filter (contaminant sites are real
     /// measurements and kept), and no terminal-placement skip (2,091 terminal sites at q &lt;= 0.01 on the corpus,
@@ -482,7 +482,7 @@ public static class Identifications
                 var nTerminal = mod.Position == Proforma.NTerminus;
                 var cTerminal = mod.Position == Proforma.CTerminus;
                 // A terminus is a POSITION; the thing modified there is still a residue, so a terminal mod is keyed
-                // on the residue it sits on (aging 045 section 2), never on a sentinel or on length + 1.
+                // on the residue it sits on, never on a sentinel or on length + 1.
                 string? residue;
                 long offset;
                 var bases = parsed.BaseSequence ?? "";
@@ -560,7 +560,7 @@ public static class Identifications
         return counts;
     }
 
-    /// <summary>The site's 15-residue window (ptmQtl DATAREPO-P30): the residue at <paramref name="position"/> and 7 on
+    /// <summary>The site's 15-residue window: the residue at <paramref name="position"/> and 7 on
     /// each side, <c>_</c> past either end, from <paramref name="sequence"/>; null when the position is outside it.</summary>
     public static string? SequenceWindow(string sequence, long position)
     {
@@ -574,7 +574,7 @@ public static class Identifications
         return new string(window);
     }
 
-    /// <summary>Writes each site's <c>sequence_window</c> (schema 0.0.16, DATAREPO-P30) from the accession's one searched
+    /// <summary>Writes each site's <c>sequence_window</c> (schema 0.0.16) from the accession's one searched
     /// sequence; NULL when the databases give it none, or several (G101 left an ambiguous accession with none).</summary>
     /// <remarks>A protein N-terminal site takes the window of residue 1 (ptmQtl S5, D35), whichever residue it is keyed
     /// on: residue 2 when the initiator Met was removed, as for 377 of PXD022196's 494. MetaMorpheus pools the Met-kept
@@ -654,7 +654,7 @@ public static class Identifications
     /// <remarks>MetaMorpheus writes <c>[Category:Name on X]</c>. A token that does not match keeps its whole text as
     /// the name, category included, so it is not a modification name and cannot key a site. Python 0.32.0 took any
     /// <c>:</c> as that sign, but Unimod's names for isotope labels hold one (<c>NEM:2H(5)</c>, <c>Label:13C(6)</c>),
-    /// so 1.3.2 refused PXD011740 and PXD010091 over a token that had parsed (PXReprise PXR-R21). The name is the key's
+    /// so 1.3.2 refused PXD011740 and PXD010091 over a token that had parsed. The name is the key's
     /// last part, so a <c>:</c> in it is still unambiguous to a reader that splits at most three times. Only inputs
     /// 1.3.2 refused change, so no bundle id moves (D47). <see cref="IngestRules.Python0320"/> keeps the old rule.</remarks>
     /// <exception cref="IngestException">The token did not parse and the name holds <c>:</c>, or the name holds
@@ -715,7 +715,7 @@ public static class Identifications
     /// <remarks>
     /// <para>Target PSMs only, PEPs included, as ptmQtl's S7 decides it (<c>PtmQtlBundle.Tiers</c>), so the two can never
     /// put one search on different rules. mzLib's own comment asks for every match's PEP, decoys included; on every
-    /// served deposit the two give the same tier (<c>results/confidence_rule_2026-11-11/tier_targets_vs_all.py</c>).</para>
+    /// served deposit the two give the same tier.</para>
     /// <para>The values are reduced to what the rule reads before it is called, as S7 does: whether any PEP q-value or
     /// notch q-value is a probability, and up to two distinct finite PEPs. A row's own PEP q-value never decides:
     /// PXD058775 trained no PEP and still wrote 229 target rows at or below 1% in <c>PEP_QValue</c>.</para>
@@ -775,7 +775,7 @@ public static class Identifications
     /// <c>q_value &lt;= threshold</c> and <c>q_value_notch &lt;= threshold</c>, plus, for PSMs only, a notch that
     /// resolved.</summary>
     /// <remarks><b>The notch clause is a PSM rule and must not be carried to peptidoforms</b>: on PXD032202 the
-    /// producer's peptide count agrees with the un-clause number exactly (DATAREPO-27, thread 033).</remarks>
+    /// producer's peptide count agrees with the un-clause number exactly.</remarks>
     public static long ProducerCounts(
         IReadOnlyDictionary<string, List<object?>> columns, double threshold = ProducerThreshold, bool requireResolvedNotch = true)
     {

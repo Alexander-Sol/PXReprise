@@ -35,7 +35,7 @@ public static class IsobaricReporters
     public const double MinFraction = 0.25;
 
     /// <summary>
-    /// v0.4.45 (PXD027464; the user, 2026-11-11, "(b)"): the least share of a file's MSn spectra with reporters at which QC under an
+    /// v0.4.45 (PXD027464; the maintainer, 2026-11-11, "(b)"): the least share of a file's MSn spectra with reporters at which QC under an
     /// isobaric profile still reads its kit. The late fractions of a fractionated plex hold few peptides: PXD027464's F36 and F37
     /// (TMT10, all ten channels) carry reporters in 24% and 23% of their spectra, PXD030407's IMAC_22 (TMTpro, the twelve channels of
     /// its passing files) in 8.6%. Such a file still fails alone, and its deposit passes it (QcStage.PassThinFractions) when it shows
@@ -174,13 +174,13 @@ public static class IsobaricReporters
     /// v0.4.41: a channel whose median height is below this share of the channel one carbon-13 below it is that channel's
     /// isotope, not a channel. Every reporter's m/z is the channel two below it plus 1.00335, so a strong channel's isotope lands
     /// exactly on the next kit's channel, and the brighter the file the more spectra show it. Presence alone cannot tell them
-    /// apart. Measured 2026-11-06 (results/mm-1.1.14-trial_2026-11-06/KitShares.cs): isotopes 0.03 to 0.08, real channels 0.37 to
+    /// apart. Measured 2026-11-06: isotopes 0.03 to 0.08, real channels 0.37 to
     /// 1.39, on PXD034564, PXD043296 (TMTpro), PXD051031 and PXD027548.
     /// </summary>
     public const double MaxIsotopeHeight = 0.15;
 
     /// <summary>
-    /// v0.4.34 (TMT trial, results/tmt-trial_2026-10-29): the KIT, not just the family, for the search's
+    /// v0.4.34 (TMT trial): the KIT, not just the family, for the search's
     /// <c>MultiplexModId</c>. A channel is SEEN when it is present (mzLib's own reporter lookup, 3 mDa) in at least
     /// <see cref="MinChannelShare"/> of the spectra the typical channel is present in. Impurity and isotope peaks put a few
     /// hits on a missing channel; the share rule leaves them out. PXD034564's MS3: TMT10's channels in 2,500-5,000 of 3,000
@@ -284,7 +284,7 @@ public static class IsobaricReporters
     }
 
     /// <summary>
-    /// v0.4.37 (dataRepo 076/078): the manifest's <c>labelling</c> and <c>labelling_plex</c> for a kit's modification id
+    /// v0.4.37: the manifest's <c>labelling</c> and <c>labelling_plex</c> for a kit's modification id
     /// (<see cref="ModificationId"/>): the family and the number of channels the kit has, used or not. TMT18 is 18
     /// (a TMTpro 16 deposit is searched under TMT18's label). Null for an id no kit has.
     /// </summary>

@@ -21,7 +21,7 @@ public static class Usi
     /// <summary>The run name mzLib's PSM reader reports for a file named <paramref name="name"/>.</summary>
     /// <remarks><c>SpectrumMatchFromTsv</c> deletes every occurrence of each known spectra extension
     /// ANYWHERE in the <c>File Name</c> cell, case-insensitively, so PRIDE's <c>X.raw.thermo.raw</c>, searched
-    /// as <c>X.raw.thermo</c>, reads back as <c>X.thermo</c> (aging 081, REQ-DATAREPO-7). Mirrored exactly.
+    /// as <c>X.raw.thermo</c>, reads back as <c>X.thermo</c>. Mirrored exactly.
     /// Reporting it upstream is G80.</remarks>
     public static string MzLibTsvFileName(string name)
     {

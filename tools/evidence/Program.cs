@@ -705,7 +705,7 @@ internal static class Deposit
         var guesses = rules.Concat(modelEvidence).Where(e => e.Confidence == SdrfEvidenceConfidence.Guess).ToList();
         SdrfEvidenceFile.Write(N("review.tsv"), guesses);
 
-        // 6. The deposit-wide facts (the user: "deposit wide facts are important"): every claim about the whole deposit.
+        // 6. The deposit-wide facts (the maintainer: "deposit wide facts are important"): every claim about the whole deposit.
         var facts = all.Where(e => e.DataFile.Length == 0 && e.DataFilePattern.Length == 0 && e.Label.Length == 0)
             .OrderBy(e => e.Column, StringComparer.Ordinal).ThenBy(e => e.Confidence)
             .Select(e => string.Join('\t', new[] { e.Column, e.Value, e.Source, e.Method, e.Confidence.ToString(), e.Locator }.Select(Clean))).ToList();

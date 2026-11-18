@@ -162,7 +162,7 @@ public sealed class Sandbox : IDisposable
             _con.Dispose();
             throw new CatalogException($"{Path} could not be opened read-only: {exc.Message}");
         }
-        // aging 107: a catalog that lost its tail answers until a query reaches the missing part, so it is refused whole.
+        // A catalog that lost its tail answers until a query reaches the missing part, so it is refused whole.
         if (PXReprise.Catalog.CatalogFile.Shortfall(_con, path) is { } shortBy)
         {
             _con.Dispose();

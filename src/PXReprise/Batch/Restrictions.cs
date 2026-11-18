@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace PXReprise.Batch;
 
 /// <summary>
-/// v0.4.46 (aging PXR-A51, DATAREPO-74; the user, 2026-11-11, "yes b"): a manifest entry's <c>restrictions</c>, the uses
+/// v0.4.46 (the maintainer, 2026-11-11, "yes b"): a manifest entry's <c>restrictions</c>, the uses
 /// datarepo 1.3.4+ marks a whole dataset unfit for in the catalog (<c>dataset_restrictions</c>). The engine owns the key.
 /// It is written from recorded facts and the question, nothing else, so it never goes stale the way the hand list of
 /// 2026-10-07 did (15 of its 41 rows no longer held a month later, and it missed every deposit delivered since):
@@ -17,7 +17,7 @@ namespace PXReprise.Batch;
 /// rule's reason for the same use.</item>
 /// </list>
 /// A restriction written by hand into the manifest is replaced at the next sync: the question is where one is declared.
-/// dataRepo needs only a rebuild for a changed restriction, never a re-ingest (their 044).
+/// dataRepo needs only a rebuild for a changed restriction, never a re-ingest.
 /// </summary>
 public static class Restrictions
 {
@@ -26,7 +26,7 @@ public static class Restrictions
     private static readonly JsonSerializerOptions Quoted = new() { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
     /// <summary>
-    /// v0.4.46 (G69; the user and QuantProject 120, 2026-11-11): the <c>quantitation</c> reason of an isobaric entry searched
+    /// v0.4.46 (G69; the maintainer and QuantProject 120, 2026-11-11): the <c>quantitation</c> reason of an isobaric entry searched
     /// on the default design v0.4.34 to v0.4.45 made when no SDRF stated one (provenance flag
     /// <see cref="Search.DesignStage.NoChannelDesign"/>). Each file was its own plex, so fractions and repeat injections of one
     /// plex are separate samples. QuantProject asked that the note say what a sample is there.

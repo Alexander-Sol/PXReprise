@@ -15,7 +15,7 @@ public sealed record FragmentationCall(string? DissociationType, bool LowRes, st
 /// type, and treats every scan as high resolution, so Autodetect is used only when every type is one of those and every
 /// scan is read at high resolution;</item>
 /// <item>HCD read in an ion trap is searched as HCD at the low-res tolerance, only when the profile turns
-/// <c>ion_trap_hcd</c> on (PXR-A68); otherwise it is refused, as before. With <c>ion_trap_hcd_lowcid</c> too (v0.4.28,
+/// <c>ion_trap_hcd</c> on; otherwise it is refused, as before. With <c>ion_trap_hcd_lowcid</c> too (v0.4.28,
 /// <c>label-free-dda-lowres@4</c>) it is searched as LowCID, MetaMorpheus's low-res path; its b and y ions are the same.
 /// Under the probe's settings LowCID finds far more (one PXD022393 file: 107 PSMs as HCD, 2,442 as LowCID), but in the
 /// full search it lost 1-16% of PSMs (2026-10-21), so <c>lowres@5</c> decides LowCID for the probe only (the caller says
