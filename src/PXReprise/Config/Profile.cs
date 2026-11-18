@@ -2,7 +2,12 @@ using PXReprise.Discovery;
 
 namespace PXReprise.Config;
 
-public enum ProfileStatus { Available, Pending }
+/// <summary>
+/// Whether a profile takes searches. <see cref="Available"/>: it searches. <see cref="Pending"/>: not runnable yet; a
+/// question that lists it is told what it would unlock. <see cref="Deprecated"/>: retired for new searches but still
+/// loaded, so the deliveries and provenance made under it read as before (profiles are never edited, decision 0007).
+/// </summary>
+public enum ProfileStatus { Available, Pending, Deprecated }
 
 /// <summary>
 /// What a profile accepts. An empty list means "any value". <see cref="Crosslinking"/> is opt-in (<c>crosslinking =
