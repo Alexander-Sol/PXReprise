@@ -37,7 +37,9 @@ public static class Router
     /// <summary>
     /// The first of the question's profiles, in the question's order, that accepts the deposit. An accepting profile
     /// that is still <c>pending</c> (e.g. TMT before its quant lands) routes to <see cref="RouteKind.WaitingOnCapability"/>
-    /// with that profile named, so the census says what finishing it would unlock.
+    /// with that profile named, so the census says what finishing it would unlock. A <c>deprecated</c> profile never
+    /// takes a new search: the next profile the question names is tried, and if only deprecated profiles accept the
+    /// deposit, it waits with the first of them named.
     /// </summary>
     public static Route Assign(string accession, Acquisition a, RelevanceResult relevance, Question q,
         IReadOnlyDictionary<string, Profile> profiles)
@@ -46,19 +48,30 @@ public static class Router
         if (q.Holds.TryGetValue(accession, out string? why)) return new(RouteKind.Held, null, why);
 
         var refusals = new List<string>();
+        string? deprecatedAccepting = null;
         foreach (string key in q.Profiles)
         {
             if (!profiles.TryGetValue(key, out var p))
                 throw new ConfigException(q.SourceFile, $"profile {key} is not defined (known: {string.Join(", ", profiles.Keys)})");
             string? refusal = p.Accepts.Refusal(a);
             if (refusal is null)
+            {
+                if (p.Status == ProfileStatus.Deprecated) { deprecatedAccepting ??= p.Key; continue; }
                 return p.Status == ProfileStatus.Available
                     ? new(RouteKind.Search, p.Key, "accepted")
                     : new(RouteKind.WaitingOnCapability, p.Key, $"{p.Key} is pending");
+            }
             refusals.Add(refusal);
         }
+        if (deprecatedAccepting is not null)
+            return new(RouteKind.WaitingOnCapability, deprecatedAccepting,
+                $"{deprecatedAccepting} is deprecated: it takes no new searches, and no other profile the question names accepts this deposit");
         return new(RouteKind.WaitingOnCapability, null, Capability(a, refusals));
     }
+
+    /// <summary>The profiles <paramref name="q"/> names whose status is <c>deprecated</c>, in the question's order.</summary>
+    public static IReadOnlyList<string> DeprecatedProfiles(Question q, IReadOnlyDictionary<string, Profile> profiles) =>
+        q.Profiles.Where(k => profiles.TryGetValue(k, out var p) && p.Status == ProfileStatus.Deprecated).ToList();
 
     /// <summary>What the deposit would need, named by the first thing no allowed profile covers.</summary>
     private static string Capability(Acquisition a, IReadOnlyList<string> refusals)

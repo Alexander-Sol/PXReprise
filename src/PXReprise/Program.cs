@@ -69,9 +69,14 @@ public static class Program
                 // whether validate reads it). Each design is checked against the deposit's files when it is searched.
                 if (q.Designs is { } dg && !Directory.Exists(dg.Dir))
                     throw new ConfigException(file, $"[designs] dir {dg.Dir} does not exist");
+                // A deprecated profile still loads, but takes no new search: say which ones the question still names.
+                var deprecated = PXReprise.Discovery.Router.DeprecatedProfiles(q, profiles);
+                foreach (string k in deprecated)
+                    Console.Error.WriteLine($"note: {k} is deprecated: it takes no new searches; a deposit only it accepts waits");
                 return new
                 {
                     question = q.Name, q.Profiles, keywords = q.Keywords.Count, q.Organisms,
+                    deprecated_profiles = deprecated.Count > 0 ? deprecated : null,
                     decisions = q.Relevance.Decisions.Count, holds = q.Holds.Count, overlays = q.Overlays.Keys,
                     // v0.4.43: each split deposit with the search keys it is searched and delivered under.
                     splits = q.Splits is { Count: > 0 } sp ? sp.ToDictionary(kv => kv.Key, kv => kv.Value) : null,
@@ -401,6 +406,8 @@ public static class Program
                             stop_pending = File.Exists(stop),
                             datasets = ds.Count,
                             by_status = ds.GroupBy(kv => kv.Value?["status"]?.GetValue<string>() ?? "?").OrderByDescending(g => g.Count()).ToDictionary(g => g.Key, g => g.Count()),
+                            // The question's profiles that take no new searches (status "deprecated"), if any.
+                            deprecated_profiles = PXReprise.Discovery.Router.DeprecatedProfiles(q, ProfileLoader.LoadDirectory(ProfilesDir(args))) is { Count: > 0 } dp ? dp : null,
                         };
                     }
                     default:

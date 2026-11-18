@@ -45,7 +45,13 @@ is a new version, so every result says exactly which method made it.
   searched again. Start no new search under a MetaMorpheus 1.1.12 profile (`@4` to `@11`, `lowres@1` to `lowres@5`): since
   0.4.33 the engine's mzLib keeps gaps in an SDRF's replicate numbers, and 1.1.12 refuses such a design.
 
-`pxreprise profiles` lists what your installation ships.
+`pxreprise profiles` lists what your installation ships. A profile's status is one of three:
+- `available`: it searches.
+- `pending`: not runnable yet. A question that lists it is told how many deposits it would unlock.
+- `deprecated`: retired for new searches. It still loads, so the results and provenance made under it read as before. A
+  deposit that only a deprecated profile accepts waits, and names that profile; otherwise the next profile the question
+  names is used. `pxreprise validate` and `pxreprise batch status` list the deprecated profiles a question still names. No
+  profile is deprecated yet.
 
 | Profile | Status | Accepts |
 |---|---|---|
