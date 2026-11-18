@@ -219,7 +219,8 @@ public static class ManifestEntry
 
   - accession: {e.Accession}
     status: {earlier?.Status ?? "include"}
-{(split is null ? "" : $"    split_reason: {split.By}\n")}    title: {JsonSerializer.Serialize(e.Title)}
+{(split is null ? "" : $"    split_reason: {split.By}\n")}    delivery: pending
+    title: {JsonSerializer.Serialize(e.Title)}
     run: {run}
     stages:
       qc: 02b_qc
@@ -245,6 +246,43 @@ public static class ManifestEntry
         string written = text.TrimEnd('\n') + "\n" + entry.ReplaceLineEndings("\n").TrimEnd('\n') + "\n";
         written = Restrictions.ApplyTo(written, e.Accession, restrictions,
             search["experimental_design"]?["flag"]?.GetValue<string>() == Search.DesignStage.NoChannelDesign);
+        File.WriteAllText(tmp, crlf ? written.ReplaceLineEndings("\r\n") : written);
+        File.Move(tmp, manifestPath, overwrite: true);
+    }
+
+    /// <summary>
+    /// Records that <paramref name="key"/>'s ingest succeeded: its entry's <c>delivery: pending</c> becomes
+    /// <c>delivery: delivered</c> with <c>delivered_utc</c>. The batch writes an entry before it ingests it, so an entry
+    /// alone never proved a delivery; this field does. An entry written before the field existed (by an older engine, or
+    /// by hand) gains both lines where <see cref="Append"/> writes them: after <c>split_reason</c>, else after <c>status</c>. Neither field enters the bundle (they are not content fields), and
+    /// the file keeps its own line ends and is replaced whole, as <see cref="Append"/> replaces it.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The manifest has no entry for <paramref name="key"/>.</exception>
+    public static void MarkDelivered(string manifestPath, string key, DateTime utc)
+    {
+        bool crlf = File.ReadAllText(manifestPath).Contains("\r\n");
+        string text = ReadLf(manifestPath);
+        var (start, end) = Block(text, key);
+        string block = text[start..end];
+        var status = System.Text.RegularExpressions.Regex.Match(block, @"(?m)^([ \t]+)status:[^\n]*$");
+        string indent = status.Success ? status.Groups[1].Value : "    ";
+        string stamp = $"{indent}delivered_utc: {utc.ToUniversalTime():yyyy-MM-dd'T'HH:mm:ss'Z'}";
+        // Any earlier record of this entry's delivery is replaced, never stacked.
+        block = System.Text.RegularExpressions.Regex.Replace(block, @"(?m)^[ \t]+delivered_utc:[^\n]*\n", "");
+        var delivery = System.Text.RegularExpressions.Regex.Match(block, @"(?m)^[ \t]+delivery:[^\n]*$");
+        string lines = $"{indent}delivery: delivered\n{stamp}";
+        // Without one, the record goes where Append writes it: after split_reason if the entry has one, else after status.
+        var anchor = System.Text.RegularExpressions.Regex.Match(block, @"(?m)^[ \t]+split_reason:[^\n]*$");
+        if (!anchor.Success) anchor = System.Text.RegularExpressions.Regex.Match(block, @"(?m)^[ \t]+status:[^\n]*$");
+        if (delivery.Success) block = block[..delivery.Index] + lines + block[(delivery.Index + delivery.Length)..];
+        else if (anchor.Success) block = block.Insert(anchor.Index + anchor.Length, "\n" + lines);
+        else
+        {
+            int eol = block.IndexOf('\n');
+            block = eol < 0 ? block + "\n" + lines : block.Insert(eol, "\n" + lines);
+        }
+        string written = text[..start] + block + text[end..];
+        string tmp = manifestPath + ".pxreprise-tmp";
         File.WriteAllText(tmp, crlf ? written.ReplaceLineEndings("\r\n") : written);
         File.Move(tmp, manifestPath, overwrite: true);
     }
@@ -363,6 +401,8 @@ public static class ManifestEntry
     {
         "accession", "status", "title", "run", "stages", "search_results", "files", "organism", "acquisition", "quant_method",
         "metamorpheus", "provenance_schema", "enrichment", "flags", "notes", "labelling", "labelling_plex", "restrictions",
+        // The engine's record of whether this entry's ingest succeeded (MarkDelivered): a re-search starts it afresh.
+        "delivery", "delivered_utc",
     };
 
     /// <summary>Every key of the entry this writer does not own, with its nested lines, as written (LF line ends).</summary>

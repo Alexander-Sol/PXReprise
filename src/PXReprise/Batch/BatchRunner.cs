@@ -1903,7 +1903,21 @@ public sealed class BatchRunner
             Log($"{e.Accession} INGEST rc={rc} (full output {full})\n{tail}");
             Record(e.Accession, ("ingest_rc", rc), ("ingest_out", tail), ("ingest_log", full));
         }
-        if (rc == 0) Prune(e.Accession);
+        if (rc == 0)
+        {
+            // The review's R14: the entry was written before the ingest (as `delivery: pending`), so it says now that the
+            // ingest succeeded. A failure to write it is logged, never a failed delivery: state.json's ingest_rc is 0.
+            try
+            {
+                ManifestEntry.MarkDelivered(manifest, e.Accession, DateTime.UtcNow);
+                Log($"{e.Accession} MANIFEST delivery: delivered");
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
+            {
+                Log($"{e.Accession} MANIFEST delivery not recorded ({ex.GetType().Name}: {ex.Message}); the ingest itself succeeded");
+            }
+            Prune(e.Accession);
+        }
         if (rc != 0 || _q.Publish.Command.Count == 0) return;
         // D41 rule 6: publishing is scheduled (PublishLoopAsync), no longer run after each ingest. A new delivery waits for
         // the next scheduled publish; an earlier publish result belongs to the bundle this ingest replaced.
