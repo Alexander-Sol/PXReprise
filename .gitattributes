@@ -14,3 +14,5 @@ tests/PXReprise.Data.Tests/Fixtures/site/** -text
 tests/PXReprise.Data.Tests/Fixtures/go-engine/** -text
 tests/PXReprise.Data.Tests/Fixtures/design-labels/** -text
 *.parquet binary
+# Released schemas are frozen byte for byte (FrozenSchemaTests checks SHA256SUMS).
+schemas/datarepo/releases/** text eol=lf
