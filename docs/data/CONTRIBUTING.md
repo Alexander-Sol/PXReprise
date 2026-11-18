@@ -18,7 +18,8 @@ benchmark questions the schema can't yet answer, and producer file formats the i
    new number needs a `definition_id` from the project that owns its meaning.
 4. **Missing is not zero.** Never write 0 for "not measured".
 5. **No data in this repo.** Bundles, releases and DOIs belong to an instance (decision D8).
-   `examples/` and `tests/data/` hold only tiny fixtures.
+   `schemas/datarepo/examples/`, `tests/datarepo-instance/` and `tests/PXReprise.Data.Tests/Fixtures/` hold only
+   tiny fixtures.
 6. **Parsing producer formats belongs to mzLib.** If the ingester reads a producer file itself, the
    reason must be recorded in `Readers` (`src/PXReprise.Ingest/Readers.cs`) and in the bundle's
    reader log, along with the request that would let the in-house code be deleted.
@@ -28,42 +29,39 @@ benchmark questions the schema can't yet answer, and producer file formats the i
 ## Making a schema change
 
 ```bash
-pip install -r requirements-dev.txt
-
-# 1. edit schema/datarepo.yaml (or a study layer)
+# 1. edit schemas/datarepo/datarepo.yaml (or a study layer in schemas/datarepo/study/)
 #    every class, column and vocabulary needs a description: agents read them
 
-# 2. check
-linkml-lint --config .linkmllint.yaml schema/datarepo.yaml
-linkml-lint --config .linkmllint.yaml schema/study/aging.yaml
-linkml-validate -s schema/datarepo.yaml -C Bundle examples/minimal_bundle.yaml
+# 2. regenerate the program's table definitions and column descriptions, and commit them
+dotnet run --project src/PXReprise.SchemaGen            # writes src/PXReprise.Bundle/Generated/*.g.cs
+dotnet run --project src/PXReprise.SchemaGen -- --check # exits 1 if they are stale
 
-# 3. regenerate the reference docs AND the program's table definitions, and commit them
-python tools/build_docs.py
-dotnet run --project dotnet/src/DataRepo.SchemaGen
-
-# 4. note the change under "Unreleased" in CHANGELOG.md
+# 3. note the change in docs/data/CHANGELOG.md's unreleased section
 ```
 
-CI runs the same checks. It also confirms that `examples/invalid/` still **fails** validation, that
-`docs/schema/` and `dotnet/src/DataRepo.Bundle/Generated/` match the schema, and that the ingester
-output in `examples/ingested_bundle.yaml` (written by the Python release) validates.
+`tests/PXReprise.Data.Tests` fails if `Tables.g.cs` no longer matches the schema.
+
+Not yet replaced since the move: the Python tools that linted the schema (LinkML), regenerated
+`docs/data/schema/*.md` and `docs/data/cli.md`, and validated `schemas/datarepo/examples/` stayed in
+smith-chem-wisc/dataRepo (no Python here: decision 0008). Until C# equivalents exist, edit those pages
+by hand to match the schema and the CLI's `-h` output, and say so in the pull request.
 
 ## Working on the ingester
 
-dataRepo is a C# program (`dotnet/`, solution `DataRepo.slnx`); the Python package under `src/` is
-frozen at 0.32.0 and only tested at that tag. You need the
+dataRepo is a C# program: the `src/PXReprise.*` data projects in `PXReprise.slnx` (its `/src/data/`
+folder), with the `datarepo` command line in `src/PXReprise.DataCli`. The Python package stayed in
+smith-chem-wisc/dataRepo, frozen at 0.32.0. You need the
 [.NET 10 SDK](https://dotnet.microsoft.com/download):
 
 ```bash
-dotnet test dotnet/DataRepo.slnx                     # every test, including the docs (DocsTests)
-dotnet build dotnet/src/DataRepo.Cli -c Release -o build/cs   # the program, as build/cs/datarepo
-python tools/build_cli_docs.py                       # after changing a command's arguments or help
+dotnet test tests/PXReprise.Data.Tests                                  # dataRepo's tests, including the docs (DocsTests)
+dotnet build src/PXReprise.DataCli -c Release -o build/datarepo         # the program, as build/datarepo/datarepo
 ```
 
-`dotnet/PORTING.md` holds the conventions the port follows.
+[PORTING.md](PORTING.md) holds the conventions the port followed (it still names the projects
+`DataRepo.*`, as they were then).
 
-`tests/data/` is a miniature producing instance: a manifest with relative roots, real MetaMorpheus
+`tests/datarepo-instance/` is a miniature producing instance: a manifest with relative roots, real MetaMorpheus
 `.psmtsv` rows trimmed from PXD036557, and hand-made FlashLFQ tables whose edge cases are the ones
 that matter (a zero intensity, a `NotDetected` cell, a q-value of exactly zero, a decoy group, a
 contaminant group). Add to it rather than mocking a reader.

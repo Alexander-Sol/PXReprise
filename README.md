@@ -65,7 +65,9 @@ See [Commands](https://smith-chem-wisc.github.io/PXReprise/commands.html) for th
 
 PXReprise is orchestration, policy and provenance. File reading, chemistry and quantification come from
 [mzLib](https://github.com/smith-chem-wisc/mzLib); search is MetaMorpheus, run as its own process per dataset. Delivery
-into a queryable repository and website is [dataRepo](https://github.com/smith-chem-wisc/dataRepo), run as its own program.
+into a queryable repository and website is dataRepo, run as its own program (`datarepo`). Its code lives in this
+repository too, as the `src/PXReprise.*` data projects ([docs/data](docs/data/README.md)); its design records stay in
+[smith-chem-wisc/dataRepo](https://github.com/smith-chem-wisc/dataRepo).
 
 ## Developing
 
