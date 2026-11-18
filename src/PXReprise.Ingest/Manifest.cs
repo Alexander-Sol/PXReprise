@@ -97,6 +97,8 @@ public sealed record DatasetEntry
         ["operator_sdrf"] = "a path, which is site-specific; the file it names is read in place of any other SDRF and is a source of the bundle, hashed by its bytes (G107)",
         ["excluded_runs"] = "the producer's judgement of which runs an ANALYSIS should leave out (G85); every run is still searched, ingested and counted the same, so no row changes, and the catalog takes the field at build (run_exclusions)",
         ["restrictions"] = "the producer's judgement of which USES the whole dataset is unfit for (DATAREPO-74); no row changes, and the catalog takes the field at build (dataset_restrictions, dataset_overview.restrictions)",
+        ["delivery"] = "the producer's record of whether this entry's ingest succeeded (pending, then delivered); written after the ingest it describes, so it can never be part of that bundle",
+        ["delivered_utc"] = "when the producer recorded the delivery; written after the ingest, as `delivery` is",
         ["split_reason"] = "why the producer searched the deposit in parts (PXR-R32); the key already names the deposit and the group, every row is the same under any reason, and the catalog takes the field at build (dataset_annotations, dataset_overview.split_reason, deposits)",
         ["raw"] = "the source row itself, which is the container for every field above",
     };

@@ -42,8 +42,13 @@ Every folder has a `provenance.json`: the exact inputs with checksums, the comma
 anything unusual.
 
 **Delivered or not?** With dataRepo, a deposit's manifest entry is written before its ingest runs, so an entry alone proves
-nothing. Delivered means `INGEST rc=0` in `batch.log` (`ingest_rc` 0 in `state.json`). It reaches a website at the next
-scheduled publish (`PUBLISH rc=0`).
+nothing. The entry says so itself:
+- `delivery: pending` when the batch writes it;
+- `delivery: delivered`, with `delivered_utc`, once `datarepo ingest` succeeds.
+
+An entry written before an engine wrote this field has none. For it, delivered still means `INGEST rc=0` in `batch.log`
+(`ingest_rc` 0 in `state.json`), which stays the record either way. A delivery reaches a website at the next scheduled
+publish (`PUBLISH rc=0`).
 
 MetaMorpheus's output formats are documented in the
 [MetaMorpheus wiki](https://github.com/smith-chem-wisc/MetaMorpheus/wiki).
